@@ -12,6 +12,7 @@ struct material {
 	int atk;
 	float def;
 	int hp;
+	int maxHp;
 	int value;
 
 	char name[32];

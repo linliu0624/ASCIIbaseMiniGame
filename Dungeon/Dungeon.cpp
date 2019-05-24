@@ -149,7 +149,8 @@ unit CreatePlayer() {
 	unit tmpPlayer;
 	tmpPlayer.alive = true;
 	tmpPlayer.inventoryMode = false;
-	tmpPlayer.hp = 30;
+	tmpPlayer.maxHp = 30;
+	tmpPlayer.hp = tmpPlayer.maxHp;
 	tmpPlayer.type = PLAYER;
 	tmpPlayer.weapon = fist;
 	tmpPlayer.armor = noArmor;
@@ -418,16 +419,8 @@ void ShowRoom() {
 		}
 		cout << "|" << endl;
 	}
-	cout << "===============================================================================" << endl;*/
-
-	//玩家位置
-	//cout << player.x << " " << player.y << endl;
-	//敵人位置
-	//cout << enemy.x << " " << enemy.y << endl;
-	//GotoXY(10, 15);
-	//cout << "player_HP:" << player.hp;
-	//GotoXY(10, 16);
-	//cout << "enemy_HP:" << enemy.hp;
+	cout << "===============================================================================" << endl;
+	*/
 }
 /*装備管理*/
 void InventoryManage() {
@@ -492,11 +485,11 @@ void ShowPlayerStatus() {
 	cout << "X:" << player.x;
 	cout << "  Y:" << player.y << endl;
 
-	cout << "HP:" << player.hp << endl;
+	cout << "HP:" << player.hp << "/" << player.maxHp;
+	cout << "     [" << player.armor.name << "] def:-" << player.armor.def * 100 <<
+		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
+	cout << "             [" << player.weapon.name << "]" << endl;
 	cout << "----Inventory----" << endl;
-	cout << "Weapon:" << player.weapon.name << endl;
-	cout << "Armor:" << player.armor.name << endl;
-	cout << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
 			cout << i + 1 << "." << player.inventory[i].name << endl;

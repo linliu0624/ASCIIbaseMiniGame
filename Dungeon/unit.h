@@ -5,6 +5,7 @@ struct unit {
 	int type;
 	int x;
 	int y;
+	int maxHp;
 	int hp;
 	material weapon;
 	material armor;

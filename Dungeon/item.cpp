@@ -32,6 +32,9 @@ void ArmorOption() {
 	noArmor.mateTag = ARMOR;
 	noArmor.armorType = NO_ARMOR;
 	noArmor.value = 0;
+	noArmor.def = 0;
+	noArmor.maxHp = 0;
+	noArmor.hp = noArmor.maxHp;
 	noArmor.flag = true;
 
 	//皮甲
@@ -40,7 +43,8 @@ void ArmorOption() {
 	leatherArmor.armorType = LEATHER_ARMOR;
 	leatherArmor.value = 30;
 	leatherArmor.flag = true;
-	leatherArmor.hp = 40;
+	leatherArmor.maxHp = 40;
+	leatherArmor.hp = leatherArmor.maxHp;
 	leatherArmor.def = 0.3f;
 }
 void CreateVoid() {
