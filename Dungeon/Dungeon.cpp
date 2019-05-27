@@ -41,6 +41,8 @@ void CreateEnemy();
 void SpawnEnemy();
 ///敵人行動
 void EnemyMove();
+///顯示敵人狀態
+void ShowEnemyStatus();
 ///戰鬥
 void Battle();
 ///玩家移動
@@ -51,6 +53,7 @@ void InventoryManage();
 unit player;
 unit enemy[128];
 int enemyPtr = 0;
+int enemyCount = 0;
 bool clsFlag_Inventory;
 
 int main()
@@ -111,7 +114,7 @@ static void Refresh() {
 	ShowBigMap();
 	ShowRoom();
 	ShowPlayerStatus();
-
+	ShowEnemyStatus();
 }
 
 /*生成大地圖*/
@@ -267,21 +270,29 @@ void SpawnEnemy() {
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
 			if (map[i][j].playerPos == true) {
-				roomX_min = (j - 1) * 5; roomX_max = j * 3;
-				roomY_min = (i - 1) * 5; roomY_max = i * 3;
+				roomX_min = (j - 1) * 5; roomX_max = j * 5;
+				roomY_min = (i - 1) * 5; roomY_max = i * 5;
 			}
 		}
 	}
 	for (int i = 1; i < ROOMRANGE; i++) {
 		for (int j = 1; j < ROOMRANGE; j++) {
-			if ((room[i][j].playerPos != true) && (room[i][j].type == FLOOR) &&
-				(i > roomY_max || i < roomY_min) && (j > roomX_max || j < roomX_min)) {
-				int rnd = rand() % 10;
+			if (i >= roomY_min && i <= roomY_max && j <= roomX_max && j >= roomX_min) {
+
+			}
+			else if (room[i][j].playerPos != true && room[i][j].type == FLOOR &&
+				(i != 5 && i != 6 && i != 10 && i != 11 && i != 15 && i != 16 && i != 20 && i != 21) &&
+				(j != 5 && j != 6 && j != 10 && j != 11 && j != 15 && j != 16 && j != 20 && j != 21)) {
+				int rnd = rand() % 25;
 				if (rnd == 3 || rnd == 5) {
 					enemy[enemyPtr].alive = true;
 					room[i][j].enemyPos = true;
 					enemy[enemyPtr].x = j;
 					enemy[enemyPtr].y = i;
+					enemyPtr++;
+					if (enemyPtr == 127) {
+						enemyPtr = 0;
+					}
 				}
 			}
 		}
@@ -550,6 +561,25 @@ void ShowPlayerStatus() {
 			cout << i + 1 << "." << player.inventory[i].name << endl;
 		}
 	}
+}
+/*顯示敵人狀態*/
+void ShowEnemyStatus() {
+	int roomX_min, roomX_max, roomY_min, roomY_max;
+
+	GotoXY(50, 14);
+	cout << "enemyPtr:" << enemyPtr + 1 << endl;
+	GotoXY(50, 15);
+	cout << "The enemy from left to right is the top left to bottom right of the picture." << endl;
+	for (int i = 0; i < MAPRANGE; i++) {
+		for (int j = 0; j < MAPRANGE; j++) {
+			if (map[i][j].playerPos == true) {
+				roomX_min = j; roomX_max = j + 4;
+				roomY_min = i; roomY_max = i + 4;
+				break;
+			}
+		}
+	}
+
 }
 /*初始隨機*/
 void StartRnd() {
