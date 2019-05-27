@@ -36,6 +36,8 @@ unit CreatePlayer();
 ///顯示玩家狀態
 void ShowPlayerStatus();
 ///生成敵人
+void CreateEnemy();
+///放置敵人
 void SpawnEnemy();
 ///敵人行動
 void EnemyMove();
@@ -48,7 +50,7 @@ void InventoryManage();
 
 unit player;
 unit enemy[128];
-
+int enemyPtr = 0;
 bool clsFlag_Inventory;
 
 int main()
@@ -71,6 +73,7 @@ void Init() {
 	WeaponOption();
 	ArmorOption();
 	CreateVoid();
+	CreateEnemy();
 	//地圖生成
 	while (true) {
 		CreateMap();
@@ -85,6 +88,7 @@ void Init() {
 	//玩家命名
 	player = CreatePlayer();
 	CreateRoom();
+	SpawnEnemy();
 }
 
 /*操作*/
@@ -245,10 +249,41 @@ unit CreatePlayer() {
 //	}
 //}
 /*enemyの生成*/
+void CreateEnemy() {
+	for (int i = 0; i < 128; i++) {
+		//enemy[i].alive = true;
+		enemy[i].maxHp = 10 + rand() % 5;
+		enemy[i].hp = enemy[i].maxHp;
+		enemy[i].type = ENEMY;
+		enemy[i].weapon = sword;
+		enemy[i].armor = leatherArmor;
+	}
+}
+/*enemyの配置*/
 void SpawnEnemy() {
+	//PlayerPos of map turn to room
+	int roomX_min, roomY_min, roomX_max, roomY_max;
+
+	for (int i = 1; i < MAPRANGE - 1; i++) {
+		for (int j = 1; j < MAPRANGE - 1; j++) {
+			if (map[i][j].playerPos == true) {
+				roomX_min = (j - 1) * 5; roomX_max = j * 3;
+				roomY_min = (i - 1) * 5; roomY_max = i * 3;
+			}
+		}
+	}
 	for (int i = 1; i < ROOMRANGE; i++) {
 		for (int j = 1; j < ROOMRANGE; j++) {
-
+			if ((room[i][j].playerPos != true) && (room[i][j].type == FLOOR) &&
+				(i > roomY_max || i < roomY_min) && (j > roomX_max || j < roomX_min)) {
+				int rnd = rand() % 10;
+				if (rnd == 3 || rnd == 5) {
+					enemy[enemyPtr].alive = true;
+					room[i][j].enemyPos = true;
+					enemy[enemyPtr].x = j;
+					enemy[enemyPtr].y = i;
+				}
+			}
 		}
 	}
 }
@@ -386,7 +421,7 @@ void ShowRoom() {
 						else if (room[y][x].type == WALL) {
 							cout << "X ";
 						}
-						else if (room[y][x].type == ENEMY) {
+						else if (room[y][x].enemyPos == true) {
 							cout << "e ";
 						}
 						else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
@@ -429,54 +464,74 @@ void InventoryManage() {
 		clsFlag_Inventory = !clsFlag_Inventory;
 	}
 	int a, b;
-
 	cout << "Weapon:" << player.weapon.name << endl;
 	cout << "Armor:" << player.armor.name << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << endl;
+			cout << i + 1 << "." << player.inventory[i].name << " value:" << player.inventory[i].value << endl;
 		}
 	}
-	cout << endl;
-	cout << "Input a number that you want to change(twice time same number will equip):";
-	cin >> a;
-	cout << "Change to:";
-	cin >> b;
-	a--;
-	b--;
 
-	material tmp;
-	if (a != b) {
-		tmp = player.inventory[a];
-		player.inventory[a] = player.inventory[b];
-		player.inventory[b] = tmp;
+	cout << endl;
+	cout << "Input a number that you want to change(twice time same number will equip , '888' to back ,'999' to discard):";
+	cin >> a;
+	if (a == 888) {
+	}
+	else if (a == 999) {
+		while (true) {
+			cout << "Discard:";
+			cin >> b;
+			b--;
+			cout << "If you discard, your item will never back. Are you sure?(y/n):";
+			char ch;
+			cin >> ch;
+			if (ch == 'y' || ch == 'Y') {
+				player.inventory[b] = nothing;
+				break;
+			}
+			else {
+				break;
+			}
+		}
 	}
 	else {
-		if (player.inventory[a].mateTag == ARMOR) {
-			tmp = player.inventory[a];
-			if (player.armor.armorType == NO_ARMOR) {
-				player.inventory[a] = nothing;
-			}
-			else {
-				player.inventory[a] = tmp;
-			}
-			player.armor = tmp;
-		}
-		else if (player.inventory[a].mateTag == WEAPON) {
-			tmp = player.inventory[a];
-			if (player.weapon.weaponType == FIST) {
-				player.inventory[a] = nothing;
-			}
-			else {
-				player.inventory[a] = tmp;
-			}
-			player.weapon = tmp;
+		cout << "Change to:";
+		cin >> b;
+		a--;
+		b--;
 
+		material tmp;
+		if (a != b) {
+			tmp = player.inventory[a];
+			player.inventory[a] = player.inventory[b];
+			player.inventory[b] = tmp;
+		}
+		else {
+			if (player.inventory[a].mateTag == ARMOR) {
+				tmp = player.inventory[a];
+				if (player.armor.armorType == NO_ARMOR) {
+					player.inventory[a] = nothing;
+				}
+				else {
+					player.inventory[a] = tmp;
+				}
+				player.armor = tmp;
+			}
+			else if (player.inventory[a].mateTag == WEAPON) {
+				tmp = player.inventory[a];
+				if (player.weapon.weaponType == FIST) {
+					player.inventory[a] = nothing;
+				}
+				else {
+					player.inventory[a] = tmp;
+				}
+				player.weapon = tmp;
+
+			}
 		}
 	}
-
 	player.inventoryMode = false;
-
+	clsFlag_Inventory = false;
 }
 /*顯示玩家狀態*/
 void ShowPlayerStatus() {
