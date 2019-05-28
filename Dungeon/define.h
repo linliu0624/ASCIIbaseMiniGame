@@ -12,6 +12,8 @@
 
 //參數
 #define MAXENEMYINONEROOM 2
+#define ENEMYNUMBER 128
+#define RE_ENEMYNUMBER 20
 
 //道具
 #define NOTHING -1

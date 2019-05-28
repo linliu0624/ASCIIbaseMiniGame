@@ -53,4 +53,15 @@ void CreateVoid() {
 	nothing.value = 0;
 	nothing.flag = false;
 }
+/*攻擊力計算*/
+void SetAtk() {
+	int dice4 = rand() % 4 + 1;
+	int dice6 = rand() % 6 + 1;
+	int dice8 = rand() % 8 + 1;
+	int dice10 = rand() % 10 + 1;
+	int dice20 = rand() % 20 + 1;
+
+	fist.atk = dice4;
+	sword.atk = dice6 + 2;
+}
 

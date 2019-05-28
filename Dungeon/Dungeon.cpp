@@ -49,13 +49,15 @@ bool SearchEnemy();
 void ShowEnemyStatus();
 ///戰鬥
 void Battle();
+///玩家攻擊
+void PlayerAttack();
 ///玩家移動
 void PlayerMove();
 ///裝備管理
 void InventoryManage();
 
 unit player;
-unit enemy[128];
+unit enemy[ENEMYNUMBER];
 int playerMoveCounter = 0;
 int enemyPtr = 0;
 int enemyCount = 0;
@@ -65,7 +67,6 @@ bool haveEnemyFlag;
 int main()
 {
 	StartRnd();
-
 	Init();
 	// ゲームの循環
 	while (true)
@@ -103,19 +104,20 @@ void Init() {
 	SpawnEnemy();
 	Refresh();
 }
-
 /*操作*/
 void Update() {
 	if (player.inventoryMode == false) {
 		//int currentPlayerX = player.x, currentPlayerY = player.y;
 		//int newPlayerX, newPlayerY;
+        SetAtk();
 		PlayerMove();
-		if (playerMoveCounter > 20 && SearchEnemy() == false) {
+		if (playerMoveCounter > RE_ENEMYNUMBER && SearchEnemy() == false) {
 			DeleteAllEnemy();
 			CreateEnemy();
 			SpawnEnemy();
 			playerMoveCounter = 0;
 		}
+
 		//newPlayerX = player.x; newPlayerY = player.y;
 		//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
 		UpdateBigMap();
@@ -274,7 +276,7 @@ unit CreatePlayer() {
 //}
 /*enemyの生成*/
 void CreateEnemy() {
-	for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < ENEMYNUMBER; i++) {
 		//enemy[i].alive = true;
 		enemy[i].maxHp = 10 + rand() % 5;
 		enemy[i].hp = enemy[i].maxHp;
@@ -309,11 +311,11 @@ void SpawnEnemy() {
 					if (enemyCount < 2) {
 						enemy[enemyPtr].alive = true;
 						room[i][j].enemyPos = true;
-						enemy[enemyPtr].x = j;
-						enemy[enemyPtr].y = i;
+						enemy[enemyPtr].roomX = j;
+						enemy[enemyPtr].roomY = i;
 						enemyPtr++;
 						enemyCount++;
-						if (enemyPtr == 127) {
+						if (enemyPtr == ENEMYNUMBER - 1) {
 							enemyPtr = 0;
 						}
 					}
@@ -360,43 +362,43 @@ void PlayerMove() {
 	int ch;
 	ch = _getch();
 	int currentX, currentY, newX, newY;
-	currentX = player.x; currentY = player.y;
+	currentX = player.roomX; currentY = player.roomY;
 	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 		switch (ch) {
 		case UP: {
-			if (player.y - 1 != 0 && room[player.y - 1][player.x].type != WALL) {
-				room[player.y][player.x].playerPos = false;
-				room[player.y - 1][player.x].playerPos = true;
-				player.y--;
+			if (player.roomY - 1 != 0 && room[player.roomY - 1][player.roomX].type != WALL) {
+				room[player.roomY][player.roomX].playerPos = false;
+				room[player.roomY - 1][player.roomX].playerPos = true;
+				player.roomY--;
 			}
 			break;
 		}
 		case DOWN: {
-			if (player.y + 1 != ROOMRANGE + 1 && room[player.y + 1][player.x].type != WALL && player.y < 25) {
-				room[player.y][player.x].playerPos = false;
-				room[player.y + 1][player.x].playerPos = true;
-				player.y++;
+			if (player.roomY + 1 != ROOMRANGE + 1 && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
+				room[player.roomY][player.roomX].playerPos = false;
+				room[player.roomY + 1][player.roomX].playerPos = true;
+				player.roomY++;
 			}
 			break;
 		}
 		case LEFT: {
-			if (player.x - 1 != 0 && room[player.y][player.x - 1].type != WALL) {
-				room[player.y][player.x].playerPos = false;
-				room[player.y][player.x - 1].playerPos = true;
-				player.x--;
+			if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
+				room[player.roomY][player.roomX].playerPos = false;
+				room[player.roomY][player.roomX - 1].playerPos = true;
+				player.roomX--;
 			}
 			break;
 		}
 		case RIGHT: {
-			if (player.x - 1 != ROOMRANGE + 1 && room[player.y][player.x + 1].type != WALL && player.x < 25) {
-				room[player.y][player.x].playerPos = false;
-				room[player.y][player.x + 1].playerPos = true;
-				player.x++;
+			if (player.roomX - 1 != ROOMRANGE + 1 && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
+				room[player.roomY][player.roomX].playerPos = false;
+				room[player.roomY][player.roomX + 1].playerPos = true;
+				player.roomX++;
 			}
 			break;
 		}
 		}
-		newX = player.x; newY = player.y;
+		newX = player.roomX; newY = player.roomY;
 		if (currentX != newX || currentY != newY) {
 			playerMoveCounter++;
 		}
@@ -436,21 +438,23 @@ void CreateRoom() {
 
 	//指定玩家出生點
 	room[1][1].playerPos = true;
-	player.x = 1;
-	player.y = 1;
+	player.roomX = 1;
+	player.roomY = 1;
 }
 
 
 /*大地圖更新*/
 void UpdateBigMap() {
 	int mapX, mapY;
-	mapX = (player.x - 1) / 5 + 1;
-	mapY = (player.y - 1) / 5 + 1;
+	mapX = (player.roomX - 1) / 5 + 1;
+	mapY = (player.roomY - 1) / 5 + 1;
 
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (i == mapY && j == mapX) {
 				map[mapY][mapX].playerPos = true;
+				player.mapX = mapX;
+				player.mapY = mapY;
 			}
 			else
 			{
@@ -609,12 +613,12 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'r' to manage inventory" << endl;
 	cout << endl;
-	cout << "X:" << player.x << "  Y:" << player.y << endl;
+	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	cout << "player move count:" << playerMoveCounter << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "     [" << player.armor.name << "] def:-" << player.armor.def * 100 <<
 		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
-	cout << "             [" << player.weapon.name << "]" << endl;
+	cout << "             [" << player.weapon.name << "]" << endl; cout << player.weapon.atk << endl;
 	cout << "----Inventory----" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
@@ -643,8 +647,8 @@ void ShowEnemyStatus() {
 				for (int i = roomY_min; i <= roomY_max; i++) {
 					for (int j = roomX_min; j <= roomX_max; j++) {
 						if (room[i][j].enemyPos == true) {
-							for (int e = 0; e < 128; e++) {
-								if (enemy[e].x == j && enemy[e].y == i) {
+							for (int e = 0; e < ENEMYNUMBER; e++) {
+								if (enemy[e].roomX == j && enemy[e].roomY == i) {
 									y = basicY;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
@@ -664,6 +668,7 @@ void ShowEnemyStatus() {
 		}
 	}
 }
+
 /*初始隨機*/
 void StartRnd() {
 	unsigned seed;

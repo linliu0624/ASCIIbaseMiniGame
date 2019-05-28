@@ -3,8 +3,10 @@
 #include "item.h"
 struct unit {
 	int type;
-	int x;
-	int y;
+	int mapX;
+	int mapY;
+	int roomX;
+	int roomY;
 	int maxHp;
 	int hp;
 	material weapon;
