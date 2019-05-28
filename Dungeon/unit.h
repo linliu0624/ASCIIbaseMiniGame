@@ -12,6 +12,7 @@ struct unit {
 	material inventory[64];
 	bool alive;
 	bool inventoryMode = false;
+	bool samePosWithPlayer = false;
 	char name[100];
 };
 

@@ -10,6 +10,9 @@
 #define ENEMY 8
 #define PLAYER 9
 
+//參數
+#define MAXENEMYINONEROOM 2
+
 //道具
 #define NOTHING -1
 #define WEAPON 0

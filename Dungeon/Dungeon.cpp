@@ -71,6 +71,8 @@ int main()
 
 /*初始化*/
 void Init() {
+	//設置螢幕寬高
+	system("mode con cols=150 lines=30");
 	char flag;
 	clsFlag_Inventory = false;
 	WeaponOption();
@@ -92,14 +94,20 @@ void Init() {
 	player = CreatePlayer();
 	CreateRoom();
 	SpawnEnemy();
+	Refresh();
 }
 
 /*操作*/
 void Update() {
 	if (player.inventoryMode == false) {
-		Refresh();
+		//int currentPlayerX = player.x, currentPlayerY = player.y;
+		//int newPlayerX, newPlayerY;
 		PlayerMove();
+		//newPlayerX = player.x; newPlayerY = player.y;
+		//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
 		UpdateBigMap();
+		Refresh();
+		//}
 	}
 	else {
 		InventoryManage();
@@ -283,17 +291,23 @@ void SpawnEnemy() {
 			else if (room[i][j].playerPos != true && room[i][j].type == FLOOR &&
 				(i != 5 && i != 6 && i != 10 && i != 11 && i != 15 && i != 16 && i != 20 && i != 21) &&
 				(j != 5 && j != 6 && j != 10 && j != 11 && j != 15 && j != 16 && j != 20 && j != 21)) {
-				int rnd = rand() % 25;
+				int rnd = rand() % 20;
 				if (rnd == 3 || rnd == 5) {
-					enemy[enemyPtr].alive = true;
-					room[i][j].enemyPos = true;
-					enemy[enemyPtr].x = j;
-					enemy[enemyPtr].y = i;
-					enemyPtr++;
-					if (enemyPtr == 127) {
-						enemyPtr = 0;
+					if (enemyCount < 2) {
+						enemy[enemyPtr].alive = true;
+						room[i][j].enemyPos = true;
+						enemy[enemyPtr].x = j;
+						enemy[enemyPtr].y = i;
+						enemyPtr++;
+						enemyCount++;
+						if (enemyPtr == 127) {
+							enemyPtr = 0;
+						}
 					}
 				}
+			}
+			if ((j % 5 == 0 || i % 5 == 0) && enemyCount >= 2) {
+				enemyCount = 0;
 			}
 		}
 	}
@@ -303,6 +317,8 @@ void SpawnEnemy() {
 void PlayerMove() {
 	int ch;
 	ch = _getch();
+	//int currentX, currentY, newX, newY;
+	//currentX = player.x; currentY = player.y;
 	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 		switch (ch) {
 		case UP: {
@@ -338,6 +354,7 @@ void PlayerMove() {
 			break;
 		}
 		}
+		//newX = player.x; newY = player.y;
 	}
 
 	if (ch == 'r' || ch == 'R') {
@@ -360,7 +377,6 @@ void CreateRoom() {
 		}
 	}
 	//如果map的區域是牆壁的話，room也是牆壁
-	cout << map[1][1].type << endl;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
 			if (map[i][j].type == WALL) {
@@ -562,24 +578,47 @@ void ShowPlayerStatus() {
 		}
 	}
 }
-/*顯示敵人狀態*/
+/*顯示敵人狀態*/ //寫法需要優化
 void ShowEnemyStatus() {
 	int roomX_min, roomX_max, roomY_min, roomY_max;
-
-	GotoXY(50, 14);
+	int x = 50, y = 14;
+	GotoXY(x, y++);
 	cout << "enemyPtr:" << enemyPtr + 1 << endl;
-	GotoXY(50, 15);
+	GotoXY(x, y++);
+	int basicY = y;
 	cout << "The enemy from left to right is the top left to bottom right of the picture." << endl;
-	for (int i = 0; i < MAPRANGE; i++) {
-		for (int j = 0; j < MAPRANGE; j++) {
+	//找到玩家在大地圖中的位置
+	for (int i = 1; i < MAPRANGE; i++) {
+		for (int j = 1; j < MAPRANGE; j++) {
 			if (map[i][j].playerPos == true) {
-				roomX_min = j; roomX_max = j + 4;
-				roomY_min = i; roomY_max = i + 4;
-				break;
+				//大地圖座標轉換為房間座標
+				roomX_max = j * 5; roomX_min = roomX_max - 4;
+				roomY_max = i * 5; roomY_min = roomY_max - 4;
+
+				//搜尋房間座標中的敵人
+				for (int i = roomY_min; i <= roomY_max; i++) {
+					for (int j = roomX_min; j <= roomX_max; j++) {
+						if (room[i][j].enemyPos == true) {
+							for (int e = 0; e < 128; e++) {
+								if (enemy[e].x == j && enemy[e].y == i) {
+									y = basicY;
+									GotoXY(x, y++);
+									cout << "enemy hp:" << enemy[e].hp << endl;
+									GotoXY(x, y++);
+									cout << "weapon:" << enemy[e].weapon.name << endl;
+									GotoXY(x, y++);
+									cout << "armor:" << enemy[e].armor.name << endl;
+									x += 25;
+								}
+
+							}
+
+						}
+					}
+				}
 			}
 		}
 	}
-
 }
 /*初始隨機*/
 void StartRnd() {
