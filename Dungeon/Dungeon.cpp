@@ -41,6 +41,10 @@ void CreateEnemy();
 void SpawnEnemy();
 ///敵人行動
 void EnemyMove();
+///刪除所有敵人
+void DeleteAllEnemy();
+///搜尋同房間敵人
+bool SearchEnemy();
 ///顯示敵人狀態
 void ShowEnemyStatus();
 ///戰鬥
@@ -52,9 +56,11 @@ void InventoryManage();
 
 unit player;
 unit enemy[128];
+int playerMoveCounter = 0;
 int enemyPtr = 0;
 int enemyCount = 0;
 bool clsFlag_Inventory;
+bool haveEnemyFlag;
 
 int main()
 {
@@ -75,6 +81,7 @@ void Init() {
 	system("mode con cols=150 lines=30");
 	char flag;
 	clsFlag_Inventory = false;
+	haveEnemyFlag = false;
 	WeaponOption();
 	ArmorOption();
 	CreateVoid();
@@ -103,6 +110,12 @@ void Update() {
 		//int currentPlayerX = player.x, currentPlayerY = player.y;
 		//int newPlayerX, newPlayerY;
 		PlayerMove();
+		if (playerMoveCounter > 20 && SearchEnemy() == false) {
+			DeleteAllEnemy();
+			CreateEnemy();
+			SpawnEnemy();
+			playerMoveCounter = 0;
+		}
 		//newPlayerX = player.x; newPlayerY = player.y;
 		//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
 		UpdateBigMap();
@@ -274,7 +287,7 @@ void CreateEnemy() {
 void SpawnEnemy() {
 	//PlayerPos of map turn to room
 	int roomX_min, roomY_min, roomX_max, roomY_max;
-
+	enemyPtr = 0;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
 			if (map[i][j].playerPos == true) {
@@ -312,13 +325,42 @@ void SpawnEnemy() {
 		}
 	}
 }
+/*刪除敵人*/
+bool SearchEnemy() {
+	//取得玩家大地圖座標
+	int roomX_min, roomY_min, roomX_max, roomY_max;
+	for (int i = 1; i < MAPRANGE - 1; i++) {
+		for (int j = 1; j < MAPRANGE - 1; j++) {
+			if (map[i][j].playerPos == true) {
+				//轉換大地圖座標為房間座標
+				roomX_max = j * 5; roomX_min = roomX_max - 4;
+				roomY_max = i * 5; roomY_min = roomY_max - 4;
+			}
+		}
+	}
 
+	for (int i = roomY_min; i <= roomY_max; i++) {
+		for (int j = roomX_min; j <= roomX_max; j++) {
+			if (room[i][j].enemyPos == true) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+void DeleteAllEnemy() {
+	for (int i = 0; i < ROOMRANGE; i++) {
+		for (int j = 0; j < ROOMRANGE; j++) {
+			room[i][j].enemyPos = false;
+		}
+	}
+}
 /*プレーヤーのターン*/
 void PlayerMove() {
 	int ch;
 	ch = _getch();
-	//int currentX, currentY, newX, newY;
-	//currentX = player.x; currentY = player.y;
+	int currentX, currentY, newX, newY;
+	currentX = player.x; currentY = player.y;
 	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 		switch (ch) {
 		case UP: {
@@ -354,7 +396,10 @@ void PlayerMove() {
 			break;
 		}
 		}
-		//newX = player.x; newY = player.y;
+		newX = player.x; newY = player.y;
+		if (currentX != newX || currentY != newY) {
+			playerMoveCounter++;
+		}
 	}
 
 	if (ch == 'r' || ch == 'R') {
@@ -564,9 +609,8 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'r' to manage inventory" << endl;
 	cout << endl;
-	cout << "X:" << player.x;
-	cout << "  Y:" << player.y << endl;
-
+	cout << "X:" << player.x << "  Y:" << player.y << endl;
+	cout << "player move count:" << playerMoveCounter << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "     [" << player.armor.name << "] def:-" << player.armor.def * 100 <<
 		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
