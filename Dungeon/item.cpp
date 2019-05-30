@@ -6,6 +6,9 @@
 
 material fist;
 material sword;
+material spear;
+material axe;
+
 material noArmor;
 material leatherArmor;
 material nothing;
@@ -13,11 +16,12 @@ material nothing;
 void WeaponOption() {
 	//拳
 	strcpy(fist.name, "fist");
+	strcpy(fist.text, "~ Just hands, attack distance is one. atk=1~4 ~");
 	fist.mateTag = WEAPON;
 	fist.weaponType = FIST;
 	fist.value = 0;
 	fist.flag = true;
-
+	
 
 	//剣
 	strcpy(sword.name, "long sword");
@@ -25,6 +29,20 @@ void WeaponOption() {
 	sword.weaponType = SWORD;
 	sword.value = 15;
 	sword.flag = true;
+
+	//斧
+	strcpy(axe.name, "axe");
+	axe.mateTag = WEAPON;
+	axe.weaponType = AXE;
+	axe.value = 20;
+	axe.flag = true;
+
+	//槍
+	strcpy(spear.name, "spear");
+	spear.mateTag = WEAPON;
+	spear.weaponType = SPEAR;
+	spear.value = 20;
+	spear.flag = true;
 }
 void ArmorOption() {
 	//裸體
@@ -55,6 +73,7 @@ void CreateVoid() {
 }
 /*攻擊力計算*/
 void SetAtk() {
+
 	int dice4 = rand() % 4 + 1;
 	int dice6 = rand() % 6 + 1;
 	int dice8 = rand() % 8 + 1;

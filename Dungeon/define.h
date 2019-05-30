@@ -24,6 +24,8 @@
 //武器
 #define FIST 0
 #define SWORD 1
+#define AXE 2
+#define SPEAR 3
 
 //裝備
 #define NO_ARMOR 0

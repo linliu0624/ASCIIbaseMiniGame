@@ -4,9 +4,7 @@
 struct material {
 	//weapon armor or item
 	int mateTag;
-
 	int weaponType;
-	
 	int armorType;
 	
 	int atk;
@@ -16,6 +14,7 @@ struct material {
 	int value;
 
 	char name[32];
+	char text[128];
 
 	bool flag = false;
 	bool drop;
@@ -24,6 +23,9 @@ extern material nothing;
 
 extern material fist;
 extern material sword;
+extern material axe;
+extern material spear;
+
 extern material leatherArmor;
 extern material noArmor;
 

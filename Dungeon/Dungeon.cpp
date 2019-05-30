@@ -51,8 +51,12 @@ void ShowEnemyStatus();
 void Battle();
 ///玩家攻擊
 void PlayerAttack();
+///敵人攻擊
+void EnemyAttack();
 ///玩家移動
 void PlayerMove();
+///敵人移動
+void EnemyMove();
 ///裝備管理
 void InventoryManage();
 
@@ -63,6 +67,7 @@ int enemyPtr = 0;
 int enemyCount = 0;
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
+bool isBattle;
 
 int main()
 {
@@ -109,8 +114,8 @@ void Update() {
 	if (player.inventoryMode == false) {
 		//int currentPlayerX = player.x, currentPlayerY = player.y;
 		//int newPlayerX, newPlayerY;
-        SetAtk();
 		PlayerMove();
+		EnemyMove();
 		if (playerMoveCounter > RE_ENEMYNUMBER && SearchEnemy() == false) {
 			DeleteAllEnemy();
 			CreateEnemy();
@@ -276,8 +281,10 @@ unit CreatePlayer() {
 //}
 /*enemyの生成*/
 void CreateEnemy() {
+	int weaponRnd;
+	int armorRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		//enemy[i].alive = true;
+		enemy[i].alive = true;
 		enemy[i].maxHp = 10 + rand() % 5;
 		enemy[i].hp = enemy[i].maxHp;
 		enemy[i].type = ENEMY;
@@ -360,6 +367,8 @@ void DeleteAllEnemy() {
 /*プレーヤーのターン*/
 void PlayerMove() {
 	int ch;
+	//基於一些神祕的原因，這邊需要兩個ch = _getch();
+	ch = _getch();
 	ch = _getch();
 	int currentX, currentY, newX, newY;
 	currentX = player.roomX; currentY = player.roomY;
@@ -441,7 +450,15 @@ void CreateRoom() {
 	player.roomX = 1;
 	player.roomY = 1;
 }
+/*玩家攻擊*/
+void PlayerAttack(int dir) {
+	if (player.weapon.weaponType == FIST) {
 
+	}
+	else if (player.weapon.weaponType == SWORD) {
+
+	}
+}
 
 /*大地圖更新*/
 void UpdateBigMap() {
@@ -613,16 +630,17 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'r' to manage inventory" << endl;
 	cout << endl;
+	cout << "Name:" << player.name << endl;
 	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
-	cout << "player move count:" << playerMoveCounter << endl;
+	cout << "move count:" << playerMoveCounter << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "     [" << player.armor.name << "] def:-" << player.armor.def * 100 <<
 		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
-	cout << "             [" << player.weapon.name << "]" << endl; cout << player.weapon.atk << endl;
+	cout << "             [" << player.weapon.name << "]" << endl;
 	cout << "----Inventory----" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << endl;
+			cout << i + 1 << "." << player.inventory[i].name << "[" << player.inventory[i].value << "]" << endl;
 		}
 	}
 }
@@ -634,7 +652,6 @@ void ShowEnemyStatus() {
 	cout << "enemyPtr:" << enemyPtr + 1 << endl;
 	GotoXY(x, y++);
 	int basicY = y;
-	cout << "The enemy from left to right is the top left to bottom right of the picture." << endl;
 	//找到玩家在大地圖中的位置
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
@@ -650,6 +667,8 @@ void ShowEnemyStatus() {
 							for (int e = 0; e < ENEMYNUMBER; e++) {
 								if (enemy[e].roomX == j && enemy[e].roomY == i) {
 									y = basicY;
+									GotoXY(x, y++);
+									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);

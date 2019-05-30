@@ -13,25 +13,42 @@
 #include <math.h>
 //#pragma warning( disable : 4996 )
 using namespace std;
-int cont(int x, int y) {
-	int ans;
-	int a = (0 - x);
-	int b = (4 - y);
-	ans = abs(a * a + b * b);
-	return ans;
-}
-int curv(int x, int y) {
-	int ans;
-	int a = (0 - 2 * x + 3);
-	int b = (4 - 2 * y + 4);
-	ans = abs(a*a + b * b);
-	return ans;
-}
+#define UP 72
+#define DOWN 80
+#define RIGHT 77
+#define LEFT 75
 int main()
 {
-	int ans;
-	ans = cont(2, 3) + curv(2, 3);
-	cout << ans << endl;
+	int ch;
+	int count=0;
+	while (true) {
+		cout << "Input something:" << endl;
+		ch = _getch(); count++;
+		ch = _getch(); count++;
+		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
+			switch (ch) {
+			case UP: {
+				cout << "UP" << endl;
+				break;
+			}
+			case DOWN: {
+				cout << "DOWN" << endl;
+				break;
+			}
+			case LEFT: {
+				cout << "LEFT" << endl;
+				break;
+			}
+			case RIGHT: {
+				cout << "RIGHT" << endl;
+				break;
+			}
+			}
+
+		}
+		cout << count << endl;
+	}
+	
 }
 
 // 執行程式: Ctrl + F5 或 [偵錯] > [啟動但不偵錯] 功能表
