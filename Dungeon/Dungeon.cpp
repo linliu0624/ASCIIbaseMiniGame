@@ -288,7 +288,20 @@ void CreateEnemy() {
 		enemy[i].maxHp = 10 + rand() % 5;
 		enemy[i].hp = enemy[i].maxHp;
 		enemy[i].type = ENEMY;
-		enemy[i].weapon = sword;
+		weaponRnd = rand() % 100 + 1;
+		armorRnd = rand() % 100 + 1;
+		if (weaponRnd <= 10)
+			enemy[i].weapon = fist;
+		else if (weaponRnd >= 10 && weaponRnd < 30)
+			enemy[i].weapon = axe;
+		else if (weaponRnd >= 30 && weaponRnd < 45)
+			enemy[i].weapon = spear;
+		else
+			enemy[i].weapon = sword;
+
+		if (weaponRnd < 60)
+			enemy[i].armor = noArmor;
+		else
 		enemy[i].armor = leatherArmor;
 	}
 }
@@ -416,6 +429,10 @@ void PlayerMove() {
 	if (ch == 'r' || ch == 'R') {
 		player.inventoryMode = !player.inventoryMode;
 	}
+}
+/*敵の移動*/
+void EnemyMove() {
+
 }
 void CreateRoom() {
 	int rnd;
