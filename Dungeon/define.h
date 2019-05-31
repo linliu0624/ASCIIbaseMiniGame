@@ -13,7 +13,8 @@
 //參數
 #define MAXENEMYINONEROOM 2
 #define ENEMYNUMBER 128
-#define RE_ENEMYNUMBER 20
+#define RE_ENEMYNUMBER 20 //移動步數
+#define ENEMY_SPAWN_PROBABILITY 20 //生成機率
 
 //道具
 #define NOTHING -1

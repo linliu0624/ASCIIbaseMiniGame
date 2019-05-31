@@ -11,60 +11,66 @@
 #include "map.h"
 #include "unit.h"
 using namespace std;
-///初始化游戏
+///初期化
 void Init();
-/// 针对输入进行处理
+///更新
 void Update();
-/// 清屏&将内容打印到屏幕上
+///古い画面を削除して、新しい画面を表示する。
 void Refresh();
-///移動到座標
+///指定されているさ表に移動（表示関連）
 inline void GotoXY(int, int);
-///隨機種子
+///ランダム機能の初期化
 void StartRnd();
-///大地圖生成
+///ダンジョン初期化
 void CreateMap();
-///大地圖更新
+///ダンジョン内容更新
 void UpdateBigMap();
-///顯示大地圖
+///ダンジョンを表示する
 void ShowBigMap();
-///小地圖生成
+///部屋の初期化
 void CreateRoom();
-///顯示小地圖
+///部屋の表示
 void ShowRoom();
-///玩家生成
+///プレイヤーの初期化
 unit CreatePlayer();
-///顯示玩家狀態
+///プレイヤーの状態を表示する
 void ShowPlayerStatus();
-///生成敵人
+///敵の初期化
 void CreateEnemy();
-///放置敵人
+///敵の配置
 void SpawnEnemy();
-///敵人行動
-void EnemyMove();
-///刪除所有敵人
+///敵の削除
 void DeleteAllEnemy();
-///搜尋同房間敵人
+///プレイヤーと同じ部屋の敵を探す。
 bool SearchEnemy();
-///顯示敵人狀態
+///敵の状態を表示する
 void ShowEnemyStatus();
-///戰鬥
+///戦闘
 void Battle();
-///玩家攻擊
+///プレイヤーの攻撃
 void PlayerAttack();
-///敵人攻擊
-void EnemyAttack();
-///玩家移動
+///プレイヤーの移動先は敵がいる
+bool IsEnemy(int);
+///敵の攻撃
+int EnemyAttack();
+///プレイヤーのタン
 void PlayerMove();
-///敵人移動
+///敵のタン
 void EnemyMove();
-///裝備管理
+///装備管理
 void InventoryManage();
 
 unit player;
 unit enemy[ENEMYNUMBER];
+
+int sameMapEnemy[MAXENEMYINONEROOM];
 int playerMoveCounter = 0;
 int enemyPtr = 0;
-int enemyCount = 0;
+int sameMapEnemyPtr = 0;
+
+//攻撃先の敵の座標
+int enemyPosX, enemyPosY;
+
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
@@ -73,6 +79,8 @@ int main()
 {
 	StartRnd();
 	Init();
+	//画面表示
+	Refresh();
 	// ゲームの循環
 	while (true)
 	{
@@ -83,16 +91,20 @@ int main()
 
 /*初始化*/
 void Init() {
-	//設置螢幕寬高
+	//ゲーム画面の大きさを設定する
 	system("mode con cols=150 lines=30");
 	char flag;
 	clsFlag_Inventory = false;
 	haveEnemyFlag = false;
+	//武器の初期化
 	WeaponOption();
+	//アーマーの初期化
 	ArmorOption();
+	//空欄
 	CreateVoid();
+	//敵の初期化
 	CreateEnemy();
-	//地圖生成
+	//ダンジョン生成
 	while (true) {
 		CreateMap();
 		ShowBigMap();
@@ -103,19 +115,22 @@ void Init() {
 		}
 		system("cls");
 	}
-	//玩家命名
+	//プレイヤー生成
 	player = CreatePlayer();
+	//部屋生成
 	CreateRoom();
+	//敵配置
 	SpawnEnemy();
-	Refresh();
 }
-/*操作*/
+/*更新*/
 void Update() {
+	//装備管理モードか？
 	if (player.inventoryMode == false) {
 		//int currentPlayerX = player.x, currentPlayerY = player.y;
 		//int newPlayerX, newPlayerY;
 		PlayerMove();
 		EnemyMove();
+		//敵を削除して。生成と配置をし直す。
 		if (playerMoveCounter > RE_ENEMYNUMBER && SearchEnemy() == false) {
 			DeleteAllEnemy();
 			CreateEnemy();
@@ -151,27 +166,27 @@ void CreateMap() {
 		for (int j = 0; j < MAPRANGE; j++) {
 			//如果不是邊框
 			if (i != 0 && i != MAPRANGE - 1 && j != 0 && j != MAPRANGE - 1) {
-				//最左上一定是房間+玩家
+				//一番左上はプレイヤーの生成位置
 				if (i == 1 && j == 1) {
-					map[i][j].type = ROOM;
-					map[i][j].playerPos = true;
+					dangeon[i][j].type = ROOM;
+					dangeon[i][j].playerPos = true;
 				}
 				else {
-					//生成隨機房間
-					map[i][j].type = rand() % 5 + 1;//(1~5)
-					if (map[i][j].type != WALL) {
-						map[i][j].type = ROOM;
-						map[i][j].playerPos = false;
+					//部屋の生成
+					dangeon[i][j].type = rand() % 5 + 1;//(1~5)
+					if (dangeon[i][j].type != WALL) {
+						dangeon[i][j].type = ROOM;
+						dangeon[i][j].playerPos = false;
 					}
 					else {
-						map[i][j].type = WALL;
-						map[i][j].playerPos = false;
+						dangeon[i][j].type = WALL;
+						dangeon[i][j].playerPos = false;
 					}
 				}
 			}
 			else {
-				map[i][j].type = WALL;
-				map[i][j].playerPos = false;
+				dangeon[i][j].type = WALL;
+				dangeon[i][j].playerPos = false;
 
 			}
 		}
@@ -302,58 +317,77 @@ void CreateEnemy() {
 		if (weaponRnd < 60)
 			enemy[i].armor = noArmor;
 		else
-		enemy[i].armor = leatherArmor;
+			enemy[i].armor = leatherArmor;
 	}
 }
 /*enemyの配置*/
 void SpawnEnemy() {
 	//PlayerPos of map turn to room
+	int enemyCount = 0;
 	int roomX_min, roomY_min, roomX_max, roomY_max;
 	enemyPtr = 0;
+
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (map[i][j].playerPos == true) {
-				roomX_min = (j - 1) * 5; roomX_max = j * 5;
-				roomY_min = (i - 1) * 5; roomY_max = i * 5;
-			}
-		}
-	}
-	for (int i = 1; i < ROOMRANGE; i++) {
-		for (int j = 1; j < ROOMRANGE; j++) {
-			if (i >= roomY_min && i <= roomY_max && j <= roomX_max && j >= roomX_min) {
+			if (dangeon[i][j].playerPos != true) {
 
-			}
-			else if (room[i][j].playerPos != true && room[i][j].type == FLOOR &&
-				(i != 5 && i != 6 && i != 10 && i != 11 && i != 15 && i != 16 && i != 20 && i != 21) &&
-				(j != 5 && j != 6 && j != 10 && j != 11 && j != 15 && j != 16 && j != 20 && j != 21)) {
-				int rnd = rand() % 20;
-				if (rnd == 3 || rnd == 5) {
-					if (enemyCount < 2) {
-						enemy[enemyPtr].alive = true;
-						room[i][j].enemyPos = true;
-						enemy[enemyPtr].roomX = j;
-						enemy[enemyPtr].roomY = i;
-						enemyPtr++;
-						enemyCount++;
-						if (enemyPtr == ENEMYNUMBER - 1) {
-							enemyPtr = 0;
+				for (int roomY = i * 5 - 4; roomY <= i * 5; roomY++) {
+					for (int roomX = j * 5 - 4; roomX <= j * 5; roomX++) {
+						if (room[roomY][roomX].playerPos != true && room[roomY][roomX].type == FLOOR &&
+							(roomY % 5 != 0 && roomY % 5 != 1) && (roomX % 5 != 0 && roomX % 5 != 1)) {
+							room[roomY][roomX].enemyPos = true;
+							enemyPtr++;
 						}
 					}
 				}
 			}
-			if ((j % 5 == 0 || i % 5 == 0) && enemyCount >= 2) {
-				enemyCount = 0;
-			}
 		}
 	}
+	/*for (int i = 1; i < MAPRANGE - 1; i++) {
+		for (int j = 1; j < MAPRANGE - 1; j++) {
+			if (dangeon[i][j].playerPos == true) {
+				roomX_min = (j - 1) * 5; roomX_max = j * 5;
+				roomY_min = (i - 1) * 5; roomY_max = i * 5;
+			}
+		}
+	}*/
+
+	//for (int i = 1; i < ROOMRANGE; i++) {
+	//	for (int j = 1; j < ROOMRANGE; j++) {
+	//		if (i >= roomY_min && i <= roomY_max && j <= roomX_max && j >= roomX_min) {}
+	//		else if (room[i][j].playerPos != true && room[i][j].type == FLOOR &&
+	//			(i % 5 != 0 && i % 5 != 1) && (j % 5 != 0 && j % 5 != 1)) {
+
+	//			if (enemyCount < MAXENEMYINONEROOM) {
+	//				int rnd = rand() % ENEMY_SPAWN_PROBABILITY;
+	//				//if (rnd == 3 || rnd == 5) {
+	//				enemyCount++;
+	//				enemy[enemyPtr].alive = true;
+	//				room[i][j].enemyPos = true;
+	//				enemy[enemyPtr].roomX = j;
+	//				enemy[enemyPtr].roomY = i;
+	//				enemyPtr++;
+
+	//				if (enemyPtr == ENEMYNUMBER - 1) {
+	//					enemyPtr = 0;
+	//				}
+	//				//}
+	//			}
+	//		}
+	//		if (j % 5 == 1 && i % 5 == 1) {
+	//			enemyCount = 0;
+	//		}
+	//	}
+	//}
 }
-/*刪除敵人*/
+
+/*尋找同房間的敵人*/
 bool SearchEnemy() {
 	//取得玩家大地圖座標
 	int roomX_min, roomY_min, roomX_max, roomY_max;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (map[i][j].playerPos == true) {
+			if (dangeon[i][j].playerPos == true) {
 				//轉換大地圖座標為房間座標
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -380,7 +414,6 @@ void DeleteAllEnemy() {
 /*プレーヤーのターン*/
 void PlayerMove() {
 	int ch;
-	//基於一些神祕的原因，這邊需要兩個ch = _getch();
 	ch = _getch();
 	ch = _getch();
 	int currentX, currentY, newX, newY;
@@ -388,10 +421,19 @@ void PlayerMove() {
 	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 		switch (ch) {
 		case UP: {
-			if (player.roomY - 1 != 0 && room[player.roomY - 1][player.roomX].type != WALL) {
-				room[player.roomY][player.roomX].playerPos = false;
-				room[player.roomY - 1][player.roomX].playerPos = true;
-				player.roomY--;
+			//武器の攻撃範囲で敵がいるかどうかを判定する
+			//いれば戦闘に入る
+			if (IsEnemy(UP) == true) {
+				//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
+				PlayerAttack();
+			}
+			else {
+				//なければ移動
+				if (player.roomY - 1 != 0 && room[player.roomY - 1][player.roomX].type != WALL) {
+					room[player.roomY][player.roomX].playerPos = false;
+					room[player.roomY - 1][player.roomX].playerPos = true;
+					player.roomY--;
+				}
 			}
 			break;
 		}
@@ -425,8 +467,7 @@ void PlayerMove() {
 			playerMoveCounter++;
 		}
 	}
-
-	if (ch == 'r' || ch == 'R') {
+	else if (ch == 'r' || ch == 'R') {
 		player.inventoryMode = !player.inventoryMode;
 	}
 }
@@ -436,7 +477,7 @@ void EnemyMove() {
 }
 void CreateRoom() {
 	int rnd;
-	//生成陸地和牆壁
+	//歩けるマスと壁の生成
 	for (int i = 1; i < ROOMRANGE; i++) {
 		for (int j = 1; j < ROOMRANGE; j++) {
 			rnd = rand() % 8;
@@ -449,10 +490,10 @@ void CreateRoom() {
 			room[i][j].playerPos = false;
 		}
 	}
-	//如果map的區域是牆壁的話，room也是牆壁
+	//ダンジョンこの地域は壁だと、部屋も壁
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (map[i][j].type == WALL) {
+			if (dangeon[i][j].type == WALL) {
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					for (int x = j * 5 - 4; x <= j * 5; x++) {
 						room[y][x].type = WALL;
@@ -462,22 +503,65 @@ void CreateRoom() {
 		}
 	}
 
-	//指定玩家出生點
+	//プレイヤーの生成位置を決める
 	room[1][1].playerPos = true;
 	player.roomX = 1;
 	player.roomY = 1;
 }
-/*玩家攻擊*/
-void PlayerAttack(int dir) {
+/*プレイヤー攻撃*/
+void PlayerAttack() {
+	int dice4 = rand() % 4 + 1;
+	int dice6 = rand() % 6 + 1;
+	int dice8 = rand() % 8 + 1;
+	int dice10 = rand() % 10 + 1;
+	int dice20 = rand() % 20 + 1;
+
 	if (player.weapon.weaponType == FIST) {
-
+		for (int i = 0; i < MAXENEMYINONEROOM; i++) {
+			if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
+				if (enemy[sameMapEnemy[i]].armor.armorType == NO_ARMOR)
+					enemy[sameMapEnemy[i]].hp -= dice4;
+			}
+		}
 	}
-	else if (player.weapon.weaponType == SWORD) {
 
-	}
 }
+/*武器の攻撃範囲で敵を探す*/
+bool IsEnemy(int dir) {
 
-/*大地圖更新*/
+	if (player.weapon.weaponType == FIST || player.weapon.weaponType == SWORD || player.weapon.weaponType == AXE) {
+		if (dir == UP) {
+			enemyPosX = player.roomX;
+			enemyPosY = player.roomY - 1;
+		}
+		else if (dir == DOWN) {
+			enemyPosX = player.roomX;
+			enemyPosY = player.roomY + 1;
+		}
+		else if (dir == LEFT) {
+			enemyPosX = player.roomX - 1;
+			enemyPosY = player.roomY;
+		}
+		else {
+			enemyPosX = player.roomX + 1;
+			enemyPosY = player.roomY;
+		}
+
+		if (room[enemyPosY][enemyPosX].enemyPos == true) {
+			return true;
+		}
+	}
+	//else if (player.weapon.weaponType == SWORD) {
+
+	//}
+	//else if (player.weapon.weaponType == AXE) {
+
+	//}
+	//else if (player.weapon.weaponType == SPEAR) {
+
+	//}
+}
+/*ダンジョン更新*/
 void UpdateBigMap() {
 	int mapX, mapY;
 	mapX = (player.roomX - 1) / 5 + 1;
@@ -486,41 +570,41 @@ void UpdateBigMap() {
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (i == mapY && j == mapX) {
-				map[mapY][mapX].playerPos = true;
+				dangeon[mapY][mapX].playerPos = true;
 				player.mapX = mapX;
 				player.mapY = mapY;
 			}
 			else
 			{
-				map[i][j].playerPos = false;
+				dangeon[i][j].playerPos = false;
 			}
 		}
 	}
 }
 
-/*顯示大地圖*/
+/*ダンジョンの表示*/
 void ShowBigMap() {
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
-			if (map[i][j].type == WALL && map[i][j].playerPos != true) {
+			if (dangeon[i][j].type == WALL && dangeon[i][j].playerPos != true) {
 				cout << "X ";
 			}
-			if (map[i][j].type == ROOM && map[i][j].playerPos != true) {
+			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos != true) {
 				cout << "O ";
 			}
-			if (map[i][j].type == ROOM && map[i][j].playerPos == true) {
+			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos == true) {
 				cout << "P ";
 			}
 		}
 		cout << endl;
 	}
 }
-/*部屋を表示する*/
+/*部屋の表示*/
 void ShowRoom() {
 	cout << "---------------" << endl;
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (map[i][j].playerPos == true)
+			if (dangeon[i][j].playerPos == true)
 			{
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					cout << "|";
@@ -643,10 +727,16 @@ void InventoryManage() {
 	player.inventoryMode = false;
 	clsFlag_Inventory = false;
 }
-/*顯示玩家狀態*/
+/*プレイヤーの状態を表示する*/
 void ShowPlayerStatus() {
-	cout << "press 'r' to manage inventory" << endl;
+	cout << "press 'r' for twice time to manage inventory" << endl;
 	cout << endl;
+	for (int i = 0; i < MAXENEMYINONEROOM; i++) {
+		if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
+			cout << "enemyPosX:" << enemy[sameMapEnemy[i]].roomX << " enemyPosY:" << enemy[sameMapEnemy[i]].roomY << endl;
+			cout << i << endl;
+		}
+	}
 	cout << "Name:" << player.name << endl;
 	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	cout << "move count:" << playerMoveCounter << endl;
@@ -661,7 +751,7 @@ void ShowPlayerStatus() {
 		}
 	}
 }
-/*顯示敵人狀態*/ //寫法需要優化
+/*敵の状態を表示する*/ //寫法需要優化
 void ShowEnemyStatus() {
 	int roomX_min, roomX_max, roomY_min, roomY_max;
 	int x = 50, y = 14;
@@ -669,20 +759,22 @@ void ShowEnemyStatus() {
 	cout << "enemyPtr:" << enemyPtr + 1 << endl;
 	GotoXY(x, y++);
 	int basicY = y;
-	//找到玩家在大地圖中的位置
+	//プレイヤーがダンジョンのどこにいるかを探す
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (map[i][j].playerPos == true) {
-				//大地圖座標轉換為房間座標
+			if (dangeon[i][j].playerPos == true) {
+				//ダンジョンの座標を部屋の座標に転換する
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
 
-				//搜尋房間座標中的敵人
+				//部屋の敵を探す
 				for (int i = roomY_min; i <= roomY_max; i++) {
 					for (int j = roomX_min; j <= roomX_max; j++) {
 						if (room[i][j].enemyPos == true) {
 							for (int e = 0; e < ENEMYNUMBER; e++) {
 								if (enemy[e].roomX == j && enemy[e].roomY == i) {
+									enemy[e].samePosWithPlayer = true;
+									sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
 									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
@@ -693,6 +785,9 @@ void ShowEnemyStatus() {
 									GotoXY(x, y++);
 									cout << "armor:" << enemy[e].armor.name << endl;
 									x += 25;
+								}
+								else {
+									enemy[e].samePosWithPlayer = false;
 								}
 
 							}
@@ -705,14 +800,14 @@ void ShowEnemyStatus() {
 	}
 }
 
-/*初始隨機*/
+/*ランダムの初期化*/
 void StartRnd() {
 	unsigned seed;
 	seed = (unsigned)time(NULL);
 	srand(seed);
 }
-/*螢幕座標移動到(x,y)*/
-inline void GotoXY(int x, int y) //移动坐标
+/*画面の座標を(x,y)に移動する*/
+inline void GotoXY(int x, int y)
 {
 	COORD coord;
 	coord.X = x;

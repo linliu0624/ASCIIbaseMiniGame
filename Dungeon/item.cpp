@@ -45,7 +45,7 @@ void WeaponOption() {
 	spear.flag = true;
 }
 void ArmorOption() {
-	//裸體
+	//裸体
 	strcpy(noArmor.name, "no armor");
 	noArmor.mateTag = ARMOR;
 	noArmor.armorType = NO_ARMOR;
@@ -72,15 +72,15 @@ void CreateVoid() {
 	nothing.flag = false;
 }
 /*攻擊力計算*/
-void SetAtk() {
-
-	int dice4 = rand() % 4 + 1;
-	int dice6 = rand() % 6 + 1;
-	int dice8 = rand() % 8 + 1;
-	int dice10 = rand() % 10 + 1;
-	int dice20 = rand() % 20 + 1;
-
-	fist.atk = dice4;
-	sword.atk = dice6 + 2;
-}
+//void SetAtk() {
+//
+//	int dice4 = rand() % 4 + 1;
+//	int dice6 = rand() % 6 + 1;
+//	int dice8 = rand() % 8 + 1;
+//	int dice10 = rand() % 10 + 1;
+//	int dice20 = rand() % 20 + 1;
+//
+//	fist.atk = dice4;
+//	sword.atk = dice6 + 2;
+//}
 

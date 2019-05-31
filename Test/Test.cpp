@@ -24,7 +24,7 @@ int main()
 	while (true) {
 		cout << "Input something:" << endl;
 		ch = _getch(); count++;
-		ch = _getch(); count++;
+		//ch = _getch(); count++;
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {

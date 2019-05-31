@@ -31,5 +31,5 @@ extern material noArmor;
 
 void WeaponOption();
 void ArmorOption();
-void SetAtk();
+//void SetAtk();
 void CreateVoid();

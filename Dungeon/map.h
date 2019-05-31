@@ -6,7 +6,7 @@ struct bigmap {
 	int x;
 	int y;
 	bool playerPos;
-}map[MAPRANGE][MAPRANGE];
+}dangeon[MAPRANGE][MAPRANGE];
 
 struct roomObj {
 	int type;
