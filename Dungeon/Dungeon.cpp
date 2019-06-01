@@ -52,13 +52,13 @@ void PlayerAttack();
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
-int EnemyAttack();
+void EnemyAttack(int);
 //プレイヤーのタン
 void PlayerMove();
 //敵のタン
 void EnemyMove();
 //敵が死ぬ
-void EnemyDie(int);
+void EnemyDieAndDrop(int);
 //装備管理
 void InventoryManage();
 //ダメージの計算
@@ -369,50 +369,14 @@ void SpawnEnemy() {
 			}
 			enemyCount = 0;
 		}
-
 	}
-	/*for (int i = 1; i < MAPRANGE - 1; i++) {
-		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos == true) {
-				roomX_min = (j - 1) * 5; roomX_max = j * 5;
-				roomY_min = (i - 1) * 5; roomY_max = i * 5;
-			}
-		}
-	}*/
-
-	//for (int i = 1; i < ROOMRANGE; i++) {
-	//	for (int j = 1; j < ROOMRANGE; j++) {
-	//		if (i >= roomY_min && i <= roomY_max && j <= roomX_max && j >= roomX_min) {}
-	//		else if (room[i][j].playerPos != true && room[i][j].type == FLOOR &&
-	//			(i % 5 != 0 && i % 5 != 1) && (j % 5 != 0 && j % 5 != 1)) {
-
-	//			if (enemyCount < MAXENEMYINONEROOM) {
-	//				int rnd = rand() % ENEMY_SPAWN_PROBABILITY;
-	//				//if (rnd == 3 || rnd == 5) {
-	//				enemyCount++;
-	//				enemy[enemyPtr].alive = true;
-	//				room[i][j].enemyPos = true;
-	//				enemy[enemyPtr].roomX = j;
-	//				enemy[enemyPtr].roomY = i;
-	//				enemyPtr++;
-
-	//				if (enemyPtr == ENEMYNUMBER - 1) {
-	//					enemyPtr = 0;
-	//				}
-	//				//}
-	//			}
-	//		}
-	//		if (j % 5 == 1 && i % 5 == 1) {
-	//			enemyCount = 0;
-	//		}
-	//	}
-	//}
 }
 
 /*尋找同房間的敵人*/
 bool SearchEnemy() {
 	//取得玩家大地圖座標
 	int roomX_min, roomY_min, roomX_max, roomY_max;
+	bool haveEnemy = false;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
 			if (dangeon[i][j].playerPos == true) {
@@ -426,9 +390,20 @@ bool SearchEnemy() {
 	for (int i = roomY_min; i <= roomY_max; i++) {
 		for (int j = roomX_min; j <= roomX_max; j++) {
 			if (room[i][j].enemyPos == true) {
-				return true;
+				haveEnemy = true;
+				for (int e = 0; e < ENEMYNUMBER; e++) {
+					if (enemy[e].roomX == j && enemy[e].roomY == i) {
+						enemy[e].samePosWithPlayer = true;
+					}
+					else {
+						enemy[e].samePosWithPlayer = false;
+					}
+				}				
 			}
 		}
+	}
+	if (haveEnemy) {
+		return true;
 	}
 	return false;
 }
@@ -516,7 +491,7 @@ void PlayerMove() {
 }
 /*敵の移動*/
 void EnemyMove() {
-
+	//EnemyAttack();
 }
 void CreateRoom() {
 	int rnd;
@@ -564,6 +539,22 @@ void PlayerAttack() {
 	}
 
 }
+/*
+*敵の攻撃
+*number 敵が配列にいる番号
+*/
+void EnemyAttack(int number) {
+	int dice4 = rand() % 4 + 1;
+	int dice6 = rand() % 6 + 1;
+	int dice8 = rand() % 8 + 1;
+	int dice10 = rand() % 10 + 1;
+	int dice20 = rand() % 20 + 1;
+
+	if (enemy[number].weapon.weaponType == FIST) {
+		Damage(dice4, 0, 0, false);
+	}
+
+}
 /***************************************
 *ダメージの計算
 *int damage1 ダメージ量1
@@ -596,7 +587,7 @@ void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
 				enemy[i].hp -= bodyDamage;
 				//敵が死んだ時
 				if (enemy[i].hp <= 0) {
-					EnemyDie(i);
+					EnemyDieAndDrop(i);
 				}
 				break;
 			}
@@ -614,7 +605,7 @@ void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
 *敵がぬ
 *number:敵配列の番号
 */
-void EnemyDie(int number) {
+void EnemyDieAndDrop(int number) {
 	enemy[number].hp = 0;
 	enemy[number].alive = false;
 	room[enemy[number].roomY][enemy[number].roomX].enemyPos = false;
@@ -887,7 +878,6 @@ void ShowEnemyStatus() {
 						if (room[i][j].enemyPos == true) {
 							for (int e = 0; e < ENEMYNUMBER; e++) {
 								if ((enemy[e].roomX == j && enemy[e].roomY == i) && enemy[e].alive == true) {
-									//enemy[e].samePosWithPlayer = true;
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
@@ -903,7 +893,6 @@ void ShowEnemyStatus() {
 									x += 25;
 								}
 								else {
-									enemy[e].samePosWithPlayer = false;
 								}
 
 							}
