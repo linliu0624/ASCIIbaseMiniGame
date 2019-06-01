@@ -313,9 +313,9 @@ void CreateEnemy() {
 		//武器を装備する
 		if (weaponRnd <= 10)
 			enemy[i].weapon = fist;
-		else if (weaponRnd >= 10 && weaponRnd < 30)
+		else if (weaponRnd >= 10 && weaponRnd < 40)
 			enemy[i].weapon = axe;
-		else if (weaponRnd >= 30 && weaponRnd < 45)
+		else if (weaponRnd >= 40 && weaponRnd < 50)
 			enemy[i].weapon = spear;
 		else
 			enemy[i].weapon = sword;
@@ -466,26 +466,41 @@ void PlayerMove() {
 			break;
 		}
 		case DOWN: {
-			if (player.roomY + 1 != ROOMRANGE + 1 && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
-				room[player.roomY][player.roomX].playerPos = false;
-				room[player.roomY + 1][player.roomX].playerPos = true;
-				player.roomY++;
+			if (IsEnemy(DOWN) == true) {
+				PlayerAttack();
+			}
+			else {
+				if (player.roomY + 1 != ROOMRANGE + 1 && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
+					room[player.roomY][player.roomX].playerPos = false;
+					room[player.roomY + 1][player.roomX].playerPos = true;
+					player.roomY++;
+				}
 			}
 			break;
 		}
 		case LEFT: {
-			if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
-				room[player.roomY][player.roomX].playerPos = false;
-				room[player.roomY][player.roomX - 1].playerPos = true;
-				player.roomX--;
+			if (IsEnemy(LEFT) == true) {
+				PlayerAttack();
+			}
+			else {
+				if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
+					room[player.roomY][player.roomX].playerPos = false;
+					room[player.roomY][player.roomX - 1].playerPos = true;
+					player.roomX--;
+				}
 			}
 			break;
 		}
 		case RIGHT: {
-			if (player.roomX - 1 != ROOMRANGE + 1 && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
-				room[player.roomY][player.roomX].playerPos = false;
-				room[player.roomY][player.roomX + 1].playerPos = true;
-				player.roomX++;
+			if (IsEnemy(RIGHT) == true) {
+				PlayerAttack();
+			}
+			else {
+				if (player.roomX - 1 != ROOMRANGE + 1 && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
+					room[player.roomY][player.roomX].playerPos = false;
+					room[player.roomY][player.roomX + 1].playerPos = true;
+					player.roomX++;
+				}
 			}
 			break;
 		}
