@@ -63,7 +63,7 @@ void ArmorOption() {
 	leatherArmor.flag = true;
 	leatherArmor.maxHp = 40;
 	leatherArmor.hp = leatherArmor.maxHp;
-	leatherArmor.def = 0.3f;
+	leatherArmor.def = 0.33f;
 }
 void CreateVoid() {
 	strcpy(nothing.name, "nothing");

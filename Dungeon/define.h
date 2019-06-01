@@ -15,6 +15,7 @@
 #define ENEMYNUMBER 128
 #define RE_ENEMYNUMBER 20 //移動步數
 #define ENEMY_SPAWN_PROBABILITY 20 //生成機率
+#define MAX_INVENTORY 64
 
 //道具
 #define NOTHING -1

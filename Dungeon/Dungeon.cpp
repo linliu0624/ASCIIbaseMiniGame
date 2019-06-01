@@ -11,62 +11,66 @@
 #include "map.h"
 #include "unit.h"
 using namespace std;
-///初期化
+//初期化
 void Init();
-///更新
+//更新
 void Update();
-///古い画面を削除して、新しい画面を表示する。
+//古い画面を削除して、新しい画面を表示する。
 void Refresh();
-///指定されているさ表に移動（表示関連）
+//指定されているさ表に移動（表示関連）
 inline void GotoXY(int, int);
-///ランダム機能の初期化
+//ランダム機能の初期化
 void StartRnd();
-///ダンジョン初期化
+//ダンジョン初期化
 void CreateMap();
-///ダンジョン内容更新
+//ダンジョン内容更新
 void UpdateBigMap();
-///ダンジョンを表示する
+//ダンジョンを表示する
 void ShowBigMap();
-///部屋の初期化
+//部屋の初期化
 void CreateRoom();
-///部屋の表示
+//部屋の表示
 void ShowRoom();
-///プレイヤーの初期化
+//プレイヤーの初期化
 unit CreatePlayer();
-///プレイヤーの状態を表示する
+//プレイヤーの状態を表示する
 void ShowPlayerStatus();
-///敵の初期化
+//敵の初期化
 void CreateEnemy();
-///敵の配置
+//敵の配置
 void SpawnEnemy();
-///敵の削除
+//敵の削除
 void DeleteAllEnemy();
-///プレイヤーと同じ部屋の敵を探す。
+//プレイヤーと同じ部屋の敵を探す。
 bool SearchEnemy();
-///敵の状態を表示する
+//敵の状態を表示する
 void ShowEnemyStatus();
-///戦闘
+//戦闘
 void Battle();
-///プレイヤーの攻撃
+//プレイヤーの攻撃
 void PlayerAttack();
-///プレイヤーの移動先は敵がいる
+//プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
-///敵の攻撃
+//敵の攻撃
 int EnemyAttack();
-///プレイヤーのタン
+//プレイヤーのタン
 void PlayerMove();
-///敵のタン
+//敵のタン
 void EnemyMove();
-///装備管理
+//敵が死ぬ
+void EnemyDie(int);
+//装備管理
 void InventoryManage();
+//ダメージの計算
+void Damage(int, int, int, bool);
 
 unit player;
 unit enemy[ENEMYNUMBER];
 
-int sameMapEnemy[MAX_ENEMY_IN_ONEROOM];
+//int sameMapEnemy[MAX_ENEMY_IN_ONEROOM];
 int playerMoveCounter = 0;
 int enemyPtr = 0;
-int sameMapEnemyPtr = 0;
+//int sameMapEnemyPtr = 0;
 
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
@@ -92,7 +96,7 @@ int main()
 /*初始化*/
 void Init() {
 	//ゲーム画面の大きさを設定する
-	system("mode con cols=150 lines=30");
+	system("mode con cols=150");
 	char flag;
 	clsFlag_Inventory = false;
 	haveEnemyFlag = false;
@@ -146,6 +150,7 @@ void Update() {
 	}
 	else {
 		InventoryManage();
+		Refresh();
 	}
 }
 
@@ -305,6 +310,7 @@ void CreateEnemy() {
 		enemy[i].type = ENEMY;
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
+		//武器を装備する
 		if (weaponRnd <= 10)
 			enemy[i].weapon = fist;
 		else if (weaponRnd >= 10 && weaponRnd < 30)
@@ -313,18 +319,23 @@ void CreateEnemy() {
 			enemy[i].weapon = spear;
 		else
 			enemy[i].weapon = sword;
-
-		if (weaponRnd < 60)
+		//防具を装備する
+		if (armorRnd < 60)
 			enemy[i].armor = noArmor;
-		else
+		else {
 			enemy[i].armor = leatherArmor;
+			enemy[i].armor.hp = rand() % 20 + 20;
+		}
+
+		//アイテムを装備する
+		enemy[i].inventory[0] = nothing;
 	}
 }
 /*enemyの配置*/
 void SpawnEnemy() {
 	//PlayerPos of map turn to room
 	int enemyCount = 0;
-	int roomX_min, roomY_min, roomX_max, roomY_max;
+	//int roomX_min, roomY_min, roomX_max, roomY_max;
 	enemyPtr = 0;
 	//ダンジョンの部屋の移動
 	for (int i = 1; i < MAPRANGE - 1; i++) {
@@ -534,14 +545,85 @@ void PlayerAttack() {
 	int dice20 = rand() % 20 + 1;
 
 	if (player.weapon.weaponType == FIST) {
-		for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
-			if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
+		Damage(dice4, 0, 0, true);
+	}
+
+}
+/***************************************
+*ダメージの計算
+*int damage1 ダメージ量1
+*int damage2 ダメージ量2
+*int bonus   ダメージボーナス
+*bool playerToEnemy プレイヤーの攻撃か
+****************************************/
+void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
+	if (playerToEnemy) {
+		for (int i = 0; i < ENEMYNUMBER; i++) {
+			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
+				int totalDamage = damage1 + damage2 + bonus;
+				int armorDamage = enemy[i].armor.def*totalDamage;
+				int bodyDamage;
+				//armorDamage少なくても1
+				if (armorDamage < 1) {
+					armorDamage = 1;
+				}
+				//armorDamageが壊れた時
+				if (enemy[i].armor.hp <= 0) {
+					enemy[i].armor.hp = 0;
+					enemy[i].armor = noArmor;
+					armorDamage = 0;
+				}
+				enemy[i].armor.hp -= armorDamage;
+				bodyDamage = totalDamage - armorDamage;
+				if (bodyDamage <= 0) {
+					bodyDamage = 0;
+				}
+				enemy[i].hp -= bodyDamage;
+				//敵が死んだ時
+				if (enemy[i].hp <= 0) {
+					EnemyDie(i);
+				}
+				break;
+			}
+			/*if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
 				if (enemy[sameMapEnemy[i]].armor.armorType == NO_ARMOR)
 					enemy[sameMapEnemy[i]].hp -= dice4;
+			}*/
+		}
+	}
+	else {
+
+	}
+}
+/*
+*敵がぬ
+*number:敵配列の番号
+*/
+void EnemyDie(int number) {
+	enemy[number].hp = 0;
+	enemy[number].alive = false;
+	room[enemy[number].roomY][enemy[number].roomX].enemyPos = false;
+
+	for (int i = 0; i < MAX_INVENTORY; i++) {
+		if (player.inventory[i].mateTag != WEAPON && player.inventory[i].mateTag != ARMOR &&
+			player.inventory[i].mateTag != ITEM) {
+			if (enemy[number].weapon.weaponType != FIST) {
+				player.inventory[i] = enemy[number].weapon;
+				enemy[number].weapon = fist;
+				continue;
+			}
+			else if (enemy[number].armor.armorType != NO_ARMOR) {
+				player.inventory[i] = enemy[number].armor;
+				enemy[number].armor = noArmor;
+				continue;
+			}
+			else if (enemy[number].inventory[0].mateTag != NOTHING) {
+				player.inventory[i] = enemy[number].inventory[0];
+				enemy[number].inventory[0] = nothing;
+				continue;
 			}
 		}
 	}
-
 }
 /*武器の攻撃範囲で敵を探す*/
 bool IsEnemy(int dir) {
@@ -679,7 +761,7 @@ void InventoryManage() {
 	cout << "Armor:" << player.armor.name << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << " value:" << player.inventory[i].value << endl;
+			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]" << endl;
 		}
 	}
 
@@ -724,7 +806,7 @@ void InventoryManage() {
 					player.inventory[a] = nothing;
 				}
 				else {
-					player.inventory[a] = tmp;
+					player.inventory[a] = player.armor;
 				}
 				player.armor = tmp;
 			}
@@ -734,7 +816,7 @@ void InventoryManage() {
 					player.inventory[a] = nothing;
 				}
 				else {
-					player.inventory[a] = tmp;
+					player.inventory[a] = player.weapon;
 				}
 				player.weapon = tmp;
 
@@ -748,12 +830,12 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'r' for twice time to manage inventory" << endl;
 	cout << endl;
-	for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
+	/*for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
 		if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
 			cout << "enemyPosX:" << enemy[sameMapEnemy[i]].roomX << " enemyPosY:" << enemy[sameMapEnemy[i]].roomY << endl;
 			cout << i << endl;
 		}
-	}
+	}*/
 	cout << "Name:" << player.name << endl;
 	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	cout << "move count:" << playerMoveCounter << endl;
@@ -789,9 +871,9 @@ void ShowEnemyStatus() {
 					for (int j = roomX_min; j <= roomX_max; j++) {
 						if (room[i][j].enemyPos == true) {
 							for (int e = 0; e < ENEMYNUMBER; e++) {
-								if (enemy[e].roomX == j && enemy[e].roomY == i) {
-									enemy[e].samePosWithPlayer = true;
-									sameMapEnemy[sameMapEnemyPtr] = e;
+								if ((enemy[e].roomX == j && enemy[e].roomY == i) && enemy[e].alive == true) {
+									//enemy[e].samePosWithPlayer = true;
+									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
 									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
@@ -801,6 +883,8 @@ void ShowEnemyStatus() {
 									cout << "weapon:" << enemy[e].weapon.name << endl;
 									GotoXY(x, y++);
 									cout << "armor:" << enemy[e].armor.name << endl;
+									GotoXY(x, y++);
+									cout << "durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
 									x += 25;
 								}
 								else {
