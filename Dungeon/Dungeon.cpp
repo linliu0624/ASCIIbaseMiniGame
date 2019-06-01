@@ -63,7 +63,7 @@ void InventoryManage();
 unit player;
 unit enemy[ENEMYNUMBER];
 
-int sameMapEnemy[MAXENEMYINONEROOM];
+int sameMapEnemy[MAX_ENEMY_IN_ONEROOM];
 int playerMoveCounter = 0;
 int enemyPtr = 0;
 int sameMapEnemyPtr = 0;
@@ -326,22 +326,39 @@ void SpawnEnemy() {
 	int enemyCount = 0;
 	int roomX_min, roomY_min, roomX_max, roomY_max;
 	enemyPtr = 0;
-
+	//ダンジョンの部屋の移動
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
 			if (dangeon[i][j].playerPos != true) {
-
+				//部屋のマスの移動
 				for (int roomY = i * 5 - 4; roomY <= i * 5; roomY++) {
 					for (int roomX = j * 5 - 4; roomX <= j * 5; roomX++) {
-						if (room[roomY][roomX].playerPos != true && room[roomY][roomX].type == FLOOR &&
-							(roomY % 5 != 0 && roomY % 5 != 1) && (roomX % 5 != 0 && roomX % 5 != 1)) {
-							room[roomY][roomX].enemyPos = true;
-							enemyPtr++;
+						//一つ部屋の敵はMAX_ENEMY_IN_ONEROOM以下
+						if (enemyCount < MAX_ENEMY_IN_ONEROOM) {
+							if (room[roomY][roomX].playerPos != true && room[roomY][roomX].type == FLOOR &&
+								(roomY % 5 != 0 && roomY % 5 != 1) && (roomX % 5 != 0 && roomX % 5 != 1)) {
+								//敵の出現確率
+								int rnd = rand() % ENEMY_SPAWN_PROBABILITY;
+								if (rnd == 3 || rnd == 5) {
+									//敵の出現
+									room[roomY][roomX].enemyPos = true;
+									enemy[enemyPtr].alive = true;
+									enemy[enemyPtr].roomX = roomX;
+									enemy[enemyPtr].roomY = roomY;
+									enemyPtr++;
+									enemyCount++;
+								}
+								if (enemyPtr == ENEMYNUMBER - 1) {
+									enemyPtr = 0;
+								}
+							}
 						}
 					}
 				}
 			}
+			enemyCount = 0;
 		}
+
 	}
 	/*for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
@@ -517,7 +534,7 @@ void PlayerAttack() {
 	int dice20 = rand() % 20 + 1;
 
 	if (player.weapon.weaponType == FIST) {
-		for (int i = 0; i < MAXENEMYINONEROOM; i++) {
+		for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
 			if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
 				if (enemy[sameMapEnemy[i]].armor.armorType == NO_ARMOR)
 					enemy[sameMapEnemy[i]].hp -= dice4;
@@ -731,7 +748,7 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'r' for twice time to manage inventory" << endl;
 	cout << endl;
-	for (int i = 0; i < MAXENEMYINONEROOM; i++) {
+	for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
 		if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
 			cout << "enemyPosX:" << enemy[sameMapEnemy[i]].roomX << " enemyPosY:" << enemy[sameMapEnemy[i]].roomY << endl;
 			cout << i << endl;

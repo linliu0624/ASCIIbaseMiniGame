@@ -11,7 +11,7 @@
 #define PLAYER 9
 
 //參數
-#define MAXENEMYINONEROOM 2
+#define MAX_ENEMY_IN_ONEROOM 3
 #define ENEMYNUMBER 128
 #define RE_ENEMYNUMBER 20 //移動步數
 #define ENEMY_SPAWN_PROBABILITY 20 //生成機率

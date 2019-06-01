@@ -3,5 +3,7 @@ d:\code\game\themea\dungeon\dungeon.cpp(327): warning C4101: 'roomX_max': 未參
 d:\code\game\themea\dungeon\dungeon.cpp(327): warning C4101: 'roomY_max': 未參考的區域變數
 d:\code\game\themea\dungeon\dungeon.cpp(327): warning C4101: 'roomY_min': 未參考的區域變數
 d:\code\game\themea\dungeon\dungeon.cpp(327): warning C4101: 'roomX_min': 未參考的區域變數
-d:\code\game\themea\dungeon\dungeon.cpp(562): warning C4715: 'IsEnemy': 不是所有控制路徑都傳回值
+  item.cpp
+  正在產生程式碼...
+d:\code\game\themea\dungeon\dungeon.cpp(580): warning C4715: 'IsEnemy': 不是所有控制路徑都傳回值
   Dungeon.vcxproj -> D:\Code\Game\ThemeA\Debug\Dungeon.exe
