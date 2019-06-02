@@ -74,8 +74,7 @@ int enemyPtr = 0;
 
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
-//同じ部屋の敵の数
-int sameRoomEnemyNum;
+
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
@@ -105,6 +104,8 @@ void Init() {
 	WeaponOption();
 	//アーマーの初期化
 	ArmorOption();
+	//アイテムの初期化
+	ItemOption();
 	//空欄
 	CreateVoid();
 	//ダンジョン生成
@@ -129,14 +130,16 @@ void Init() {
 }
 /*更新*/
 void Update() {
+	bool haveEnemy;
 	//装備管理モードか？
 	if (player.inventoryMode == false) {
 		//int currentPlayerX = player.x, currentPlayerY = player.y;
 		//int newPlayerX, newPlayerY;
 		PlayerMove();
+		haveEnemy = SearchEnemy();
 		EnemyMove();
 		//敵を削除して。生成と配置をし直す。
-		if (playerMoveCounter > RE_ENEMYNUMBER && SearchEnemy() == false) {
+		if (playerMoveCounter > RE_ENEMYNUMBER && !haveEnemy) {
 			DeleteAllEnemy();
 			CreateEnemy();
 			SpawnEnemy();
@@ -335,7 +338,7 @@ void CreateEnemy() {
 		}
 
 		//アイテムを装備する
-		if (itemRnd <= 20) {
+		if (itemRnd <= 80) {
 			enemy[i].inventory[0] = nothing;
 		}
 		else {
@@ -404,7 +407,8 @@ bool SearchEnemy() {
 			if (room[i][j].enemyPos == true) {
 				haveEnemy = true;
 				for (int e = 0; e < ENEMYNUMBER; e++) {
-					if (enemy[e].roomX == j && enemy[e].roomY == i) {
+					if ((enemy[e].roomX <= roomX_max && enemy[e].roomX >= roomX_min) &&
+						(enemy[e].roomY <= roomY_max && enemy[e].roomY >= roomY_min)) {//(enemy[e].roomX == j && enemy[e].roomY == i) {
 						enemy[e].samePosWithPlayer = true;
 					}
 					else {
@@ -430,10 +434,14 @@ void DeleteAllEnemy() {
 void PlayerMove() {
 	int ch;
 	ch = _getch();
-	ch = _getch();
+	//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
+	if (ch == 224) {
+		ch = _getch();
+	}
 	int currentX, currentY, newX, newY;
 	currentX = player.roomX; currentY = player.roomY;
-	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT || ch == SPACE) {
+	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
+		
 		switch (ch) {
 		case UP: {
 			//武器の攻撃範囲で敵がいるかどうかを判定する
@@ -491,13 +499,18 @@ void PlayerMove() {
 			}
 			break;
 		}
-		case SPACE:
+		case SPACE: {
+			playerMoveCounter++;
 			break;
+		}
 		}
 		newX = player.roomX; newY = player.roomY;
 		if (currentX != newX || currentY != newY) {
 			playerMoveCounter++;
 		}
+	}
+	else if (ch == SPACE) {
+
 	}
 	else if (ch == 'r' || ch == 'R') {
 		player.inventoryMode = !player.inventoryMode;
@@ -688,13 +701,10 @@ bool IsEnemy(int dir) {
 			enemyPosX = player.roomX + 1;
 			enemyPosY = player.roomY;
 		}
-		for (int i = 0; i > ENEMYNUMBER; i++) {
-			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY && enemy[i].samePosWithPlayer == true) {
-				if (room[enemyPosY][enemyPosX].enemyPos == true) {
-					return true;
-				}
+		for (int i = 0; i < ENEMYNUMBER; i++)
+			if (room[enemyPosY][enemyPosX].enemyPos == true && enemy[i].samePosWithPlayer == true) {
+				return true;
 			}
-		}
 	}
 	//else if (player.weapon.weaponType == SPEAR) {
 
@@ -799,7 +809,7 @@ void InventoryManage() {
 	}
 	int a, b;
 	cout << "Weapon:" << player.weapon.name << endl;
-	cout << "Armor:" << player.armor.name << endl;
+	cout << "Armor:" << player.armor.name << endl << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
 			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]" << endl;
@@ -880,7 +890,7 @@ void InventoryManage() {
 }
 /*プレイヤーの状態を表示する*/
 void ShowPlayerStatus() {
-	cout << "press 'r' for twice time to manage inventory" << endl;
+	cout << "press 'r' to manage inventory, 'space' to wait" << endl;
 	cout << endl;
 	/*for (int i = 0; i < MAX_ENEMY_IN_ONEROOM; i++) {
 		if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {

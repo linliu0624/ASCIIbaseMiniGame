@@ -6,9 +6,7 @@ struct unit {
 	int mapX;
 	int mapY;
 	int roomX;
-	int firstRoomX;
 	int roomY;
-	int firstRoomY;
 	int maxHp;
 	int hp;
 	material weapon;

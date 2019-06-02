@@ -79,9 +79,7 @@ void ArmorOption() {
 	heavyLeatherArmor.def = 0.4f;
 }
 void ItemOption() {
-	//simple potion
 	strcpy(simplePotion.name, "simple potion");
-	//strcpy(simplePotion.text, "Use to +10 hp");
 	simplePotion.mateTag = ITEM;
 	simplePotion.itemType = SIMPLE_POTION;
 	simplePotion.value = 40;
