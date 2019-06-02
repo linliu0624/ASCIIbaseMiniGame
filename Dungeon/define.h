@@ -25,7 +25,7 @@
 
 //武器
 #define FIST 0
-#define SWORD 1
+#define LONG_SWORD 1
 #define AXE 2
 #define SPEAR 3
 
@@ -42,4 +42,7 @@
 #define DOWN 80
 #define RIGHT 77
 #define LEFT 75
+#define ENTER 13 // 定義按鍵值, 就是ASCII code 
+#define ESC 27 
+#define SPACE 32
 

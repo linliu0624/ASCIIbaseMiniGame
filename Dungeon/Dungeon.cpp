@@ -107,8 +107,6 @@ void Init() {
 	ArmorOption();
 	//空欄
 	CreateVoid();
-	//敵の初期化
-	CreateEnemy();
 	//ダンジョン生成
 	while (true) {
 		CreateMap();
@@ -124,6 +122,8 @@ void Init() {
 	player = CreatePlayer();
 	//部屋生成
 	CreateRoom();
+	//敵の初期化
+	CreateEnemy();
 	//敵配置
 	SpawnEnemy();
 }
@@ -433,7 +433,7 @@ void PlayerMove() {
 	ch = _getch();
 	int currentX, currentY, newX, newY;
 	currentX = player.roomX; currentY = player.roomY;
-	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
+	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT || ch == SPACE) {
 		switch (ch) {
 		case UP: {
 			//武器の攻撃範囲で敵がいるかどうかを判定する
@@ -491,6 +491,8 @@ void PlayerMove() {
 			}
 			break;
 		}
+		case SPACE:
+			break;
 		}
 		newX = player.roomX; newY = player.roomY;
 		if (currentX != newX || currentY != newY) {
@@ -505,8 +507,24 @@ void PlayerMove() {
 void EnemyMove() {
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		if (enemy[i].samePosWithPlayer == true) {
-			if (enemy[i].weapon.weaponType == FIST) {
+			int enemyWeapon = enemy[i].weapon.weaponType;
+			if (enemyWeapon == FIST || enemyWeapon == LONG_SWORD || enemyWeapon == AXE) {
+				//もし、enemy[i]の下は仲間がいなければ。
+				if (room[enemy[i].roomY + 1][enemy[i].roomX].enemyPos != true) {
 
+				}
+				//もし、enemy[i]の上は仲間がいなければ。
+				else if (room[enemy[i].roomY - 1][enemy[i].roomX].enemyPos != true) {
+
+				}
+				//もし、enemy[i]の右は仲間がいなければ。
+				else if (room[enemy[i].roomY][enemy[i].roomX + 1].enemyPos != true) {
+
+				}
+				//もし、enemy[i]の左は仲間がいなければ。
+				else if (room[enemy[i].roomY][enemy[i].roomX - 1].enemyPos != true) {
+
+				}
 			}
 		}
 	}
@@ -653,7 +671,7 @@ void EnemyDieAndDrop(int number) {
 /*武器の攻撃範囲で敵を探す*/
 bool IsEnemy(int dir) {
 
-	if (player.weapon.weaponType == FIST || player.weapon.weaponType == SWORD || player.weapon.weaponType == AXE) {
+	if (player.weapon.weaponType == FIST || player.weapon.weaponType == LONG_SWORD || player.weapon.weaponType == AXE) {
 		if (dir == UP) {
 			enemyPosX = player.roomX;
 			enemyPosY = player.roomY - 1;
@@ -678,15 +696,10 @@ bool IsEnemy(int dir) {
 			}
 		}
 	}
-	//else if (player.weapon.weaponType == SWORD) {
-
-	//}
-	//else if (player.weapon.weaponType == AXE) {
-
-	//}
 	//else if (player.weapon.weaponType == SPEAR) {
 
 	//}
+	return false;
 }
 /*ダンジョン更新*/
 void UpdateBigMap() {

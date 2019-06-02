@@ -19,34 +19,8 @@ using namespace std;
 #define LEFT 75
 int main()
 {
-	int ch;
-	int count=0;
-	while (true) {
-		cout << "Input something:" << endl;
-		ch = _getch(); count++;
-		//ch = _getch(); count++;
-		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
-			switch (ch) {
-			case UP: {
-				cout << "UP" << endl;
-				break;
-			}
-			case DOWN: {
-				cout << "DOWN" << endl;
-				break;
-			}
-			case LEFT: {
-				cout << "LEFT" << endl;
-				break;
-			}
-			case RIGHT: {
-				cout << "RIGHT" << endl;
-				break;
-			}
-			}
-
-		}
-		cout << count << endl;
+	while (1) {
+		int c = _getch(); printf("%d\n", c); 
 	}
 	
 }

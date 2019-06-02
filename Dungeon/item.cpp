@@ -29,7 +29,7 @@ void WeaponOption() {
 	//剣
 	strcpy(sword.name, "long sword");
 	sword.mateTag = WEAPON;
-	sword.weaponType = SWORD;
+	sword.weaponType = LONG_SWORD;
 	sword.value = 15;
 	sword.flag = true;
 
