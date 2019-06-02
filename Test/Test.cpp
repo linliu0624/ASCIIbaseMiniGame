@@ -19,10 +19,15 @@ using namespace std;
 #define LEFT 75
 int main()
 {
-	while (1) {
-		int c = _getch(); printf("%d\n", c); 
-	}
-	
+	/*while (1) {
+		int c = _getch(); printf("%d\n", c);
+	}*/
+	int a;
+	char b;
+	cin >> a;
+	b = a;
+	cout << a << "," << b << endl;
+
 }
 
 // 執行程式: Ctrl + F5 或 [偵錯] > [啟動但不偵錯] 功能表

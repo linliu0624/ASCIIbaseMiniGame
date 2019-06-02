@@ -441,7 +441,6 @@ void PlayerMove() {
 	int currentX, currentY, newX, newY;
 	currentX = player.roomX; currentY = player.roomY;
 	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
-		
 		switch (ch) {
 		case UP: {
 			//武器の攻撃範囲で敵がいるかどうかを判定する
@@ -497,10 +496,6 @@ void PlayerMove() {
 					player.roomX++;
 				}
 			}
-			break;
-		}
-		case SPACE: {
-			playerMoveCounter++;
 			break;
 		}
 		}
@@ -812,7 +807,7 @@ void InventoryManage() {
 	cout << "Armor:" << player.armor.name << endl << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]" << endl;
+			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]:"<<player.inventory[i].text << endl;
 		}
 	}
 
@@ -902,7 +897,7 @@ void ShowPlayerStatus() {
 	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	cout << "move count:" << playerMoveCounter << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
-	cout << "     [" << player.armor.name << "] def:-" << player.armor.def * 100 <<
+	cout << "     [" << player.armor.name << "] def:+" << player.armor.def * 100 <<
 		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
 	cout << "             [" << player.weapon.name << "]" << endl;
 	cout << "----Inventory----" << endl;

@@ -80,6 +80,7 @@ void ArmorOption() {
 }
 void ItemOption() {
 	strcpy(simplePotion.name, "simple potion");
+	strcpy(simplePotion.text, "Use to +10 hp");
 	simplePotion.mateTag = ITEM;
 	simplePotion.itemType = SIMPLE_POTION;
 	simplePotion.value = 40;
