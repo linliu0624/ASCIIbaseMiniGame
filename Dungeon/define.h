@@ -32,6 +32,10 @@
 //裝備
 #define NO_ARMOR 0
 #define LEATHER_ARMOR 1
+#define HEAVY_LEATHE_RARMOR 2
+
+//消耗品或寶藏
+#define SIMPLE_POTION 0
 
 //方向,72 77 80 75即表示方向键 上 右 下 左。
 #define UP 72

@@ -11,7 +11,10 @@ material axe;
 
 material noArmor;
 material leatherArmor;
+material heavyLeatherArmor;
 material nothing;
+
+material simplePotion;
 
 void WeaponOption() {
 	//拳
@@ -21,7 +24,7 @@ void WeaponOption() {
 	fist.weaponType = FIST;
 	fist.value = 0;
 	fist.flag = true;
-	
+
 
 	//剣
 	strcpy(sword.name, "long sword");
@@ -64,6 +67,24 @@ void ArmorOption() {
 	leatherArmor.maxHp = 40;
 	leatherArmor.hp = leatherArmor.maxHp;
 	leatherArmor.def = 0.33f;
+
+	//重皮甲
+	strcpy(heavyLeatherArmor.name, "hLeather armor");
+	heavyLeatherArmor.mateTag = ARMOR;
+	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
+	heavyLeatherArmor.value = 35;
+	heavyLeatherArmor.flag = true;
+	heavyLeatherArmor.maxHp = 30;
+	heavyLeatherArmor.hp = heavyLeatherArmor.maxHp;
+	heavyLeatherArmor.def = 0.4f;
+}
+void ItemOption() {
+	strcpy(simplePotion.name, "simple potion");
+	simplePotion.mateTag = ITEM;
+	simplePotion.itemType = SIMPLE_POTION;
+	simplePotion.value = 40;
+	simplePotion.flag = true;
+	simplePotion.hp = 10;
 }
 void CreateVoid() {
 	strcpy(nothing.name, "nothing");

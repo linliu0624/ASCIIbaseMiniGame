@@ -6,6 +6,7 @@ struct material {
 	int mateTag;
 	int weaponType;
 	int armorType;
+	int itemType;
 	
 	int atk;
 	float def;
@@ -27,9 +28,13 @@ extern material axe;
 extern material spear;
 
 extern material leatherArmor;
+extern material heavyLeatherArmor;
 extern material noArmor;
+
+extern material simplePotion;
 
 void WeaponOption();
 void ArmorOption();
 //void SetAtk();
 void CreateVoid();
+void ItemOption();

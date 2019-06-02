@@ -303,13 +303,15 @@ unit CreatePlayer() {
 void CreateEnemy() {
 	int weaponRnd;
 	int armorRnd;
+	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		enemy[i].alive = true;
-		enemy[i].maxHp = 10 + rand() % 5;
-		enemy[i].hp = enemy[i].maxHp;
+		enemy[i].maxHp = 30;
+		enemy[i].hp = 20 + rand() % 10;
 		enemy[i].type = ENEMY;
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
+		itemRnd = rand() % 100 + 1;
 		//武器を装備する
 		if (weaponRnd <= 10)
 			enemy[i].weapon = fist;
@@ -322,13 +324,22 @@ void CreateEnemy() {
 		//防具を装備する
 		if (armorRnd < 60)
 			enemy[i].armor = noArmor;
-		else {
+		else if (armorRnd >= 60 && armorRnd < 90) {
 			enemy[i].armor = leatherArmor;
 			enemy[i].armor.hp = rand() % 20 + 20;
 		}
+		else {
+			enemy[i].armor = heavyLeatherArmor;
+			enemy[i].armor.hp = rand() % 15 + 15;
+		}
 
 		//アイテムを装備する
-		enemy[i].inventory[0] = nothing;
+		if (itemRnd <= 20) {
+			enemy[i].inventory[0] = nothing;
+		}
+		else {
+			enemy[i].inventory[0] = simplePotion;
+		}
 	}
 }
 /*enemyの配置*/
@@ -398,7 +409,7 @@ bool SearchEnemy() {
 					else {
 						enemy[e].samePosWithPlayer = false;
 					}
-				}				
+				}
 			}
 		}
 	}
@@ -826,6 +837,17 @@ void InventoryManage() {
 				}
 				player.weapon = tmp;
 
+			}
+			else if (player.inventory[a].mateTag == ITEM) {
+				if (player.inventory[a].itemType == SIMPLE_POTION) {
+					if (player.hp + simplePotion.hp >= player.maxHp) {
+						player.hp = player.maxHp;
+					}
+					else {
+						player.hp += simplePotion.hp;
+					}
+					player.inventory[a] = nothing;
+				}
 			}
 		}
 	}
