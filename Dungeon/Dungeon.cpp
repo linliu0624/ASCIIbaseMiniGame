@@ -74,7 +74,8 @@ int enemyPtr = 0;
 
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
-
+//同じ部屋の敵の数
+int sameRoomEnemyNum;
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
@@ -502,6 +503,13 @@ void PlayerMove() {
 }
 /*敵の移動*/
 void EnemyMove() {
+	for (int i = 0; i < ENEMYNUMBER; i++) {
+		if (enemy[i].samePosWithPlayer == true) {
+			if (enemy[i].weapon.weaponType == FIST) {
+
+			}
+		}
+	}
 	//EnemyAttack();
 }
 void CreateRoom() {
@@ -662,9 +670,12 @@ bool IsEnemy(int dir) {
 			enemyPosX = player.roomX + 1;
 			enemyPosY = player.roomY;
 		}
-
-		if (room[enemyPosY][enemyPosX].enemyPos == true) {
-			return true;
+		for (int i = 0; i > ENEMYNUMBER; i++) {
+			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY && enemy[i].samePosWithPlayer == true) {
+				if (room[enemyPosY][enemyPosX].enemyPos == true) {
+					return true;
+				}
+			}
 		}
 	}
 	//else if (player.weapon.weaponType == SWORD) {
