@@ -62,13 +62,20 @@ void EnemyDieAndDrop(int);
 //装備管理
 void InventoryManage();
 //ダメージの計算
-void Damage(int, int, int, bool);
+int Damage(int);
+//void Damage(int, int, int, bool);
+//攻撃
+void Attack(int, bool);
+//玩家死亡
+void PlayerDie();
 
 unit player;
 unit enemy[ENEMYNUMBER];
 
 //int sameMapEnemy[MAX_ENEMY_IN_ONEROOM];
 int playerMoveCounter = 0;
+//玩家裝備的武器與護甲價值
+int playerWAVAlue = 0;
 int enemyPtr = 0;
 //int sameMapEnemyPtr = 0;
 
@@ -305,13 +312,14 @@ unit CreatePlayer() {
 //}
 /*enemyの生成*/
 void CreateEnemy() {
+	//未來可以依照玩家的武器和護甲來決定敵人裝備物品
 	int weaponRnd;
 	int armorRnd;
 	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		enemy[i].alive = true;
 		enemy[i].maxHp = 30;
-		enemy[i].hp = 20 + rand() % 10;
+		enemy[i].hp = 10 + rand() % 10 + rand() % 10;
 		enemy[i].type = ENEMY;
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
@@ -447,7 +455,7 @@ void PlayerMove() {
 			//いれば戦闘に入る
 			if (IsEnemy(UP) == true) {
 				//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
-				PlayerAttack();
+				Attack(player.weapon.weaponType, true);
 			}
 			else {
 				//なければ移動
@@ -461,7 +469,7 @@ void PlayerMove() {
 		}
 		case DOWN: {
 			if (IsEnemy(DOWN) == true) {
-				PlayerAttack();
+				Attack(player.weapon.weaponType, true);
 			}
 			else {
 				if (player.roomY + 1 != ROOMRANGE + 1 && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
@@ -474,7 +482,7 @@ void PlayerMove() {
 		}
 		case LEFT: {
 			if (IsEnemy(LEFT) == true) {
-				PlayerAttack();
+				Attack(player.weapon.weaponType, true);
 			}
 			else {
 				if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
@@ -487,7 +495,7 @@ void PlayerMove() {
 		}
 		case RIGHT: {
 			if (IsEnemy(RIGHT) == true) {
-				PlayerAttack();
+				Attack(player.weapon.weaponType, true);
 			}
 			else {
 				if (player.roomX - 1 != ROOMRANGE + 1 && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
@@ -511,32 +519,59 @@ void PlayerMove() {
 		player.inventoryMode = !player.inventoryMode;
 	}
 }
-/*敵の移動*/
+/*敵のターン*/
 void EnemyMove() {
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		if (enemy[i].samePosWithPlayer == true) {
 			int enemyWeapon = enemy[i].weapon.weaponType;
 			if (enemyWeapon == FIST || enemyWeapon == LONG_SWORD || enemyWeapon == AXE) {
+				//是否會碰到玩家
+				//下
+				if (room[enemy[i].roomY + 1][enemy[i].roomX].playerPos == true) {
+					//攻擊
+					Attack(enemy[i].weapon.weaponType, false);
+				}
+				//上
+				else if (room[enemy[i].roomY - 1][enemy[i].roomX].playerPos == true) {
+					//攻擊
+					Attack(enemy[i].weapon.weaponType, false);
+				}
+				//右
+				else if (room[enemy[i].roomY][enemy[i].roomX + 1].playerPos == true) {
+					//攻擊
+					Attack(enemy[i].weapon.weaponType, false);
+				}
+				//左
+				else if (room[enemy[i].roomY][enemy[i].roomX - 1].playerPos == true) {
+					//攻擊
+					Attack(enemy[i].weapon.weaponType, false);
+				}
+				//是否會碰到隊友
 				//もし、enemy[i]の下は仲間がいなければ。
-				if (room[enemy[i].roomY + 1][enemy[i].roomX].enemyPos != true) {
-
+				else if (room[enemy[i].roomY + 1][enemy[i].roomX].enemyPos != true) {
+					//不動
 				}
 				//もし、enemy[i]の上は仲間がいなければ。
 				else if (room[enemy[i].roomY - 1][enemy[i].roomX].enemyPos != true) {
-
+					//不動
 				}
 				//もし、enemy[i]の右は仲間がいなければ。
 				else if (room[enemy[i].roomY][enemy[i].roomX + 1].enemyPos != true) {
-
+					//不動
 				}
 				//もし、enemy[i]の左は仲間がいなければ。
 				else if (room[enemy[i].roomY][enemy[i].roomX - 1].enemyPos != true) {
+					//不動
+				}
+				else {
 
 				}
+
+				//以上兩者都不會就移動
+
 			}
 		}
 	}
-	//EnemyAttack();
 }
 void CreateRoom() {
 	int rnd;
@@ -571,35 +606,6 @@ void CreateRoom() {
 	player.roomX = 1;
 	player.roomY = 1;
 }
-/*プレイヤー攻撃*/
-void PlayerAttack() {
-	int dice4 = rand() % 4 + 1;
-	int dice6 = rand() % 6 + 1;
-	int dice8 = rand() % 8 + 1;
-	int dice10 = rand() % 10 + 1;
-	int dice20 = rand() % 20 + 1;
-
-	if (player.weapon.weaponType == FIST) {
-		Damage(dice4, 0, 0, true);
-	}
-
-}
-/*
-*敵の攻撃
-*number 敵が配列にいる番号
-*/
-void EnemyAttack(int number) {
-	int dice4 = rand() % 4 + 1;
-	int dice6 = rand() % 6 + 1;
-	int dice8 = rand() % 8 + 1;
-	int dice10 = rand() % 10 + 1;
-	int dice20 = rand() % 20 + 1;
-
-	if (enemy[number].weapon.weaponType == FIST) {
-		Damage(dice4, 0, 0, false);
-	}
-
-}
 /***************************************
 *ダメージの計算
 *int damage1 ダメージ量1
@@ -607,13 +613,63 @@ void EnemyAttack(int number) {
 *int bonus   ダメージボーナス
 *bool playerToEnemy プレイヤーの攻撃か
 ****************************************/
-void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
+//void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
+//
+//	int totalDamage;
+//	int armorDamage;
+//	int bodyDamage;
+//	if (playerToEnemy) {
+//		for (int i = 0; i < ENEMYNUMBER; i++) {
+//			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
+//				totalDamage = damage1 + damage2 + bonus;
+//				armorDamage = enemy[i].armor.def*totalDamage;
+//
+//				//armorDamage少なくても1
+//				if (armorDamage < 1) {
+//					armorDamage = 1;
+//				}
+//				//armorDamageが壊れた時
+//				if (enemy[i].armor.hp <= 0) {
+//					enemy[i].armor.hp = 0;
+//					enemy[i].armor = noArmor;
+//					armorDamage = 0;
+//				}
+//				enemy[i].armor.hp -= armorDamage;
+//				bodyDamage = totalDamage - armorDamage;
+//				if (bodyDamage <= 0) {
+//					bodyDamage = 0;
+//				}
+//				enemy[i].hp -= bodyDamage;
+//				//敵が死んだ時
+//				if (enemy[i].hp <= 0) {
+//					EnemyDieAndDrop(i);
+//				}
+//				break;
+//			}
+//		}
+//	}
+//	else {
+//
+//	}
+//}
+/***************************************
+*攻撃
+*int weaponType 武器のタイプ
+*bool playerToEnemy プレイヤーの攻撃か
+****************************************/
+void Attack(int weaponType, bool playerToEnemy) {
+
+	int totalDamage;
+	int armorDamage;
+	int bodyDamage;
+
+	totalDamage = Damage(weaponType);
+
 	if (playerToEnemy) {
 		for (int i = 0; i < ENEMYNUMBER; i++) {
 			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
-				int totalDamage = damage1 + damage2 + bonus;
-				int armorDamage = enemy[i].armor.def*totalDamage;
-				int bodyDamage;
+				armorDamage = enemy[i].armor.def*totalDamage;
+
 				//armorDamage少なくても1
 				if (armorDamage < 1) {
 					armorDamage = 1;
@@ -636,15 +692,50 @@ void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
 				}
 				break;
 			}
-			/*if (enemy[sameMapEnemy[i]].roomX == enemyPosX && enemy[sameMapEnemy[i]].roomY == enemyPosY) {
-				if (enemy[sameMapEnemy[i]].armor.armorType == NO_ARMOR)
-					enemy[sameMapEnemy[i]].hp -= dice4;
-			}*/
 		}
 	}
 	else {
+		armorDamage = player.armor.def*totalDamage;
 
+		//armorDamage少なくても1
+		if (armorDamage < 1) {
+			armorDamage = 1;
+		}
+		//armorDamageが壊れた時
+		if (player.armor.hp <= 0) {
+			player.armor.hp = 0;
+			player.armor = noArmor;
+			armorDamage = 0;
+		}
+		player.armor.hp -= armorDamage;
+		bodyDamage = totalDamage - armorDamage;
+		if (bodyDamage <= 0) {
+			bodyDamage = 0;
+		}
+		player.hp -= bodyDamage;
+		//敵が死んだ時
+		if (player.hp <= 0) {
+			player.alive = false;
+		}
 	}
+}
+/*
+*ダメージの計算
+*int weaponType　武器のタイプ
+*/
+int Damage(int weaponType) {
+	int dice4 = rand() % 4 + 1;
+	int dice6 = rand() % 6 + 1;
+	int dice8 = rand() % 8 + 1;
+	int dice10 = rand() % 10 + 1;
+	int dice20 = rand() % 20 + 1;
+
+	if (weaponType == FIST)
+		return dice4; //1~4
+	else if (weaponType == LONG_SWORD)
+		return dice4 + dice4; //2~8
+	else if (weaponType == AXE)
+		return dice6 + 2; //3~8
 }
 /*
 *敵がぬ
@@ -807,7 +898,7 @@ void InventoryManage() {
 	cout << "Armor:" << player.armor.name << endl << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]:"<<player.inventory[i].text << endl;
+			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]:" << player.inventory[i].text << endl;
 		}
 	}
 
