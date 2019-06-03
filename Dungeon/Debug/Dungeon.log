@@ -1,4 +1,4 @@
 ﻿  Dungeon.cpp
-d:\code\game\themea\dungeon\dungeon.cpp(813): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
-d:\code\game\themea\dungeon\dungeon.cpp(840): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\code\game\themea\dungeon\dungeon.cpp(843): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\code\game\themea\dungeon\dungeon.cpp(870): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
   Dungeon.vcxproj -> D:\Code\Game\ThemeA\Debug\Dungeon.exe

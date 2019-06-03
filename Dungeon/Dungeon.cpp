@@ -14,6 +14,11 @@ using namespace std;
 /*************待解決問題***************
 1.敵人會卡牆壁
 2.敵人會重疊
+3.攻擊距離超過1的情況
+4.包包滿了的情況與重做
+5.逃出
+6.死
+7.起始畫面
 **************************************/
 //初期化
 void Init();
@@ -161,10 +166,8 @@ void Update() {
 				SpawnEnemy();
 				playerMoveCounter = 0;
 			}
-
 			//newPlayerX = player.x; newPlayerY = player.y;
 			//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
-			
 			Refresh();
 		}
 		//}
@@ -589,129 +592,157 @@ void EnemyMove(int enemyNumber) {
 	//是否會碰到隊友--------------------------------------------------------
 	else {
 		//もし、enemy[i]の下は仲間がいなければ。
-		if (room[enemyY + 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
-			if (enemy[enemyNumber].roomY != player.roomY) {
-				if (enemy[enemyNumber].roomY > player.roomY) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY) {
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				}
+		if (enemyY != player.roomY) {
+			if (enemyY > player.roomY) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY--;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
 			}
-			else if (enemyX != player.roomX) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
+			else if (enemyY < player.roomY) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY++;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
 			}
 		}
-		//もし、enemy[i]の上は仲間がいなければ。
-		else if (room[enemyY - 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
-			if (enemy[enemyNumber].roomY != player.roomY) {
-				if (enemy[enemyNumber].roomY > player.roomY) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY) {
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				}
+		else if (enemyX != player.roomX && enemyY == player.roomY) {
+			if (enemyX > player.roomX) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX--;
+				enemyY = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
 			}
-			else if (enemyX != player.roomX) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
+			else if (enemyX < player.roomX) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX++;
+				enemyY = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
 			}
 		}
-		//もし、enemy[i]の右は仲間がいなければ。
-		else if (room[enemyY][enemyX + 1].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
-			if (enemy[enemyNumber].roomY != player.roomY) {
-				if (enemy[enemyNumber].roomY > player.roomY) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY) {
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				}
-			}
-			else if (enemyX != player.roomX) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-		}
-		//もし、enemy[i]の左は仲間がいなければ。
-		else if (room[enemyY + 1][enemyX].type != WALL) {
-			if (enemy[enemyNumber].roomY != player.roomY) {
-				if (enemy[enemyNumber].roomY > player.roomY) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY) {
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				}
-			}
-			else if (enemyX != player.roomX) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-		}
+		//if (room[enemyY + 1][enemyX].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
+		//	if (enemy[enemyNumber].roomY != player.roomY) {
+		//		if (enemy[enemyNumber].roomY > player.roomY) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY--;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyY < player.roomY) {
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY++;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//	else if (enemyX != player.roomX) {
+		//		if (enemy[enemyNumber].roomX > player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX--;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyX < player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX++;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//}
+		////もし、enemy[i]の上は仲間がいなければ。
+		//else if (room[enemyY - 1][enemyX].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
+		//	if (enemy[enemyNumber].roomY != player.roomY) {
+		//		if (enemy[enemyNumber].roomY > player.roomY) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY--;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyY < player.roomY) {
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY++;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//	else if (enemyX != player.roomX) {
+		//		if (enemy[enemyNumber].roomX > player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX--;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyX < player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX++;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//}
+		////もし、enemy[i]の右は仲間がいなければ。
+		//else if (room[enemyY][enemyX + 1].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
+		//	if (enemy[enemyNumber].roomY != player.roomY) {
+		//		if (enemy[enemyNumber].roomY > player.roomY) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY--;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyY < player.roomY) {
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY++;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//	else if (enemyX != player.roomX) {
+		//		if (enemy[enemyNumber].roomX > player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX--;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyX < player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX++;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//}
+		////もし、enemy[i]の左は仲間がいなければ。
+		//else if (room[enemyY + 1][enemyX].enemyPos!=true ||room[enemyY + 1][enemyX].type != WALL) {
+		//	if (enemy[enemyNumber].roomY != player.roomY) {
+		//		if (enemy[enemyNumber].roomY > player.roomY) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY--;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyY < player.roomY) {
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomY++;
+		//			enemyY = enemy[enemyNumber].roomY;
+		//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//	else if (enemyX != player.roomX) {
+		//		if (enemy[enemyNumber].roomX > player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX--;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//		else if (enemyX < player.roomX) {
+		//			room[enemyY][enemyX].enemyPos = false;
+		//			enemy[enemyNumber].roomX++;
+		//			enemyX = enemy[enemyNumber].roomX;
+		//			room[enemyY][enemyX].enemyPos = true;
+		//		}
+		//	}
+		//}
 	}
 }
 void CreateRoom() {
