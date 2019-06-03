@@ -21,6 +21,5 @@ struct unit {
 	bool inventoryMode = false;
 	//¼Ä¤H
 	bool samePosWithPlayer = false;
-	bool attackAble = false;
 };
 

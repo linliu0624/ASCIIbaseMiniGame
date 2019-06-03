@@ -381,12 +381,6 @@ void SpawnEnemy() {
 								(roomY % 5 != 0 && roomY % 5 != 1) && (roomX % 5 != 0 && roomX % 5 != 1)) {
 								//敵の出現確率
 								int rnd = rand() % ENEMY_SPAWN_PROBABILITY;
-								room[2][7].enemyPos = true;
-								enemy[enemyPtr].alive = true;
-								enemy[enemyPtr].roomX = roomX;
-								enemy[enemyPtr].roomY = roomY;
-								enemyPtr++;
-								enemyCount++;
 								if (rnd == 3 || rnd == 5) {
 									//敵の出現
 									room[roomY][roomX].enemyPos = true;
@@ -538,32 +532,28 @@ void EnemyMove() {
 		if (enemy[i].samePosWithPlayer == true) {
 			int enemyWeapon = enemy[i].weapon.weaponType;
 			if (enemyWeapon == FIST || enemyWeapon == LONG_SWORD || enemyWeapon == AXE) {
-				//是否會碰到玩家
+				//是否會碰到玩家--------------------------------------------------------
 				//下
 				if (room[enemy[i].roomY + 1][enemy[i].roomX].playerPos == true) {
 					//攻擊
-					if (enemy[i].attackAble == true)
 						Attack(enemy[i].weapon.weaponType, false);
 				}
 				//上
 				else if (room[enemy[i].roomY - 1][enemy[i].roomX].playerPos == true) {
 					//攻擊
-					if (enemy[i].attackAble == true)
 						Attack(enemy[i].weapon.weaponType, false);
 				}
 				//右
 				else if (room[enemy[i].roomY][enemy[i].roomX + 1].playerPos == true) {
 					//攻擊
-					if (enemy[i].attackAble == true)
 						Attack(enemy[i].weapon.weaponType, false);
 				}
 				//左
 				else if (room[enemy[i].roomY][enemy[i].roomX - 1].playerPos == true) {
 					//攻擊
-					if (enemy[i].attackAble == true)
 						Attack(enemy[i].weapon.weaponType, false);
 				}
-				//是否會碰到隊友
+				//是否會碰到隊友--------------------------------------------------------
 				//もし、enemy[i]の下は仲間がいなければ。
 				else if (room[enemy[i].roomY + 1][enemy[i].roomX].enemyPos != true) {
 					//不動
@@ -580,19 +570,13 @@ void EnemyMove() {
 				else if (room[enemy[i].roomY][enemy[i].roomX - 1].enemyPos != true) {
 					//不動
 				}
+				//以上兩者都不會就移動
 				else {
 
 				}
-
-				//以上兩者都不會就移動
+				
 
 			}
-		}
-		else {
-			enemy[i].attackAble = false;
-		}
-		if (enemy[i].samePosWithPlayer == true && enemy[i].attackAble == false) {
-			enemy[i].attackAble = true;
 		}
 	}
 }
@@ -1047,8 +1031,6 @@ void ShowEnemyStatus() {
 								if ((enemy[e].roomX == j && enemy[e].roomY == i) && enemy[e].alive == true) {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
-									GotoXY(x, y++);
-									cout << enemy[e].samePosWithPlayer << " " << enemy[e].attackAble << endl;
 									GotoXY(x, y++);
 									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
