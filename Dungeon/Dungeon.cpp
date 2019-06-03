@@ -420,7 +420,8 @@ bool SearchEnemy() {
 
 	for (int i = roomY_min; i <= roomY_max; i++) {
 		for (int j = roomX_min; j <= roomX_max; j++) {
-			haveEnemy = true;
+			if (room[i][j].enemyPos == true)
+				haveEnemy = true;
 			for (int e = 0; e < ENEMYNUMBER; e++) {
 				if ((enemy[e].roomX <= roomX_max && enemy[e].roomX >= roomX_min) &&
 					(enemy[e].roomY <= roomY_max && enemy[e].roomY >= roomY_min)) {//(enemy[e].roomX == j && enemy[e].roomY == i) {
@@ -536,22 +537,22 @@ void EnemyMove() {
 				//下
 				if (room[enemy[i].roomY + 1][enemy[i].roomX].playerPos == true) {
 					//攻擊
-						Attack(enemy[i].weapon.weaponType, false);
+					Attack(enemy[i].weapon.weaponType, false);
 				}
 				//上
 				else if (room[enemy[i].roomY - 1][enemy[i].roomX].playerPos == true) {
 					//攻擊
-						Attack(enemy[i].weapon.weaponType, false);
+					Attack(enemy[i].weapon.weaponType, false);
 				}
 				//右
 				else if (room[enemy[i].roomY][enemy[i].roomX + 1].playerPos == true) {
 					//攻擊
-						Attack(enemy[i].weapon.weaponType, false);
+					Attack(enemy[i].weapon.weaponType, false);
 				}
 				//左
 				else if (room[enemy[i].roomY][enemy[i].roomX - 1].playerPos == true) {
 					//攻擊
-						Attack(enemy[i].weapon.weaponType, false);
+					Attack(enemy[i].weapon.weaponType, false);
 				}
 				//是否會碰到隊友--------------------------------------------------------
 				//もし、enemy[i]の下は仲間がいなければ。
@@ -572,10 +573,7 @@ void EnemyMove() {
 				}
 				//以上兩者都不會就移動
 				else {
-
 				}
-				
-
 			}
 		}
 	}
