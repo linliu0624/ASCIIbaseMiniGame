@@ -12,9 +12,8 @@
 #include "unit.h"
 using namespace std;
 /*************待解決問題***************
-1.敵人會跟著玩家換地圖
-2.敵人會卡牆壁
-3.敵人會重疊
+1.敵人會卡牆壁
+2.敵人會重疊
 **************************************/
 //初期化
 void Init();
@@ -151,6 +150,7 @@ void Update() {
 		//int newPlayerX, newPlayerY;
 		haveEnemy = SearchEnemy();
 		PlayerMove();
+		UpdateBigMap();
 		if (player.inventoryMode == false) {
 			haveEnemy = SearchEnemy();
 			EnemyTurn();
@@ -164,7 +164,7 @@ void Update() {
 
 			//newPlayerX = player.x; newPlayerY = player.y;
 			//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
-			UpdateBigMap();
+			
 			Refresh();
 		}
 		//}
