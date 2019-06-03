@@ -7,15 +7,17 @@ struct material {
 	int weaponType;
 	int armorType;
 	int itemType;
+
+	char name[32];
+	char text[128];
 	
 	int atk;
-	float def;
+	int atkRange;
 	int hp;
 	int maxHp;
 	int value;
 
-	char name[32];
-	char text[128];
+	float def;
 
 	bool flag = false;
 	bool drop;

@@ -7,6 +7,8 @@ struct unit {
 	int mapX;
 	int mapY;
 	int roomX;
+	int firstRoomX;
+	int firstRoomY;
 	int roomY;
 	int maxHp;
 	int hp;
