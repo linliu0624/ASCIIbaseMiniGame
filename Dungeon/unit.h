@@ -2,6 +2,7 @@
 #include "define.h"
 #include "item.h"
 struct unit {
+	//共同
 	int type;
 	int mapX;
 	int mapY;
@@ -13,8 +14,13 @@ struct unit {
 	material armor;
 	material inventory[64];
 	bool alive;
-	bool inventoryMode = false;
-	bool samePosWithPlayer = false;
+	
+	
+	//玩家
 	char name[100];
+	bool inventoryMode = false;
+	//敵人
+	bool samePosWithPlayer = false;
+	bool attackAble = false;
 };
 
