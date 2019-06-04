@@ -12,13 +12,14 @@
 #include "unit.h"
 using namespace std;
 /*************待解決問題***************
-3.攻擊距離超過1的情況
-4.包包滿了的情況與重做
-5.逃出
-6.玩家死
-7.地圖生成重做
-8.敵人尋找路徑
-9.起始畫面
+攻擊距離超過1的情況
+包包滿了的情況與重做
+逃出
+玩家死
+依照玩家的武器和護甲來決定敵人裝備物品
+地圖生成重做
+敵人尋找路徑
+起始畫面
 **************************************/
 //初期化
 void Init();
@@ -264,6 +265,8 @@ void CreateEnemy() {
 		enemy[i].maxHp = 30;
 		enemy[i].hp = 10 + rand() % 10 + rand() % 10;
 		enemy[i].type = ENEMY;
+		if (i % 2 == 0)enemy[i].moveWay = true;
+		else enemy[i].moveWay = false;
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
 		itemRnd = rand() % 100 + 1;
