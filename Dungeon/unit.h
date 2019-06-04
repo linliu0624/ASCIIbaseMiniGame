@@ -23,5 +23,6 @@ struct unit {
 	bool inventoryMode = false;
 	//敵人
 	bool samePosWithPlayer = false;
+	bool moveWay = true; //敵人的移動模式
 };
 
