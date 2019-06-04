@@ -17,17 +17,71 @@ using namespace std;
 #define DOWN 80
 #define RIGHT 77
 #define LEFT 75
-int main()
-{
-	/*while (1) {
-		int c = _getch(); printf("%d\n", c);
-	}*/
-	int a;
-	char b;
-	cin >> a;
-	b = a;
-	cout << a << "," << b << endl;
+void StartRnd();
+inline void GotoXY(int, int);
 
+
+void main() {
+	struct map {
+		int n;
+		bool flag = false;
+		bool goAble;
+		bool isScout;
+	};
+	StartRnd();
+	map a[5][5];
+	a[0][0].isScout = true;
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			int n = rand() % 5 + 1;
+			if (n == 3 && i != 0 && j != 0) {
+				a[i][j].n = 1;
+				a[i][j].goAble = false;
+			}
+			else {
+				a[i][j].n = 0;
+				a[i][j].goAble = true;
+			}
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			if (a[i][j].isScout == false)
+				cout << a[i][j].n << " ";
+		}
+		cout << endl;
+	}
+
+	int x, y;
+	while (1) {
+		//if (){可走+==全
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (a[i][j].isScout != [i][j].goAble) {
+					cout << "有密室" << endl;
+					break;
+				}
+				else {
+					cout << "無密室" << endl;
+				}
+			}
+		}		
+		//}
+	}
+}
+void StartRnd() {
+	unsigned seed;
+	seed = (unsigned)time(NULL);
+	srand(seed);
+}
+/*画面の座標を(x,y)に移動する*/
+inline void GotoXY(int x, int y)
+{
+	COORD coord;
+	coord.X = x;
+	coord.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
 // 執行程式: Ctrl + F5 或 [偵錯] > [啟動但不偵錯] 功能表

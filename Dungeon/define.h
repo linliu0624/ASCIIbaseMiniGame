@@ -29,6 +29,11 @@
 #define AXE 2
 #define SPEAR 3
 
+//武器攻擊方式
+#define ONE 1 //1格
+#define TWO 2 //2格
+#define BEVELED 3 //斜1格
+
 //裝備
 #define NO_ARMOR 0
 #define LEATHER_ARMOR 1

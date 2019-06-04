@@ -35,8 +35,8 @@ extern material noArmor;
 
 extern material simplePotion;
 
-void WeaponOption();
-void ArmorOption();
-//void SetAtk();
+void WeaponInit();
+void ArmorInit();
 void CreateVoid();
-void ItemOption();
+void ItemInit();
+int Damage(int);

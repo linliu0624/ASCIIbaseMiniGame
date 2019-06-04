@@ -16,7 +16,7 @@ material nothing;
 
 material simplePotion;
 
-void WeaponOption() {
+void WeaponInit() {
 	//拳
 	strcpy(fist.name, "fist");
 	strcpy(fist.text, "~ Just hands, attack distance is one. atk=1~4 ~");
@@ -47,7 +47,7 @@ void WeaponOption() {
 	spear.value = 20;
 	spear.flag = true;
 }
-void ArmorOption() {
+void ArmorInit() {
 	//裸体
 	strcpy(noArmor.name, "no armor");
 	noArmor.mateTag = ARMOR;
@@ -78,7 +78,7 @@ void ArmorOption() {
 	heavyLeatherArmor.hp = heavyLeatherArmor.maxHp;
 	heavyLeatherArmor.def = 0.4f;
 }
-void ItemOption() {
+void ItemInit() {
 	strcpy(simplePotion.name, "simple potion");
 	strcpy(simplePotion.text, "Use to +10 hp");
 	simplePotion.mateTag = ITEM;
@@ -93,16 +93,24 @@ void CreateVoid() {
 	nothing.value = 0;
 	nothing.flag = false;
 }
-/*攻擊力計算*/
-//void SetAtk() {
-//
-//	int dice4 = rand() % 4 + 1;
-//	int dice6 = rand() % 6 + 1;
-//	int dice8 = rand() % 8 + 1;
-//	int dice10 = rand() % 10 + 1;
-//	int dice20 = rand() % 20 + 1;
-//
-//	fist.atk = dice4;
-//	sword.atk = dice6 + 2;
-//}
+/*
+*ダメージの計算
+*int weaponType　武器のタイプ
+*/
+int Damage(int weaponType) {
+	int dice4 = rand() % 4 + 1;
+	int dice6 = rand() % 6 + 1;
+	int dice8 = rand() % 8 + 1;
+	int dice10 = rand() % 10 + 1;
+	int dice20 = rand() % 20 + 1;
+
+	if (weaponType == FIST)
+		return dice4; //1~4
+	else if (weaponType == LONG_SWORD)
+		return dice4 + 1; //2~5
+	else if (weaponType == AXE)
+		return dice6 + 2; //3~8
+	else
+		return dice4;
+}
 

@@ -18,6 +18,7 @@ using namespace std;
 玩家死
 依照玩家的武器和護甲來決定敵人裝備物品
 地圖生成重做
+商人
 敵人尋找路徑
 起始畫面
 **************************************/
@@ -116,18 +117,10 @@ int main()
 /*初始化*/
 void Init() {
 	//ゲーム画面の大きさを設定する
-	system("mode con cols=150");
+	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	char flag;
 	clsFlag_Inventory = false;
 	haveEnemyFlag = false;
-	//武器の初期化
-	WeaponOption();
-	//アーマーの初期化
-	ArmorOption();
-	//アイテムの初期化
-	ItemOption();
-	//空欄
-	CreateVoid();
 	//ダンジョン生成
 	while (true) {
 		CreateMap();
@@ -139,6 +132,14 @@ void Init() {
 		}
 		system("cls");
 	}
+	//武器の初期化
+	WeaponInit();
+	//アーマーの初期化
+	ArmorInit();
+	//アイテムの初期化
+	ItemInit();
+	//空欄
+	CreateVoid();
 	//プレイヤー生成
 	player = CreatePlayer();
 	//部屋生成
@@ -247,10 +248,8 @@ unit CreatePlayer() {
 		cout << "Please input name:";
 		cin >> tmpPlayer.name;
 		cout << "Your name is [" << tmpPlayer.name << "], are you sure?(y/n):";
-		cin >> flag;
-		if (flag == 'Y' || flag == 'y') {
-			return tmpPlayer;
-		}
+		return tmpPlayer;
+
 	}
 }
 /*enemyの生成*/
@@ -853,26 +852,7 @@ void Attack(int weaponType, bool playerToEnemy) {
 		}
 	}
 }
-/*
-*ダメージの計算
-*int weaponType　武器のタイプ
-*/
-int Damage(int weaponType) {
-	int dice4 = rand() % 4 + 1;
-	int dice6 = rand() % 6 + 1;
-	int dice8 = rand() % 8 + 1;
-	int dice10 = rand() % 10 + 1;
-	int dice20 = rand() % 20 + 1;
 
-	if (weaponType == FIST)
-		return dice4; //1~4
-	else if (weaponType == LONG_SWORD)
-		return dice4 + 1; //2~5
-	else if (weaponType == AXE)
-		return dice6 + 2; //3~8
-	else
-		return dice4;
-}
 /*
 *敵がぬ
 *number:敵配列の番号
