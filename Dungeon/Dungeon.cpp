@@ -10,6 +10,7 @@
 #include "define.h"
 #include "map.h"
 #include "unit.h"
+#include <queue>
 using namespace std;
 /*************待解決問題***************
 攻擊距離超過1的情況
@@ -116,6 +117,7 @@ int main()
 
 /*初始化*/
 void Init() {
+
 	//ゲーム画面の大きさを設定する
 	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	char flag;
@@ -140,10 +142,10 @@ void Init() {
 	ItemInit();
 	//空欄
 	CreateVoid();
-	//プレイヤー生成
-	player = CreatePlayer();
 	//部屋生成
 	CreateRoom();
+	//プレイヤー生成
+	player = CreatePlayer();
 	//敵の初期化
 	CreateEnemy();
 	//敵配置
@@ -243,13 +245,16 @@ unit CreatePlayer() {
 	tmpPlayer.inventory[0] = simplePotion;
 	tmpPlayer.inventory[1] = simplePotion;
 	tmpPlayer.inventory[2] = simplePotion;
+	//プレイヤーの生成位置を決める
+	room[3][3].playerPos = true;
+	tmpPlayer.roomX = 3;
+	tmpPlayer.roomY = 3;
 	while (true) {
 		system("cls");
 		cout << "Please input name:";
 		cin >> tmpPlayer.name;
 		cout << "Your name is [" << tmpPlayer.name << "], are you sure?(y/n):";
 		return tmpPlayer;
-
 	}
 }
 /*enemyの生成*/
@@ -548,129 +553,6 @@ void EnemyMove(int enemyNumber) {
 					enemyX = enemy[enemyNumber].roomX;
 					room[enemyY][enemyX].enemyPos = true;
 				}
-				//if (room[enemyY + 1][enemyX].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
-				//	if (enemy[enemyNumber].roomY != player.roomY) {
-				//		if (enemy[enemyNumber].roomY > player.roomY) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY--;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyY < player.roomY) {
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY++;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//	else if (enemyX != player.roomX) {
-				//		if (enemy[enemyNumber].roomX > player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX--;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyX < player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX++;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//}
-				////もし、enemy[i]の上は仲間がいなければ。
-				//else if (room[enemyY - 1][enemyX].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
-				//	if (enemy[enemyNumber].roomY != player.roomY) {
-				//		if (enemy[enemyNumber].roomY > player.roomY) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY--;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyY < player.roomY) {
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY++;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//	else if (enemyX != player.roomX) {
-				//		if (enemy[enemyNumber].roomX > player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX--;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyX < player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX++;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//}
-				////もし、enemy[i]の右は仲間がいなければ。
-				//else if (room[enemyY][enemyX + 1].enemyPos != true || room[enemyY + 1][enemyX].type != WALL) {
-				//	if (enemy[enemyNumber].roomY != player.roomY) {
-				//		if (enemy[enemyNumber].roomY > player.roomY) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY--;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyY < player.roomY) {
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY++;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//	else if (enemyX != player.roomX) {
-				//		if (enemy[enemyNumber].roomX > player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX--;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyX < player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX++;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//}
-				////もし、enemy[i]の左は仲間がいなければ。
-				//else if (room[enemyY + 1][enemyX].enemyPos!=true ||room[enemyY + 1][enemyX].type != WALL) {
-				//	if (enemy[enemyNumber].roomY != player.roomY) {
-				//		if (enemy[enemyNumber].roomY > player.roomY) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY--;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyY < player.roomY) {
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomY++;
-				//			enemyY = enemy[enemyNumber].roomY;
-				//			room[enemy[enemyNumber].roomY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//	else if (enemyX != player.roomX) {
-				//		if (enemy[enemyNumber].roomX > player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX--;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//		else if (enemyX < player.roomX) {
-				//			room[enemyY][enemyX].enemyPos = false;
-				//			enemy[enemyNumber].roomX++;
-				//			enemyX = enemy[enemyNumber].roomX;
-				//			room[enemyY][enemyX].enemyPos = true;
-				//		}
-				//	}
-				//}
 			}
 		}
 		else {
@@ -718,7 +600,6 @@ void CreateRoom() {
 			else {
 				room[i][j].type = FLOOR;
 			}
-			room[i][j].playerPos = false;
 		}
 	}
 	//ダンジョンこの地域は壁だと、部屋も壁
@@ -733,11 +614,6 @@ void CreateRoom() {
 			}
 		}
 	}
-
-	//プレイヤーの生成位置を決める
-	room[1][1].playerPos = true;
-	player.roomX = 1;
-	player.roomY = 1;
 }
 /***************************************
 *ダメージの計算
@@ -1140,9 +1016,9 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << e << " enemy(" << j % 5 << "," << i % 5 << ")" << enemy[e].firstRoomX % 5 << "," << enemy[e].firstRoomY % 5 << endl;
+									cout << " enemy(" << j % 5 << "," << i % 5 << ")" << enemy[e].firstRoomX % 5 << "," << enemy[e].firstRoomY % 5 << endl;
 									GotoXY(x, y++);
-									cout << " enemy hp:" << enemy[e].hp << endl;
+									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
 									cout << "weapon:" << enemy[e].weapon.name << endl;
 									GotoXY(x, y++);

@@ -1,5 +1,4 @@
 ﻿// Test.cpp : 此檔案包含 'main' 函式。程式會於該處開始執行及結束執行。
-//
 #include "pch.h"
 #include <iostream>
 #include <stdlib.h>
@@ -7,6 +6,8 @@
 #include <time.h>
 #include <malloc.h>
 #include <time.h>
+#include <stack>
+#include <queue>
 #include "conio.h"
 #include "direct.h"
 #include "test.h"
@@ -19,55 +20,90 @@ using namespace std;
 #define LEFT 75
 void StartRnd();
 inline void GotoXY(int, int);
-
-
+struct map {
+	int x, y, n;
+	bool flag = false;
+	bool goAble;
+	bool isMark;
+} a[5][5];
+void Search(int, int);
+int fx[4] = { -1,1,0,0 }, fy[4] = { 0,0,-1,1 };
+struct point {
+	int x, y;
+};
 void main() {
-	struct map {
-		int n;
-		bool flag = false;
-		bool goAble;
-		bool isScout;
-	};
+
 	StartRnd();
-	map a[5][5];
-	a[0][0].isScout = true;
+	a[0][0].isMark = true;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
 			int n = rand() % 5 + 1;
-			if (n == 3 && i != 0 && j != 0) {
-				a[i][j].n = 1;
-				a[i][j].goAble = false;
-			}
-			else {
+			a[i][j].y = i;
+			a[i][j].x = j;
+			if ((i == 0 && j == 0) || (i == 4 && j == 4)) {
 				a[i][j].n = 0;
 				a[i][j].goAble = true;
 			}
+
+			else
+				if (n == 3) {
+					a[i][j].n = 1;
+					a[i][j].goAble = false;
+				}
+				else {
+					a[i][j].n = 0;
+					a[i][j].goAble = true;
+				}
+
 		}
 	}
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
-			if (a[i][j].isScout == false)
-				cout << a[i][j].n << " ";
+			cout << a[i][j].n << " ";
 		}
 		cout << endl;
 	}
 
-	int x, y;
-	while (1) {
-		//if (){可走+==全
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (a[i][j].isScout != [i][j].goAble) {
-					cout << "有密室" << endl;
-					break;
-				}
-				else {
-					cout << "無密室" << endl;
-				}
+	Search(0, 0);
+
+	cout << endl;
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			if (a[i][j].goAble == true && a[i][j].isMark == true) {
+				cout << "X ";
 			}
-		}		
-		//}
+			else {
+				cout << a[i][j].n << " ";
+			}
+		}
+		cout << endl;
+	}
+}
+
+void Search(int x, int y) {
+	queue<point> myQue;
+	point tp;
+	tp.x = x; tp.y = y;
+	myQue.push(tp);
+	int count = 0;
+	while (!myQue.empty()) {
+		count++;
+		tp = myQue.front(); myQue.pop();
+		if (count==5*25)break;
+		for (int i = 0; i < 4; i++) {
+			if (tp.x + fx[i] < 5 && tp.y + fy[i] < 5 && tp.x + fx[i] >= 0 && tp.y + fy[i] >= 0) {
+				point tmp;
+				tmp.x = tp.x + fx[i];
+				tmp.y = tp.y + fy[i];
+				if (a[tmp.x][tmp.y].goAble == false)
+				{
+					continue;
+				}
+				a[tmp.x][tmp.y].isMark = true;
+				myQue.push(tmp);
+			}
+		}
 	}
 }
 void StartRnd() {

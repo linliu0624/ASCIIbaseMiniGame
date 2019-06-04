@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Dungeon.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

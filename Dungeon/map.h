@@ -1,12 +1,13 @@
 #pragma once
 #include<iostream>
 #include "define.h"
+
 struct bigmap {
 	int type;
 	int x;
 	int y;
 	bool playerPos;
-}dangeon[MAPRANGE][MAPRANGE];
+};
 
 struct roomObj {
 	int type;
@@ -14,4 +15,8 @@ struct roomObj {
 	int y;
 	bool playerPos = false;
 	bool enemyPos = false;
-}room[ROOMRANGE][ROOMRANGE];
+	bool mark = false;
+};
+extern bigmap dangeon[MAPRANGE][MAPRANGE];
+extern roomObj room[ROOMRANGE][ROOMRANGE];
+bool SearchRoom();
