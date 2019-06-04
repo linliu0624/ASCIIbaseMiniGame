@@ -367,11 +367,12 @@ bool SearchEnemy() {
 				}
 				else {
 					enemy[e].samePosWithPlayer = false;
-
-					room[enemy[e].roomY][enemy[e].roomX].enemyPos = false;
-					enemy[e].roomX = enemy[e].firstRoomX;
-					enemy[e].roomY = enemy[e].firstRoomY;
-					room[enemy[e].roomY][enemy[e].roomX].enemyPos = true;
+					if (enemy[e].alive == true) {
+						room[enemy[e].roomY][enemy[e].roomX].enemyPos = false;
+						enemy[e].roomX = enemy[e].firstRoomX;
+						enemy[e].roomY = enemy[e].firstRoomY;
+						room[enemy[e].roomY][enemy[e].roomX].enemyPos = true;
+					}
 				}
 			}
 
@@ -532,8 +533,8 @@ void EnemyMove(int enemyNumber) {
 					room[enemyY][enemyX].enemyPos = true;
 				}
 			}
-			else if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
+			else if (enemyX != player.roomX) {
+				if (enemyX > player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
 					room[enemyY][enemyX].enemyPos = false;
 					enemy[enemyNumber].roomX--;
 					enemyX = enemy[enemyNumber].roomX;
