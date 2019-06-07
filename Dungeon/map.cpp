@@ -1,3 +1,6 @@
+/*
+§@ªÌ¡GªL
+*/
 #include "pch.h"
 #include "map.h"
 #include "define.h"

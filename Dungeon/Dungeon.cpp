@@ -70,7 +70,7 @@ void PlayerMove();
 //敵のターン
 void EnemyTurn();
 //敵の移動
-void EnemyMove(int);
+void EnemyMove(int, bool);
 //敵が死ぬ
 void EnemyDieAndDrop(int);
 //装備管理
@@ -126,7 +126,7 @@ void Init() {
 	haveEnemyFlag = false;
 	//ダンジョン生成
 	do {
-		
+
 		CreateMap();
 		//部屋生成
 		CreateRoom();
@@ -200,7 +200,10 @@ static void Refresh() {
 	ShowEnemyStatus();
 }
 
-/*生成大地圖*/
+/***************************************
+*ダンジョンの生成
+*作者：林
+***************************************/
 void CreateMap() {
 	int wallNum = 5;
 	for (int i = 0; i < MAPRANGE; i++) {
@@ -234,8 +237,10 @@ void CreateMap() {
 		}
 	}
 }
-
-/*玩家生成*/
+/***************************************
+*playerの生成
+*作者：荒井
+***************************************/
 unit CreatePlayer() {
 	char flag;
 	unit tmpPlayer;
@@ -244,7 +249,7 @@ unit CreatePlayer() {
 	tmpPlayer.maxHp = 30;
 	tmpPlayer.hp = tmpPlayer.maxHp;
 	tmpPlayer.type = PLAYER;
-	tmpPlayer.weapon = fist;
+	tmpPlayer.weapon = spear;//fist;
 	tmpPlayer.armor = noArmor;
 	for (int i = 2; i < 64; i++) {
 		tmpPlayer.inventory[i] = nothing;
@@ -264,7 +269,10 @@ unit CreatePlayer() {
 		return tmpPlayer;
 	}
 }
-/*enemyの生成*/
+/***************************************
+*enemyの生成
+*作者：林
+***************************************/
 void CreateEnemy() {
 	//未來可以依照玩家的武器和護甲來決定敵人裝備物品
 	playerWAVAlue = player.weapon.value + player.armor.value;
@@ -311,7 +319,10 @@ void CreateEnemy() {
 		}
 	}
 }
-/*enemyの配置*/
+/***************************************
+*enemyの配置
+*作者：田子
+***************************************/
 void SpawnEnemy() {
 	//PlayerPos of map turn to room
 	int enemyCount = 0;
@@ -355,7 +366,10 @@ void SpawnEnemy() {
 	}
 }
 
-/*尋找同房間的敵人*/
+/***************************************
+*plyaerと同じ部屋のenemyを探す
+*作者：荒井
+***************************************/
 bool SearchEnemy() {
 	//取得玩家大地圖座標
 	int roomX_min, roomY_min, roomX_max, roomY_max;
@@ -397,6 +411,10 @@ bool SearchEnemy() {
 	}
 	return false;
 }
+/***************************************
+*enemyを削除する
+*作者：田子
+***************************************/
 void DeleteAllEnemy() {
 	for (int i = 0; i < ROOMRANGE; i++) {
 		for (int j = 0; j < ROOMRANGE; j++) {
@@ -404,88 +422,102 @@ void DeleteAllEnemy() {
 		}
 	}
 }
-/*プレーヤーのターン*/
+/***************************************
+*プレーヤーのターン
+*作者：林
+***************************************/
 void PlayerMove() {
 	int ch;
-	ch = _getch();
-	//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
-	if (ch == 224) {
+	bool flag = false;
+	while (!flag) {
 		ch = _getch();
-	}
-	int currentX, currentY, newX, newY;
-	currentX = player.roomX; currentY = player.roomY;
-	if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
-		switch (ch) {
-		case UP: {
-			//武器の攻撃範囲で敵がいるかどうかを判定する
-			//いれば戦闘に入る
-			if (IsEnemy(UP) == true) {
-				//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
-				Attack(player.weapon.weaponType, true);
-			}
-			else {
-				//なければ移動
-				if (player.roomY - 1 != 0 && room[player.roomY - 1][player.roomX].type != WALL) {
-					room[player.roomY][player.roomX].playerPos = false;
-					room[player.roomY - 1][player.roomX].playerPos = true;
-					player.roomY--;
+		//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
+		if (ch == 224) {
+			ch = _getch();
+		}
+		int currentX, currentY, newX, newY;
+		currentX = player.roomX; currentY = player.roomY;
+		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
+			switch (ch) {
+			case UP: {
+				//武器の攻撃範囲で敵がいるかどうかを判定する
+				//いれば戦闘に入る
+				if (IsEnemy(UP) == true) {
+					//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
+					Attack(player.weapon.weaponType, true);
 				}
-			}
-			break;
-		}
-		case DOWN: {
-			if (IsEnemy(DOWN) == true) {
-				Attack(player.weapon.weaponType, true);
-			}
-			else {
-				if (player.roomY + 1 != ROOMRANGE + 1 && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
-					room[player.roomY][player.roomX].playerPos = false;
-					room[player.roomY + 1][player.roomX].playerPos = true;
-					player.roomY++;
+				else {
+					//なければ移動
+					if (player.roomY - 1 != 0 && room[player.roomY - 1][player.roomX].type != WALL) {
+						room[player.roomY][player.roomX].playerPos = false;
+						room[player.roomY - 1][player.roomX].playerPos = true;
+						player.roomY--;
+					}
 				}
+				break;
 			}
-			break;
-		}
-		case LEFT: {
-			if (IsEnemy(LEFT) == true) {
-				Attack(player.weapon.weaponType, true);
-			}
-			else {
-				if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
-					room[player.roomY][player.roomX].playerPos = false;
-					room[player.roomY][player.roomX - 1].playerPos = true;
-					player.roomX--;
+			case DOWN: {
+				if (IsEnemy(DOWN) == true) {
+					Attack(player.weapon.weaponType, true);
 				}
-			}
-			break;
-		}
-		case RIGHT: {
-			if (IsEnemy(RIGHT) == true) {
-				Attack(player.weapon.weaponType, true);
-			}
-			else {
-				if (player.roomX - 1 != ROOMRANGE + 1 && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
-					room[player.roomY][player.roomX].playerPos = false;
-					room[player.roomY][player.roomX + 1].playerPos = true;
-					player.roomX++;
+				else {
+					if (player.roomY + 1 != ROOMRANGE && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
+						room[player.roomY][player.roomX].playerPos = false;
+						room[player.roomY + 1][player.roomX].playerPos = true;
+						player.roomY++;
+					}
 				}
+				break;
 			}
-			break;
+			case LEFT: {
+				if (IsEnemy(LEFT) == true) {
+					Attack(player.weapon.weaponType, true);
+				}
+				else {
+					if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
+						room[player.roomY][player.roomX].playerPos = false;
+						room[player.roomY][player.roomX - 1].playerPos = true;
+						player.roomX--;
+					}
+				}
+				break;
+			}
+			case RIGHT: {
+				if (IsEnemy(RIGHT) == true) {
+					Attack(player.weapon.weaponType, true);
+				}
+				else {
+					if (player.roomX + 1 != ROOMRANGE && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
+						room[player.roomY][player.roomX].playerPos = false;
+						room[player.roomY][player.roomX + 1].playerPos = true;
+						player.roomX++;
+					}
+				}
+				break;
+			}
+			}
+			newX = player.roomX; newY = player.roomY;
+			if (currentX != newX || currentY != newY) {
+				playerMoveCounter++;
+			}
+			flag = true;
 		}
+		else if (ch == SPACE) {
+			flag = true;
 		}
-		newX = player.roomX; newY = player.roomY;
-		if (currentX != newX || currentY != newY) {
-			playerMoveCounter++;
+		else if (ch == 'r' || ch == 'R') {
+			player.inventoryMode = !player.inventoryMode;
+			flag = true;
 		}
-	}
-	else if (ch == SPACE) {
-
-	}
-	else if (ch == 'r' || ch == 'R') {
-		player.inventoryMode = !player.inventoryMode;
+		else {
+			flag = false;
+		}
 	}
 }
-/*敵のターン*/
+/***************************************
+*敵のターン
+*作者：林
+***************************************/
 void EnemyTurn() {
 
 	for (int i = 0; i < ENEMYNUMBER; i++) {
@@ -493,44 +525,73 @@ void EnemyTurn() {
 			int enemyWeapon = enemy[i].weapon.weaponType;
 			//攻擊距離1的武器
 			if (enemyWeapon == FIST || enemyWeapon == LONG_SWORD || enemyWeapon == AXE) {
-				EnemyMove(i);
+				EnemyMove(i, 1);
 				//以上兩者都不會就移動
+			}
+			else if (enemyWeapon == SPEAR) {
+				EnemyMove(i, 2);
 			}
 		}
 	}
 }
-/*
+/***************************************
 *敵の移動
 *int enemyNumber 敵が配列にいる番号
-*/
-void EnemyMove(int enemyNumber) {
+*int type 武器の攻撃種類
+*作者：林
+***************************************/
+void EnemyMove(int enemyNumber, bool type) {
 	int enemyX, enemyY;
-
+	bool moveFlag = true;
 	enemyX = enemy[enemyNumber].roomX;
 	enemyY = enemy[enemyNumber].roomY;
-	//是否會碰到玩家--------------------------------------------------------
-	//下
+	//-------------------是否會碰到玩家-----------------------
+	//if (type == 1) {
+		//下
 	if (room[enemyY + 1][enemyX].playerPos == true) {
 		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false);
+		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
 	}
 	//上
 	else if (room[enemyY - 1][enemyX].playerPos == true) {
 		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false);
+		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
 	}
 	//右
 	else if (room[enemyY][enemyX + 1].playerPos == true) {
 		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false);
+		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
 	}
 	//左
 	else if (room[enemyY][enemyX - 1].playerPos == true) {
 		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false);
+		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
 	}
-	//是否會碰到隊友--------------------------------------------------------
-	else {
+	//}
+	//else if (type == 2) {
+		//下
+	//if (room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) {
+	//	//攻擊
+	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+	//}
+	////上
+	//else if (room[enemyY - 1][enemyX].playerPos == true || room[enemyY - 2][enemyX].playerPos == true) {
+	//	//攻擊
+	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+	//}
+	////右
+	//else if (room[enemyY][enemyX + 1].playerPos == true || room[enemyY][enemyX + 2].playerPos == true) {
+	//	//攻擊
+	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+	//}
+	////左
+	//else if (room[enemyY][enemyX - 1].playerPos == true || room[enemyY][enemyX - 2].playerPos == true) {
+	//	//攻擊
+	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+	//}
+	//}
+//-----------------------是否會碰到隊友-----------------------
+	else {//if (moveFlag == true) {
 		//もし、enemy[i]の下は仲間がいなければ。
 		if (enemy[enemyNumber].moveWay) {
 			if (enemyY != player.roomY) {
@@ -595,6 +656,10 @@ void EnemyMove(int enemyNumber) {
 		enemy[enemyNumber].moveWay = !enemy[enemyNumber].moveWay;
 	}
 }
+/***************************************
+*部屋を作る
+*作者：林
+***************************************/
 void CreateRoom() {
 	int rnd;
 	//歩けるマスと壁の生成
@@ -673,6 +738,7 @@ void CreateRoom() {
 *攻撃
 *int weaponType 武器のタイプ
 *bool playerToEnemy プレイヤーの攻撃か
+*作者：荒井
 ****************************************/
 void Attack(int weaponType, bool playerToEnemy) {
 
@@ -737,10 +803,11 @@ void Attack(int weaponType, bool playerToEnemy) {
 	}
 }
 
-/*
-*敵がぬ
+/***************************************
+*enemyが死んだ時とアイテムドロップ
 *number:敵配列の番号
-*/
+*作者：田子
+***************************************/
 void EnemyDieAndDrop(int number) {
 	enemy[number].hp = 0;
 	enemy[number].alive = false;
@@ -767,9 +834,12 @@ void EnemyDieAndDrop(int number) {
 		}
 	}
 }
-/*武器の攻撃範囲で敵を探す*/
+/***************************************
+*武器の攻撃範囲で敵を探す
+*int playerの移動方向
+*作者：荒井
+***************************************/
 bool IsEnemy(int dir) {
-
 	if (player.weapon.weaponType == FIST || player.weapon.weaponType == LONG_SWORD || player.weapon.weaponType == AXE) {
 		if (dir == UP) {
 			enemyPosX = player.roomX;
@@ -792,12 +862,57 @@ bool IsEnemy(int dir) {
 				return true;
 			}
 	}
-	//else if (player.weapon.weaponType == SPEAR) {
+	else if (player.weapon.weaponType == SPEAR) {
+		if (dir == UP) {
+			enemyPosX = player.roomX;
+			enemyPosY = player.roomY - 1;
+			if (room[enemyPosY][enemyPosX].enemyPos) {
 
-	//}
+			}
+			else if (room[enemyPosY - 1][enemyPosX].enemyPos)
+				enemyPosY--;
+		}
+		else if (dir == DOWN) {
+			enemyPosX = player.roomX;
+			enemyPosY = player.roomY + 1;
+			if (room[enemyPosY][enemyPosX].enemyPos) {
+
+			}
+			else if (room[enemyPosY + 1][enemyPosX].enemyPos)
+				enemyPosY++;
+		}
+		else if (dir == LEFT) {
+			enemyPosX = player.roomX - 1;
+			enemyPosY = player.roomY;
+			if (room[enemyPosY][enemyPosX].enemyPos) {
+
+			}
+			else if (room[enemyPosY][enemyPosX - 1].enemyPos) {
+				enemyPosX--;
+			}
+		}
+		else {
+			enemyPosX = player.roomX + 1;
+			enemyPosY = player.roomY;
+			if (room[enemyPosY][enemyPosX].enemyPos) {
+
+			}
+			else if (room[enemyPosY][enemyPosX + 1].enemyPos) {
+				enemyPosX++;
+			}
+		}
+		for (int i = 0; i < ENEMYNUMBER; i++) {
+			if (room[enemyPosY][enemyPosX].enemyPos == true) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
-/*ダンジョン更新*/
+/***************************************
+*ダンジョン更新
+*作者：林
+***************************************/
 void UpdateBigMap() {
 	int mapX, mapY;
 	mapX = (player.roomX - 1) / 5 + 1;
@@ -817,8 +932,12 @@ void UpdateBigMap() {
 		}
 	}
 }
-/*ダンジョンの表示*/
+/***************************************
+*ダンジョンの表示
+*作者：林
+***************************************/
 void ShowBigMap() {
+	cout << ">dungenon map<" << endl;
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (dangeon[i][j].type == WALL && dangeon[i][j].playerPos != true) {
@@ -834,9 +953,12 @@ void ShowBigMap() {
 		cout << endl;
 	}
 }
-/*部屋の表示*/
+/***************************************
+*部屋の表示
+*作者：林
+***************************************/
 void ShowRoom() {
-	cout << "---------------" << endl;
+	cout << "->room map<-" << endl;
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
 			if (dangeon[i][j].playerPos == true)
@@ -890,7 +1012,10 @@ void ShowRoom() {
 	cout << "===============================================================================" << endl;*/
 
 }
-/*装備管理*/
+/***************************************
+*装備管理
+*作者：横林
+***************************************/
 void InventoryManage() {
 	if (clsFlag_Inventory == false) {
 		system("CLS");
@@ -906,7 +1031,7 @@ void InventoryManage() {
 	}
 
 	cout << endl;
-	cout << "Input a number that you want to change(twice time same number will equip , '888' to back ,'999' to discard):";
+	cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
 	cin >> a;
 	if (a == 888) {
 	}
@@ -977,7 +1102,10 @@ void InventoryManage() {
 	player.inventoryMode = false;
 	clsFlag_Inventory = false;
 }
-/*プレイヤーの状態を表示する*/
+/***************************************
+*playerの状態を表示する
+*作者：荒井
+***************************************/
 void ShowPlayerStatus() {
 	cout << "press 'r' to manage inventory, 'space' to wait" << endl;
 	cout << endl;
@@ -1003,12 +1131,16 @@ void ShowPlayerStatus() {
 		}
 	}
 }
-/*敵の状態を表示する*/ //寫法需要優化
+/***************************************
+*敵の状態を表示する
+*作者：林
+*寫法需要優化
+***************************************/
 void ShowEnemyStatus() {
 	int roomX_min, roomX_max, roomY_min, roomY_max;
-	int x = 50, y = 14;
+	int x = 50, y = 15;
 	GotoXY(x, y++);
-	cout << "enemyPtr:" << enemyPtr + 1 << endl;
+	//cout << "enemyPtr:" << enemyPtr + 1 << endl;
 	GotoXY(x, y++);
 	int basicY = y;
 	//プレイヤーがダンジョンのどこにいるかを探す
@@ -1028,7 +1160,7 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << " enemy(" << j % 5 << "," << i % 5 << ")" << endl;
+									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
@@ -1052,13 +1184,19 @@ void ShowEnemyStatus() {
 	}
 }
 
-/*ランダムの初期化*/
+/***************************************
+*ランダムの初期化
+*作者：林
+***************************************/
 void StartRnd() {
 	unsigned seed;
 	seed = (unsigned)time(NULL);
 	srand(seed);
 }
-/*画面の座標を(x,y)に移動する*/
+/***************************************
+*画面の座標を(x,y)に移動する
+*作者：林
+***************************************/
 inline void GotoXY(int x, int y)
 {
 	COORD coord;

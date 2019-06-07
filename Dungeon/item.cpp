@@ -1,4 +1,7 @@
-﻿#include"pch.h"
+﻿/*
+*作者：横林
+*/
+#include"pch.h"
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
