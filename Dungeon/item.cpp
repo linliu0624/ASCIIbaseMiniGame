@@ -87,7 +87,7 @@ void ItemInit() {
 	simplePotion.flag = true;
 	simplePotion.hp = 10;
 }
-void CreateVoid() {
+void CreateEmpty() {
 	strcpy(nothing.name, "nothing");
 	nothing.mateTag = NOTHING;
 	nothing.value = 0;

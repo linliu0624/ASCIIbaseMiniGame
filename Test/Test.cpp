@@ -37,7 +37,7 @@ void main() {
 	a[0][0].isMark = true;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
-			int n = rand() % 5 + 1;
+			int n = rand() % 3 + 1;
 			a[i][j].y = i;
 			a[i][j].x = j;
 			if ((i == 0 && j == 0) || (i == 4 && j == 4)) {
@@ -57,6 +57,7 @@ void main() {
 
 		}
 	}
+	
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
@@ -82,29 +83,40 @@ void main() {
 }
 
 void Search(int x, int y) {
-	queue<point> myQue;
+	queue<point> myque;
 	point tp;
-	tp.x = x; tp.y = y;
-	myQue.push(tp);
-	int count = 0;
-	while (!myQue.empty()) {
-		count++;
-		tp = myQue.front(); myQue.pop();
-		if (count==5*25)break;
-		for (int i = 0; i < 4; i++) {
-			if (tp.x + fx[i] < 5 && tp.y + fy[i] < 5 && tp.x + fx[i] >= 0 && tp.y + fy[i] >= 0) {
+	tp.x = x; tp.y = y; //初始化开始节点dis设为0
+	myque.push(tp);
+	do
+	{
+		tp = myque.front(); myque.pop();//从队头取节点
+		for (int i = 0; i < 4; i++)
+		{
+			if (tp.x + fx[i] < 5 && tp.x + fx[i] >= 0 && tp.y + fy[i] < 5 &&
+				tp.y + fy[i] >= 0 && a[tp.x + fx[i]][tp.y + fy[i]].n == 0)
+			{
 				point tmp;
 				tmp.x = tp.x + fx[i];
 				tmp.y = tp.y + fy[i];
-				if (a[tmp.x][tmp.y].goAble == false)
-				{
-					continue;
-				}
+				if (!a[tmp.x][tmp.y].isMark)
+					myque.push(tmp);
 				a[tmp.x][tmp.y].isMark = true;
-				myQue.push(tmp);
 			}
 		}
-	}
+		//cout << myque.front().x << "," << myque.front().y << endl;
+		//cout << myque.size() << endl;
+		/*for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (a[i][j].goAble == true && a[i][j].isMark == true) {
+					cout << "X ";
+				}
+				else {
+					cout << a[i][j].n << " ";
+				}
+			}
+			cout << endl;
+		}*/
+	} while (!myque.empty());
 }
 void StartRnd() {
 	unsigned seed;

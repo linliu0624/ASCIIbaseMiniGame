@@ -37,6 +37,6 @@ extern material simplePotion;
 
 void WeaponInit();
 void ArmorInit();
-void CreateVoid();
+void CreateEmpty();
 void ItemInit();
 int Damage(int);

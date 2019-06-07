@@ -124,16 +124,19 @@ void Init() {
 	clsFlag_Inventory = false;
 	haveEnemyFlag = false;
 	//ダンジョン生成
-	while (true) {
+	do {
 		CreateMap();
 		ShowBigMap();
+	//ShowRoom();
 		cout << "Do you want this dungeon?(y/n):";
 		cin >> flag;
 		if (flag == 'y' || flag == 'Y') {
 			break;
 		}
 		system("cls");
-	}
+	} while (true);// (!SearchRoom());
+	//部屋生成
+	CreateRoom();
 	//武器の初期化
 	WeaponInit();
 	//アーマーの初期化
@@ -141,9 +144,7 @@ void Init() {
 	//アイテムの初期化
 	ItemInit();
 	//空欄
-	CreateVoid();
-	//部屋生成
-	CreateRoom();
+	CreateEmpty();
 	//プレイヤー生成
 	player = CreatePlayer();
 	//敵の初期化
@@ -197,6 +198,7 @@ static void Refresh() {
 
 /*生成大地圖*/
 void CreateMap() {
+	int wallNum = 5;
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			//如果不是邊框
@@ -208,14 +210,15 @@ void CreateMap() {
 				}
 				else {
 					//部屋の生成
-					dangeon[i][j].type = rand() % 10 + 1;//(1~5)
+					dangeon[i][j].type = rand() % 5 + 1;//(1~5)
 					if (dangeon[i][j].type != WALL) {
 						dangeon[i][j].type = ROOM;
 						dangeon[i][j].playerPos = false;
 					}
-					else {
+					else if (wallNum > 0) {
 						dangeon[i][j].type = WALL;
 						dangeon[i][j].playerPos = false;
+						wallNum--;
 					}
 				}
 			}
@@ -875,8 +878,8 @@ void ShowRoom() {
 		}
 		cout << "|" << endl;
 	}
-	cout << "===============================================================================" << endl;
-	*/
+	cout << "===============================================================================" << endl;*/
+
 }
 /*装備管理*/
 void InventoryManage() {
@@ -1016,7 +1019,7 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << " enemy(" << j % 5 << "," << i % 5 << ")" << enemy[e].firstRoomX % 5 << "," << enemy[e].firstRoomY % 5 << endl;
+									cout << " enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
