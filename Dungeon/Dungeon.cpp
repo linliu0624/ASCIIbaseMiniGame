@@ -777,7 +777,8 @@ void Attack(int weaponType, bool playerToEnemy) {
 				}
 				enemy[i].hp -= bodyDamage;
 				//敵が死んだ時
-				if (enemy[i].hp <= 0 && enemy[i].alive) {
+				if (enemy[i].hp <= 0) {
+					if (!enemy[i].alive)continue;
 					EnemyDieAndDrop(i);
 				}
 				break;
