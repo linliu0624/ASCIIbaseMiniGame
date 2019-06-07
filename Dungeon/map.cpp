@@ -27,7 +27,6 @@ bool SearchRoom()
 				tmp.y = tp.y + fy[i];
 				if (!room[tmp.y][tmp.x].mark)
 					roomQue.push(tmp);
-
 				room[tmp.y][tmp.x].mark = true;
 				
 			}

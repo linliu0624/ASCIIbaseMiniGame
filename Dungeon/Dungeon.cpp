@@ -120,23 +120,27 @@ void Init() {
 
 	//ゲーム画面の大きさを設定する
 	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
-	char flag;
+	//char flag;
+	bool flag;
 	clsFlag_Inventory = false;
 	haveEnemyFlag = false;
 	//ダンジョン生成
 	do {
+		
 		CreateMap();
+		//部屋生成
+		CreateRoom();
 		ShowBigMap();
-	//ShowRoom();
-		cout << "Do you want this dungeon?(y/n):";
-		cin >> flag;
-		if (flag == 'y' || flag == 'Y') {
-			break;
-		}
+		flag = SearchRoom();
+		//	cout << "Do you want this dungeon?(y/n):";
+		//	cin >> flag;
+		//	if (flag == 'y' || flag == 'Y') {
+		//		break;
+		//	}
 		system("cls");
-	} while (true);// (!SearchRoom());
-	//部屋生成
-	CreateRoom();
+	} while (flag == false);
+
+
 	//武器の初期化
 	WeaponInit();
 	//アーマーの初期化
@@ -210,7 +214,7 @@ void CreateMap() {
 				}
 				else {
 					//部屋の生成
-					dangeon[i][j].type = rand() % 5 + 1;//(1~5)
+					dangeon[i][j].type = rand() % 8 + 1;//(1~8)
 					if (dangeon[i][j].type != WALL) {
 						dangeon[i][j].type = ROOM;
 						dangeon[i][j].playerPos = false;
@@ -596,6 +600,7 @@ void CreateRoom() {
 	//歩けるマスと壁の生成
 	for (int i = 1; i < ROOMRANGE; i++) {
 		for (int j = 1; j < ROOMRANGE; j++) {
+			room[i][j].mark = false;
 			rnd = rand() % 8;
 			if (rnd == 5 && i > 5 && j > 5) {
 				room[i][j].type = WALL;
@@ -872,8 +877,12 @@ void ShowRoom() {
 			else if (room[y][x].type == ENEMY) {
 				cout << "e";
 			}
-			else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
+			else if (room[y][x].mark && room[y][x].playerPos != true) {
 				cout << "O";
+			}
+
+			if (room[y][x].type == FLOOR && !room[y][x].mark) {
+				cout << "?";
 			}
 		}
 		cout << "|" << endl;
