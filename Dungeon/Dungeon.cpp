@@ -869,7 +869,7 @@ bool IsEnemy(int dir) {
 			if (room[enemyPosY][enemyPosX].enemyPos) {
 
 			}
-			else if (room[enemyPosY - 1][enemyPosX].enemyPos)
+			else if (room[enemyPosY - 1][enemyPosX].enemyPos && room[enemyPosY][enemyPosX].type != WALL)
 				enemyPosY--;
 		}
 		else if (dir == DOWN) {
@@ -878,7 +878,7 @@ bool IsEnemy(int dir) {
 			if (room[enemyPosY][enemyPosX].enemyPos) {
 
 			}
-			else if (room[enemyPosY + 1][enemyPosX].enemyPos)
+			else if (room[enemyPosY + 1][enemyPosX].enemyPos && room[enemyPosY][enemyPosX].type != WALL)
 				enemyPosY++;
 		}
 		else if (dir == LEFT) {
@@ -887,7 +887,7 @@ bool IsEnemy(int dir) {
 			if (room[enemyPosY][enemyPosX].enemyPos) {
 
 			}
-			else if (room[enemyPosY][enemyPosX - 1].enemyPos) {
+			else if (room[enemyPosY][enemyPosX - 1].enemyPos && room[enemyPosY][enemyPosX].type != WALL) {
 				enemyPosX--;
 			}
 		}
@@ -897,12 +897,12 @@ bool IsEnemy(int dir) {
 			if (room[enemyPosY][enemyPosX].enemyPos) {
 
 			}
-			else if (room[enemyPosY][enemyPosX + 1].enemyPos) {
+			else if (room[enemyPosY][enemyPosX + 1].enemyPos && room[enemyPosY][enemyPosX].type != WALL) {
 				enemyPosX++;
 			}
 		}
 		for (int i = 0; i < ENEMYNUMBER; i++) {
-			if (room[enemyPosY][enemyPosX].enemyPos == true) {
+			if (room[enemyPosY][enemyPosX].enemyPos && enemy[i].samePosWithPlayer) {
 				return true;
 			}
 		}
