@@ -1054,11 +1054,13 @@ void InventoryManage() {
 			while (true) {
 				cout << "Discard:";
 				cin >> b;
-				if (b < 1 || b > INT_MAX) {
+
+				if (b < 1 || player.inventory[b].mateTag == NOTHING) {
 					cin.clear();
 					cin.ignore(100, '\n');
 				}
 				else if (b > 0 && b < INT_MAX)break;
+
 			}
 
 			b--;
@@ -1078,11 +1080,11 @@ void InventoryManage() {
 		while (true) {
 			cout << "Change to:";
 			cin >> b;
-			if (b < 1 || b > INT_MAX) {
+			if (b < 1 || b > 64) {
 				cin.clear();
 				cin.ignore(100, '\n');
 			}
-			else if (b > 0 && b < INT_MAX)break;
+			else if (b > 0 && b < 64)break;
 		}
 		a--;
 		b--;
