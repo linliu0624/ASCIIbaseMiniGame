@@ -249,7 +249,7 @@ unit CreatePlayer() {
 	tmpPlayer.maxHp = 30;
 	tmpPlayer.hp = tmpPlayer.maxHp;
 	tmpPlayer.type = PLAYER;
-	tmpPlayer.weapon = spear;//fist;
+	tmpPlayer.weapon = fist;
 	tmpPlayer.armor = noArmor;
 	for (int i = 2; i < 64; i++) {
 		tmpPlayer.inventory[i] = nothing;
@@ -294,7 +294,7 @@ void CreateEnemy() {
 			enemy[i].weapon = fist;
 		else if (weaponRnd >= 20 && weaponRnd < 40)
 			enemy[i].weapon = axe;
-		else if (weaponRnd >= 40 && weaponRnd < 50)
+		else if (weaponRnd >= 40 && weaponRnd < 60)
 			enemy[i].weapon = spear;
 		else
 			enemy[i].weapon = sword;
@@ -590,9 +590,9 @@ void EnemyMove(int enemyNumber, bool type) {
 	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
 	//}
 	//}
-//-----------------------是否會碰到隊友-----------------------
+	//-----------------------是否會碰到隊友-----------------------
 	else {//if (moveFlag == true) {
-		//もし、enemy[i]の下は仲間がいなければ。
+	//もし、enemy[i]の下は仲間がいなければ。
 		if (enemy[enemyNumber].moveWay) {
 			if (enemyY != player.roomY) {
 				if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
@@ -770,7 +770,7 @@ void Attack(int weaponType, bool playerToEnemy) {
 				}
 				enemy[i].hp -= bodyDamage;
 				//敵が死んだ時
-				if (enemy[i].hp <= 0) {
+				if (enemy[i].hp <= 0 && enemy[i].alive) {
 					EnemyDieAndDrop(i);
 				}
 				break;
@@ -812,7 +812,6 @@ void EnemyDieAndDrop(int number) {
 	enemy[number].hp = 0;
 	enemy[number].alive = false;
 	room[enemy[number].roomY][enemy[number].roomX].enemyPos = false;
-
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		if (player.inventory[i].mateTag != WEAPON && player.inventory[i].mateTag != ARMOR &&
 			player.inventory[i].mateTag != ITEM) {
