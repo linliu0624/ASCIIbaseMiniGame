@@ -5,6 +5,7 @@
 #include <time.h>
 #include <malloc.h>
 #include <time.h>
+#include <cstdlib>
 #include "item.h"
 #include "conio.h"
 #include "define.h"
@@ -82,6 +83,7 @@ int Damage(int);
 void Attack(int, bool);
 //玩家死亡
 void PlayerDie();
+
 
 unit player;
 unit enemy[ENEMYNUMBER];
@@ -541,58 +543,63 @@ void EnemyTurn() {
 *作者：林
 ***************************************/
 void EnemyMove(int enemyNumber, bool type) {
+	//敵人拿攻擊距離2武器還是會依照1的方式行動
 	int enemyX, enemyY;
 	bool moveFlag = true;
 	enemyX = enemy[enemyNumber].roomX;
 	enemyY = enemy[enemyNumber].roomY;
 	//-------------------是否會碰到玩家-----------------------
-	//if (type == 1) {
+	if (type == 1) {
 		//下
-	if (room[enemyY + 1][enemyX].playerPos == true) {
-		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		if (room[enemyY + 1][enemyX].playerPos == true) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//上
+		else if (room[enemyY - 1][enemyX].playerPos == true) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//右
+		else if (room[enemyY][enemyX + 1].playerPos == true) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//左
+		else if (room[enemyY][enemyX - 1].playerPos == true) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
 	}
-	//上
-	else if (room[enemyY - 1][enemyX].playerPos == true) {
-		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	}
-	//右
-	else if (room[enemyY][enemyX + 1].playerPos == true) {
-		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	}
-	//左
-	else if (room[enemyY][enemyX - 1].playerPos == true) {
-		//攻擊
-		Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	}
-	//}
-	//else if (type == 2) {
+	else if (type == 2) {
 		//下
-	//if (room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) {
-	//	//攻擊
-	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	//}
-	////上
-	//else if (room[enemyY - 1][enemyX].playerPos == true || room[enemyY - 2][enemyX].playerPos == true) {
-	//	//攻擊
-	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	//}
-	////右
-	//else if (room[enemyY][enemyX + 1].playerPos == true || room[enemyY][enemyX + 2].playerPos == true) {
-	//	//攻擊
-	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	//}
-	////左
-	//else if (room[enemyY][enemyX - 1].playerPos == true || room[enemyY][enemyX - 2].playerPos == true) {
-	//	//攻擊
-	//	Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
-	//}
-	//}
+		if ((room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) &&
+			room[enemyY + 1][enemyX].type != WALL) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//上
+		else if ((room[enemyY - 1][enemyX].playerPos == true || room[enemyY - 2][enemyX].playerPos == true) &&
+			room[enemyY - 1][enemyX].type != WALL) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//右
+		else if ((room[enemyY][enemyX + 1].playerPos == true || room[enemyY][enemyX + 2].playerPos == true) &&
+			room[enemyY][enemyX + 1].type != WALL) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+		//左
+		else if ((room[enemyY][enemyX - 1].playerPos == true || room[enemyY][enemyX - 2].playerPos == true) &&
+			room[enemyY][enemyX - 1].type != WALL) {
+			//攻擊
+			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+		}
+	}
 	//-----------------------是否會碰到隊友-----------------------
-	else {//if (moveFlag == true) {
-	//もし、enemy[i]の下は仲間がいなければ。
+	if (moveFlag == true) {
+		//もし、enemy[i]の下は仲間がいなければ。
 		if (enemy[enemyNumber].moveWay) {
 			if (enemyY != player.roomY) {
 				if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
@@ -1016,6 +1023,7 @@ void ShowRoom() {
 *作者：横林
 ***************************************/
 void InventoryManage() {
+	bool outFlag = false;
 	if (clsFlag_Inventory == false) {
 		system("CLS");
 		clsFlag_Inventory = !clsFlag_Inventory;
@@ -1030,14 +1038,29 @@ void InventoryManage() {
 	}
 
 	cout << endl;
-	cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
-	cin >> a;
+	while (1) {
+		cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
+		cin >> a;
+		if (a < 1 || a > INT_MAX) {
+			cin.clear();
+			cin.ignore(100, '\n');
+		}
+		else if (a > 0 && a < INT_MAX)break;
+	}
 	if (a == 888) {
 	}
 	else if (a == 999) {
 		while (true) {
-			cout << "Discard:";
-			cin >> b;
+			while (true) {
+				cout << "Discard:";
+				cin >> b;
+				if (b < 1 || b > INT_MAX) {
+					cin.clear();
+					cin.ignore(100, '\n');
+				}
+				else if (b > 0 && b < INT_MAX)break;
+			}
+
 			b--;
 			cout << "If you discard, your item will never back. Are you sure?(y/n):";
 			char ch;
@@ -1052,8 +1075,15 @@ void InventoryManage() {
 		}
 	}
 	else {
-		cout << "Change to:";
-		cin >> b;
+		while (true) {
+			cout << "Change to:";
+			cin >> b;
+			if (b < 1 || b > INT_MAX) {
+				cin.clear();
+				cin.ignore(100, '\n');
+			}
+			else if (b > 0 && b < INT_MAX)break;
+		}
 		a--;
 		b--;
 
