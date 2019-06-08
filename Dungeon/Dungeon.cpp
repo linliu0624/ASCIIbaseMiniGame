@@ -65,13 +65,13 @@ void PlayerAttack();
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
-void EnemyAttack(int);
+bool EnemyAttack(int);
 //プレイヤーのタン
 void PlayerMove();
 //敵のターン
 void EnemyTurn();
 //敵の移動
-void EnemyMove(int, bool);
+void EnemyMove(int);
 //敵が死ぬ
 void EnemyDieAndDrop(int);
 //装備管理
@@ -300,7 +300,7 @@ void CreateEnemy() {
 			enemy[i].weapon = spear;
 		else
 			enemy[i].weapon = sword;
-		//防具を装備する
+			//防具を装備する
 		if (armorRnd < 60)
 			enemy[i].armor = noArmor;
 		else if (armorRnd >= 60 && armorRnd < 90) {
@@ -521,18 +521,11 @@ void PlayerMove() {
 *作者：林
 ***************************************/
 void EnemyTurn() {
-
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		if (enemy[i].samePosWithPlayer == true && enemy[i].alive == true) {
-			int enemyWeapon = enemy[i].weapon.weaponType;
-			//攻擊距離1的武器
-			if (enemyWeapon == FIST || enemyWeapon == LONG_SWORD || enemyWeapon == AXE) {
-				EnemyMove(i, 1);
-				//以上兩者都不會就移動
-			}
-			else if (enemyWeapon == SPEAR) {
-				EnemyMove(i, 2);
-			}
+			if (EnemyAttack(i))
+				EnemyMove(i);
+			continue;
 		}
 	}
 }
@@ -542,126 +535,135 @@ void EnemyTurn() {
 *int type 武器の攻撃種類
 *作者：林
 ***************************************/
-void EnemyMove(int enemyNumber, bool type) {
+void EnemyMove(int enemyNumber) {
 	//敵人拿攻擊距離2武器還是會依照1的方式行動
 	int enemyX, enemyY;
-	bool moveFlag = true;
 	enemyX = enemy[enemyNumber].roomX;
 	enemyY = enemy[enemyNumber].roomY;
+	//-----------------------是否會碰到隊友-----------------------
+		//もし、enemy[i]の下は仲間がいなければ。
+	if (enemy[enemyNumber].moveWay) {
+		if (enemyY != player.roomY) {
+			if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY--;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+			else if (enemyY < player.roomY && room[enemyY + 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY++;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+		}
+		else if (enemyX != player.roomX) {
+			if (enemyX > player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX--;
+				enemyX = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+			else if (enemyX < player.roomX && room[enemyY][enemyX + 1].enemyPos != true && room[enemyY][enemyX + 1].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX++;
+				enemyX = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+		}
+	}
+	else {
+		if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
+			if (enemy[enemyNumber].roomX > player.roomX) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX--;
+				enemyX = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+			else if (enemyX < player.roomX && room[enemyY][enemyX + 1].enemyPos != true && room[enemyY][enemyX + 1].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomX++;
+				enemyX = enemy[enemyNumber].roomX;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+		}
+		else if (enemyY != player.roomY) {
+			if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY--;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+			else if (enemyY < player.roomY && room[enemyY + 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
+				room[enemyY][enemyX].enemyPos = false;
+				enemy[enemyNumber].roomY++;
+				enemyY = enemy[enemyNumber].roomY;
+				room[enemyY][enemyX].enemyPos = true;
+			}
+		}
+	}
+	enemy[enemyNumber].moveWay = !enemy[enemyNumber].moveWay;
+}
+/***************************************
+*enemyの攻撃
+*int enemyNumber　敵が配列にいる番号
+*作者：林
+***************************************/
+bool EnemyAttack(int enemyNumber) {
+	int enemyX, enemyY, enemyWeaponType;
+	enemyX = enemy[enemyNumber].roomX;
+	enemyY = enemy[enemyNumber].roomY;
+	enemyWeaponType = enemy[enemyNumber].weapon.weaponType;
 	//-------------------是否會碰到玩家-----------------------
-	if (type == 1) {
+	if (enemyWeaponType == 0 || enemyWeaponType == 1 || enemyWeaponType == 2) {
 		//下
 		if (room[enemyY + 1][enemyX].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//上
 		else if (room[enemyY - 1][enemyX].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//右
 		else if (room[enemyY][enemyX + 1].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//左
 		else if (room[enemyY][enemyX - 1].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 	}
-	else if (type == 2) {
+	else if (enemyWeaponType == 3) {
 		//下
 		if ((room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) &&
 			room[enemyY + 1][enemyX].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//上
 		else if ((room[enemyY - 1][enemyX].playerPos == true || room[enemyY - 2][enemyX].playerPos == true) &&
 			room[enemyY - 1][enemyX].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//右
 		else if ((room[enemyY][enemyX + 1].playerPos == true || room[enemyY][enemyX + 2].playerPos == true) &&
 			room[enemyY][enemyX + 1].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 		//左
 		else if ((room[enemyY][enemyX - 1].playerPos == true || room[enemyY][enemyX - 2].playerPos == true) &&
 			room[enemyY][enemyX - 1].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); moveFlag = false;
+			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 	}
-	//-----------------------是否會碰到隊友-----------------------
-	if (moveFlag == true) {
-		//もし、enemy[i]の下は仲間がいなければ。
-		if (enemy[enemyNumber].moveWay) {
-			if (enemyY != player.roomY) {
-				if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY && room[enemyY + 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-			else if (enemyX != player.roomX) {
-				if (enemyX > player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX && room[enemyY][enemyX + 1].enemyPos != true && room[enemyY][enemyX + 1].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-		}
-		else {
-			if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
-				if (enemy[enemyNumber].roomX > player.roomX) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX--;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyX < player.roomX && room[enemyY][enemyX + 1].enemyPos != true && room[enemyY][enemyX + 1].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomX++;
-					enemyX = enemy[enemyNumber].roomX;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-			else if (enemyY != player.roomY) {
-				if (enemyY > player.roomY && room[enemyY - 1][enemyX].enemyPos != true && room[enemyY - 1][enemyX].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY--;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-				else if (enemyY < player.roomY && room[enemyY + 1][enemyX].enemyPos != true && room[enemyY + 1][enemyX].type != WALL) {
-					room[enemyY][enemyX].enemyPos = false;
-					enemy[enemyNumber].roomY++;
-					enemyY = enemy[enemyNumber].roomY;
-					room[enemyY][enemyX].enemyPos = true;
-				}
-			}
-		}
-		enemy[enemyNumber].moveWay = !enemy[enemyNumber].moveWay;
-	}
+	return true;
 }
 /***************************************
 *部屋を作る
