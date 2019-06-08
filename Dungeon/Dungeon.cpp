@@ -507,7 +507,7 @@ void PlayerMove() {
 		else if (ch == SPACE) {
 			flag = true;
 		}
-		else if (ch == 'r' || ch == 'R') {
+		else if (ch == 'i' || ch == 'I') {
 			player.inventoryMode = !player.inventoryMode;
 			flag = true;
 		}
@@ -1081,11 +1081,11 @@ void InventoryManage() {
 		while (true) {
 			cout << "Change to:";
 			cin >> b;
-			if (b < 1 || b > 64) {
+			if (b < 1 || b > MAX_INVENTORY) {
 				cin.clear();
 				cin.ignore(100, '\n');
 			}
-			else if (b > 0 && b < 64)break;
+			else if (b > 0 && b < MAX_INVENTORY)break;
 		}
 		a--;
 		b--;
@@ -1139,7 +1139,7 @@ void InventoryManage() {
 *作者：荒井
 ***************************************/
 void ShowPlayerStatus() {
-	cout << "press 'r' to manage inventory, 'space' to wait" << endl;
+	cout << "press 'i' to manage inventory, 'space' to wait" << endl;
 	cout << endl;
 
 	int value = 0;
