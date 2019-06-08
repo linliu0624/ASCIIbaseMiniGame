@@ -19,6 +19,8 @@ struct unit {
 	
 	
 	//ª±®a
+	int maxWeight;
+	int weight;
 	char name[100];
 	bool inventoryMode = false;
 	//¼Ä¤H

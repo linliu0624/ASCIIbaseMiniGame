@@ -163,15 +163,14 @@ void Update() {
 	bool haveEnemy;
 	//装備管理モードか？
 	if (player.inventoryMode == false) {
-		//int currentPlayerX = player.x, currentPlayerY = player.y;
-		//int newPlayerX, newPlayerY;
-		haveEnemy = SearchEnemy();
+		SearchEnemy();
 		PlayerMove();
 		UpdateBigMap();
 		Refresh();
 		if (player.inventoryMode == false) {
 			haveEnemy = SearchEnemy();
-			EnemyTurn();
+			if (haveEnemy)
+				EnemyTurn();
 			//敵を削除して。生成と配置をし直す。
 			if (playerMoveCounter > RE_ENEMYNUMBER && !haveEnemy) {
 				DeleteAllEnemy();
@@ -179,11 +178,8 @@ void Update() {
 				SpawnEnemy();
 				playerMoveCounter = 0;
 			}
-			//newPlayerX = player.x; newPlayerY = player.y;
-			//if (currentPlayerX != newPlayerX || currentPlayerY != newPlayerY) {
 			Refresh();
 		}
-		//}
 	}
 	else {
 		InventoryManage();
@@ -300,7 +296,7 @@ void CreateEnemy() {
 			enemy[i].weapon = spear;
 		else
 			enemy[i].weapon = sword;
-			//防具を装備する
+		//防具を装備する
 		if (armorRnd < 60)
 			enemy[i].armor = noArmor;
 		else if (armorRnd >= 60 && armorRnd < 90) {
@@ -573,7 +569,7 @@ void EnemyMove(int enemyNumber) {
 		}
 	}
 	else {
-		if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
+		if (enemyX != player.roomX) {
 			if (enemy[enemyNumber].roomX > player.roomX) {
 				room[enemyY][enemyX].enemyPos = false;
 				enemy[enemyNumber].roomX--;
