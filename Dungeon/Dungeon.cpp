@@ -282,6 +282,18 @@ void CreateEnemy() {
 		enemy[i].maxHp = 30;
 		enemy[i].hp = 10 + rand() % 10 + rand() % 10;
 		enemy[i].type = ENEMY;
+		if (i % 4 == 0) {
+			strcpy(enemy[i].name, "!");
+		}
+		else if (i % 4 == 1) {
+			strcpy(enemy[i].name, "@");
+		}
+		else if (i % 4 == 2) {
+			strcpy(enemy[i].name, "#");
+		}
+		else if (i % 4 == 3) {
+			strcpy(enemy[i].name, "$");
+		}
 		if (i % 2 == 0)enemy[i].moveWay = true;
 		else enemy[i].moveWay = false;
 		weaponRnd = rand() % 100 + 1;
@@ -978,7 +990,10 @@ void ShowRoom() {
 							cout << "X ";
 						}
 						else if (room[y][x].enemyPos == true) {
-							cout << "e ";
+							for (int i = 0; i < ENEMYNUMBER; i++)
+								if (enemy[i].roomX == x && enemy[i].roomY == y)
+									cout << enemy[i].name<<" ";
+							//cout << "e ";
 						}
 						else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
 							cout << "  ";
@@ -1190,7 +1205,8 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
+									cout << "name:" << enemy[e].name << endl;
+									//cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
