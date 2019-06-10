@@ -14,12 +14,10 @@
 #include <queue>
 using namespace std;
 /*************待解決問題***************
-攻擊距離超過1的情況
 包包滿了的情況與重做
 逃出
 玩家死
 依照玩家的武器和護甲來決定敵人裝備物品
-地圖生成重做
 商人
 敵人尋找路徑
 起始畫面
@@ -128,7 +126,6 @@ void Init() {
 	haveEnemyFlag = false;
 	//ダンジョン生成
 	do {
-
 		CreateMap();
 		//部屋生成
 		CreateRoom();
@@ -215,16 +212,19 @@ void CreateMap() {
 				}
 				else {
 					//部屋の生成
-					dangeon[i][j].type = rand() % 8 + 1;//(1~8)
-					if (dangeon[i][j].type != WALL) {
-						dangeon[i][j].type = ROOM;
-						dangeon[i][j].playerPos = false;
-					}
-					else if (wallNum > 0) {
-						dangeon[i][j].type = WALL;
-						dangeon[i][j].playerPos = false;
+					int type= rand() % 5 + 1;//(1~5)
+					if (type == WALL) {
 						wallNum--;
+						if (wallNum <= 0) {
+							type = ROOM;
+						}
 					}
+					else {
+						type = ROOM;
+					}
+					dangeon[i][j].type = type;
+					dangeon[i][j].playerPos = false;
+
 				}
 			}
 			else {

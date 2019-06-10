@@ -45,7 +45,7 @@ bool SearchRoom()
 			}
 		}
 	}
-	cout << walkAbleNum << " | " << isMarkNum << endl;
+	//cout << walkAbleNum << " | " << isMarkNum << endl;
 	
 	if (walkAbleNum == isMarkNum)
 		return true;
