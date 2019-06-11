@@ -14,7 +14,7 @@ struct unit {
 	int hp;
 	material weapon;
 	material armor;
-	material inventory[64];
+	material inventory[MAX_INVENTORY];
 	bool alive;
 	
 	

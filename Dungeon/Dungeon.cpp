@@ -14,6 +14,7 @@
 #include <queue>
 using namespace std;
 /*************待解決問題***************
+敵人的生成有時候會有bug(機率低)
 包包滿了的情況與重做
 逃出
 玩家死
@@ -249,7 +250,7 @@ unit CreatePlayer() {
 	tmpPlayer.type = PLAYER;
 	tmpPlayer.weapon = fist;
 	tmpPlayer.armor = noArmor;
-	tmpPlayer.maxWeight = MAX_WEIGHT;
+	tmpPlayer.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		tmpPlayer.inventory[i] = nothing;
@@ -440,8 +441,10 @@ void DeleteAllEnemy() {
 *作者：林
 ***************************************/
 void PlayerTurn() {
+	int ch;
+	bool flag = false;
+
 	//玩家負重計算與檢測
-	bool tooHeavy = false;
 	player.weight = 0;
 	player.weight += player.weapon.weight;
 	player.weight += player.armor.weight;
@@ -449,15 +452,9 @@ void PlayerTurn() {
 		player.weight += player.inventory[i].weight;
 	}
 	if (player.weight > player.maxWeight) {
-		tooHeavy = true;
+		player.inventoryMode = !player.inventoryMode;
+		flag = true;
 	}
-	else {
-		tooHeavy = false;
-	}
-
-	int ch;
-	bool flag = false;
-
 
 	while (!flag) {
 		ch = _getch();
@@ -468,7 +465,7 @@ void PlayerTurn() {
 		int currentX, currentY, newX, newY;
 		currentX = player.roomX; currentY = player.roomY;
 		//如果過重就不能動，然後跳通知說要丟裝備
-		if ((ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT)) {
+		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
 				//武器の攻撃範囲で敵がいるかどうかを判定する
@@ -726,52 +723,6 @@ void CreateRoom() {
 		}
 	}
 }
-/***************************************
-*ダメージの計算
-*int damage1 ダメージ量1
-*int damage2 ダメージ量2
-*int bonus   ダメージボーナス
-*bool playerToEnemy プレイヤーの攻撃か
-****************************************/
-//void Damage(int damage1, int damage2, int bonus, bool playerToEnemy) {
-//
-//	int totalDamage;
-//	int armorDamage;
-//	int bodyDamage;
-//	if (playerToEnemy) {
-//		for (int i = 0; i < ENEMYNUMBER; i++) {
-//			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
-//				totalDamage = damage1 + damage2 + bonus;
-//				armorDamage = enemy[i].armor.def*totalDamage;
-//
-//				//armorDamage少なくても1
-//				if (armorDamage < 1) {
-//					armorDamage = 1;
-//				}
-//				//armorDamageが壊れた時
-//				if (enemy[i].armor.hp <= 0) {
-//					enemy[i].armor.hp = 0;
-//					enemy[i].armor = noArmor;
-//					armorDamage = 0;
-//				}
-//				enemy[i].armor.hp -= armorDamage;
-//				bodyDamage = totalDamage - armorDamage;
-//				if (bodyDamage <= 0) {
-//					bodyDamage = 0;
-//				}
-//				enemy[i].hp -= bodyDamage;
-//				//敵が死んだ時
-//				if (enemy[i].hp <= 0) {
-//					EnemyDieAndDrop(i);
-//				}
-//				break;
-//			}
-//		}
-//	}
-//	else {
-//
-//	}
-//}
 /***************************************
 *攻撃
 *int weaponType 武器のタイプ
@@ -1066,9 +1017,14 @@ void InventoryManage() {
 		system("CLS");
 		clsFlag_Inventory = !clsFlag_Inventory;
 	}
+	if (player.weight > player.maxWeight) {
+		cout << ">>You carry to many things, discard something!<<" << endl;
+		cout << "weight:" << player.weight << "/" << player.maxWeight << endl << endl;
+	}
+
 	int a, b;
 	cout << "Weapon:" << player.weapon.name << endl;
-	cout << "Armor:" << player.armor.name << endl << endl;
+	cout << "Armor:" << player.armor.name << endl << "=======================" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
 			cout << i + 1 << "." << player.inventory[i].name << "[value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
@@ -1093,20 +1049,19 @@ void InventoryManage() {
 			while (true) {
 				cout << "Discard:";
 				cin >> b;
-
-				if (b < 1 || player.inventory[b].mateTag == NOTHING) {
+				if (b < 1 || player.inventory[b - 1].mateTag == NOTHING) {
 					cin.clear();
 					cin.ignore(100, '\n');
 				}
 				else if (b > 0 && b < INT_MAX)break;
 
 			}
-
 			b--;
 			cout << "If you discard, your item will never back. Are you sure?(y/n):";
 			char ch;
 			cin >> ch;
 			if (ch == 'y' || ch == 'Y') {
+				player.weight -= player.inventory[b].weight;
 				player.inventory[b] = nothing;
 				break;
 			}
@@ -1165,6 +1120,7 @@ void InventoryManage() {
 						player.hp += simplePotion.hp;
 					}
 					player.inventory[a] = nothing;
+					player.weight -= player.inventory[a].weight;
 				}
 			}
 		}

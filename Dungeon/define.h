@@ -12,11 +12,11 @@
 
 //參數
 #define MAX_ENEMY_IN_ONEROOM 3
-#define ENEMYNUMBER 128
+#define ENEMYNUMBER 64
 #define RE_ENEMYNUMBER 20 //移動步數
 #define ENEMY_SPAWN_PROBABILITY 20 //生成機率
-#define MAX_INVENTORY 64
-#define MAX_WEIGHT 50
+#define MAX_INVENTORY 128
+#define INIT_MAX_WEIGHT 50
 
 //道具
 #define NOTHING -1
