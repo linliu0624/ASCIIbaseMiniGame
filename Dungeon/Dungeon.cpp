@@ -91,7 +91,7 @@ unit enemy[ENEMYNUMBER];
 int playerMoveCounter = 0;
 //玩家裝備的武器與護甲價值
 int playerWAVAlue = 0;
-int enemyPtr = 0;
+//int enemyPtr = 0;
 //int sameMapEnemyPtr = 0;
 
 //攻撃先の敵の座標
@@ -139,8 +139,6 @@ void Init() {
 		//	}
 		system("cls");
 	} while (flag == false);
-
-
 	//武器の初期化
 	WeaponInit();
 	//アーマーの初期化
@@ -282,7 +280,6 @@ void CreateEnemy() {
 	int armorRnd;
 	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		enemy[i].alive = true;
 		enemy[i].maxHp = 30;
 		enemy[i].hp = 10 + rand() % 10 + rand() % 10;
 		enemy[i].type = ENEMY;
@@ -341,7 +338,7 @@ void SpawnEnemy() {
 	//PlayerPos of map turn to room
 	int enemyCount = 0;
 	//int roomX_min, roomY_min, roomX_max, roomY_max;
-	enemyPtr = 0;
+	int enemyPtr = 0;
 	//ダンジョンの部屋の移動
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
@@ -954,7 +951,7 @@ void ShowBigMap() {
 ***************************************/
 void ShowRoom() {
 	cout << "->room map<-" << endl;
-	for (int i = 1; i < MAPRANGE; i++) {
+	/*for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
 			if (dangeon[i][j].playerPos == true)
 			{
@@ -981,39 +978,57 @@ void ShowRoom() {
 			}
 		}
 	}
-	cout << "===============================================================================" << endl;
+	cout << "===============================================================================" << endl;*/
 
-	//cout << "---------------" << endl;
-	//for (int y = 1; y < ROOMRANGE; y++) {
-	//	cout << "|";
-	//	for (int x = 1; x < ROOMRANGE; x++) {
-	//		if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
-	//			cout << "P ";
-	//		}
-	//		else if (room[y][x].type == WALL) {
-	//			cout << "X ";
-	//		}
-	//		else if (room[y][x].enemyPos == true) {
-	//			for (int i = 0; i < ENEMYNUMBER; i++)
-	//				if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
-	//					cout << enemy[i].name << " ";
-	//		}
-	//		else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
-	//			cout << "  ";
-	//		}
-	//		/*if (room[y][x].type == FLOOR && !room[y][x].mark) {
-	//			cout << "?";
-	//		}*/
-	//		if (x % 5 == 0)
-	//			cout << "|";
-	//	
-	//	}
-	//	if (y % 5 == 0) {
-	//		cout << endl;
-	//	}
-	//	cout << "|" << endl;
-	//}
-	//cout << "===============================================================================" << endl;
+	cout << "---------------" << endl;
+	for (int y = 1; y < ROOMRANGE; y++) {
+		cout << "|";
+		for (int x = 1; x < ROOMRANGE; x++) {
+			if (room[y][x].enemyPos)
+				for (int i = 0; i < ENEMYNUMBER; i++) {
+					if (enemy[i].roomX == x && enemy[i].roomY == y) {
+						if (i < 10)
+							cout << i << " ";
+						else
+							cout << i;
+					}
+				}
+			else
+				if (room[y][x].type == FLOOR)
+					cout <<"  ";
+				else
+					cout << "X ";
+
+			//if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
+			//	cout << "P ";
+			//}
+			//else if (room[y][x].type == WALL) {
+			//	cout << "X ";
+			//}
+			//else if (room[y][x].enemyPos == true) {
+			//	for (int i = 0; i < ENEMYNUMBER; i++)
+			//		if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
+			//			if (i < 10)
+			//				cout << i << " ";//cout << enemy[i].name << " ";
+			//			else
+			//				cout << i;
+			//}
+			//else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
+			//	cout << "  ";
+			//}
+			/*if (room[y][x].type == FLOOR && !room[y][x].mark) {
+				cout << "?";
+			}*/
+			if (x % 5 == 0)
+				cout << "|";
+
+		}
+		if (y % 5 == 0) {
+			cout << endl;
+		}
+		cout << "|" << endl;
+	}
+	cout << "===============================================================================" << endl;
 
 }
 /***************************************
@@ -1152,14 +1167,13 @@ void ShowPlayerStatus() {
 	}
 
 	cout << "Name:" << player.name << "  |  All value:" << value << endl;
-	cout << "Weight:" << player.weight << "/" << player.maxWeight << endl;
+	cout << "HP:" << player.hp << "/" << player.maxHp;
+	cout << "  Weight:" << player.weight << "/" << player.maxWeight << endl;
 	//cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	//cout << "move count:" << playerMoveCounter << endl;
-	cout << "HP:" << player.hp << "/" << player.maxHp;
-	cout << "     [" << player.armor.name << "] def:+" << player.armor.def * 100 <<
-		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;
-	cout << "             [" << player.weapon.name << "]" << endl;
-
+	cout << "[" << player.armor.name << "] def:+" << player.armor.def * 100 <<
+		"%  durability:" << player.armor.hp << "/" << player.armor.maxHp << endl;
+	cout << "[" << player.weapon.name << "]" << endl;
 	cout << "----Inventory----" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
