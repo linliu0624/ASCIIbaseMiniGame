@@ -439,8 +439,25 @@ void DeleteAllEnemy() {
 *作者：林
 ***************************************/
 void PlayerTurn() {
+	//玩家負重計算與檢測
+	bool tooHeavy = false;
+	player.weight = 0;
+	player.weight += player.weapon.weight;
+	player.weight += player.armor.weight;
+	for (int i = 0; i < MAX_INVENTORY; i++) {
+		player.weight += player.inventory[i].weight;
+	}
+	if (player.weight > player.maxWeight) {
+		tooHeavy = true;
+	}
+	else {
+		tooHeavy = false;
+	}
+
 	int ch;
 	bool flag = false;
+
+
 	while (!flag) {
 		ch = _getch();
 		//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
@@ -450,7 +467,7 @@ void PlayerTurn() {
 		int currentX, currentY, newX, newY;
 		currentX = player.roomX; currentY = player.roomY;
 		//如果過重就不能動，然後跳通知說要丟裝備
-		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
+		if ((ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT)) {
 			switch (ch) {
 			case UP: {
 				//武器の攻撃範囲で敵がいるかどうかを判定する
@@ -518,7 +535,7 @@ void PlayerTurn() {
 		else if (ch == SPACE) {
 			flag = true;
 		}
-		else if (ch == 'i' || ch == 'I') {
+		else if ((ch == 'i' || ch == 'I')) {
 			player.inventoryMode = !player.inventoryMode;
 			flag = true;
 		}
