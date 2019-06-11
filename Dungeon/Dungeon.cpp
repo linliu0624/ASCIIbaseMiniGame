@@ -262,12 +262,14 @@ void CreatePlayer() {
 	room[3][3].playerPos = true;
 	player.roomX = 3;
 	player.roomY = 3;
-	while (true) {
-		system("cls");
-		cout << "Please input name:";
-		cin >> player.name;
-		cout << "Your name is [" << player.name << "], are you sure?(y/n):";
-	}
+	//while (true) {
+	system("cls");
+	cout << "Please input name:";
+	cin >> player.name;
+	cin.clear();
+	cin.ignore(100, '\n');
+	//	cout << "Your name is [" << player.name << "], are you sure?(y/n):";
+	//}
 }
 /***************************************
 *enemyの生成
@@ -600,7 +602,7 @@ void EnemyMove(int enemyNumber) {
 		}
 	}
 	else {
-		if (enemyX != player.roomX ) {
+		if (enemyX != player.roomX) {
 			if (enemy[enemyNumber].roomX > player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
 				room[enemyY][enemyX].enemyPos = false;
 				enemy[enemyNumber].roomX--;
@@ -1043,12 +1045,13 @@ void InventoryManage() {
 	while (1) {
 		cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
 		cin >> a;
-		if (a < 1 || a > INT_MAX) {
+		if (a < 1 || a > MAX_INVENTORY) {
 			cin.clear();
 			cin.ignore(100, '\n');
 		}
-		else if (a > 0 && a < INT_MAX)break;
+		else if (a > 0 && a < MAX_INVENTORY)break;
 	}
+
 	if (a == 888) {
 	}
 	else if (a == 999) {
@@ -1077,7 +1080,7 @@ void InventoryManage() {
 			}
 		}
 	}
-	else {
+	else if (a < MAX_INVENTORY) {
 		while (true) {
 			cout << "Change to:";
 			cin >> b;
