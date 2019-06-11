@@ -250,6 +250,7 @@ unit CreatePlayer() {
 	tmpPlayer.weapon = fist;
 	tmpPlayer.armor = noArmor;
 	tmpPlayer.maxWeight = MAX_WEIGHT;
+	player.weight = 0;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		tmpPlayer.inventory[i] = nothing;
 	}

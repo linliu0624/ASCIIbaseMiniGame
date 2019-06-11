@@ -26,6 +26,7 @@ void WeaponInit() {
 	fist.mateTag = WEAPON;
 	fist.weaponType = FIST;
 	fist.value = 0;
+	fist.weight = 0.0f;
 	fist.flag = true;
 
 
@@ -34,6 +35,7 @@ void WeaponInit() {
 	sword.mateTag = WEAPON;
 	sword.weaponType = LONG_SWORD;
 	sword.value = 15;
+	sword.weight = 2.0f;
 	sword.flag = true;
 
 	//斧
@@ -41,6 +43,7 @@ void WeaponInit() {
 	axe.mateTag = WEAPON;
 	axe.weaponType = AXE;
 	axe.value = 20;
+	axe.weight = 2.5f;
 	axe.flag = true;
 
 	//槍
@@ -48,6 +51,7 @@ void WeaponInit() {
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
 	spear.value = 20;
+	spear.weight = 3.5f;
 	spear.flag = true;
 }
 void ArmorInit() {
@@ -59,6 +63,7 @@ void ArmorInit() {
 	noArmor.def = 0;
 	noArmor.maxHp = 0;
 	noArmor.hp = noArmor.maxHp;
+	noArmor.weight = 0.0f;
 	noArmor.flag = true;
 
 	//皮甲
@@ -70,6 +75,7 @@ void ArmorInit() {
 	leatherArmor.maxHp = 40;
 	leatherArmor.hp = leatherArmor.maxHp;
 	leatherArmor.def = 0.33f;
+	leatherArmor.weight = 6.0f;
 
 	//重皮甲
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
@@ -80,6 +86,7 @@ void ArmorInit() {
 	heavyLeatherArmor.maxHp = 30;
 	heavyLeatherArmor.hp = heavyLeatherArmor.maxHp;
 	heavyLeatherArmor.def = 0.4f;
+	heavyLeatherArmor.weight = 8.5f;
 }
 void ItemInit() {
 	strcpy(simplePotion.name, "simple potion");
@@ -89,6 +96,7 @@ void ItemInit() {
 	simplePotion.value = 40;
 	simplePotion.flag = true;
 	simplePotion.hp = 10;
+	simplePotion.weight = 0.2f;
 }
 void CreateEmpty() {
 	strcpy(nothing.name, "nothing");

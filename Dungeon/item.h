@@ -17,6 +17,7 @@ struct material {
 	int maxHp;
 	int value;
 
+	float weight;
 	float def;
 
 	bool flag = false;
