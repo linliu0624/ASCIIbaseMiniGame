@@ -212,7 +212,7 @@ void CreateMap() {
 				}
 				else {
 					//部屋の生成
-					int type= rand() % 5 + 1;//(1~5)
+					int type = rand() % 5 + 1;//(1~5)
 					if (type == WALL) {
 						wallNum--;
 						if (wallNum <= 0) {
@@ -449,6 +449,7 @@ void PlayerTurn() {
 		}
 		int currentX, currentY, newX, newY;
 		currentX = player.roomX; currentY = player.roomY;
+		//如果過重就不能動，然後跳通知說要丟裝備
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
@@ -838,6 +839,7 @@ void EnemyDieAndDrop(int number) {
 			if (enemy[number].weapon.weaponType != FIST) {
 				player.inventory[i] = enemy[number].weapon;
 				enemy[number].weapon = fist;
+
 				continue;
 			}
 			else if (enemy[number].armor.armorType != NO_ARMOR) {
@@ -994,7 +996,7 @@ void ShowRoom() {
 						else if (room[y][x].enemyPos == true) {
 							for (int i = 0; i < ENEMYNUMBER; i++)
 								if (enemy[i].roomX == x && enemy[i].roomY == y)
-									cout << enemy[i].name<<" ";
+									cout << enemy[i].name << " ";
 							//cout << "e ";
 						}
 						else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
@@ -1049,7 +1051,8 @@ void InventoryManage() {
 	cout << "Armor:" << player.armor.name << endl << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << " [" << player.inventory[i].value << "]:" << player.inventory[i].text << endl;
+			cout << i + 1 << "." << player.inventory[i].name << "[value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
+				<< endl << "  " << player.inventory[i].text << endl;
 		}
 	}
 
@@ -1156,7 +1159,6 @@ void InventoryManage() {
 void ShowPlayerStatus() {
 	cout << "press 'i' to manage inventory, 'space' to wait" << endl;
 	cout << endl;
-
 	int value = 0;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true)
