@@ -65,7 +65,7 @@ bool IsEnemy(int);
 //敵の攻撃
 bool EnemyAttack(int);
 //プレイヤーのタン
-void PlayerMove();
+void PlayerTurn();
 //敵のターン
 void EnemyTurn();
 //敵の移動
@@ -161,7 +161,7 @@ void Update() {
 	//装備管理モードか？
 	if (player.inventoryMode == false) {
 		SearchEnemy();
-		PlayerMove();
+		PlayerTurn();
 		UpdateBigMap();
 		Refresh();
 		if (player.inventoryMode == false) {
@@ -249,7 +249,8 @@ unit CreatePlayer() {
 	tmpPlayer.type = PLAYER;
 	tmpPlayer.weapon = fist;
 	tmpPlayer.armor = noArmor;
-	for (int i = 2; i < 64; i++) {
+	tmpPlayer.maxWeight = MAX_WEIGHT;
+	for (int i = 0; i < MAX_INVENTORY; i++) {
 		tmpPlayer.inventory[i] = nothing;
 	}
 	tmpPlayer.inventory[0] = simplePotion;
@@ -436,7 +437,7 @@ void DeleteAllEnemy() {
 *プレーヤーのターン
 *作者：林
 ***************************************/
-void PlayerMove() {
+void PlayerTurn() {
 	int ch;
 	bool flag = false;
 	while (!flag) {
@@ -1162,8 +1163,9 @@ void ShowPlayerStatus() {
 	}
 
 	cout << "Name:" << player.name << "  |  All value:" << value << endl;
-	cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
-	cout << "move count:" << playerMoveCounter << endl;
+	cout << "Weight:" << player.weight << "/" << player.maxWeight << endl;
+	//cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
+	//cout << "move count:" << playerMoveCounter << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "     [" << player.armor.name << "] def:+" << player.armor.def * 100 <<
 		"%  HP:" << player.armor.hp << "/" << player.armor.maxHp << endl;

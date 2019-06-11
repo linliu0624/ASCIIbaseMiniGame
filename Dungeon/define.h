@@ -16,6 +16,7 @@
 #define RE_ENEMYNUMBER 20 //移動步數
 #define ENEMY_SPAWN_PROBABILITY 20 //生成機率
 #define MAX_INVENTORY 64
+#define MAX_WEIGHT 50
 
 //道具
 #define NOTHING -1
