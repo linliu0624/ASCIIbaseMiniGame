@@ -44,7 +44,7 @@ void CreateRoom();
 //部屋の表示
 void ShowRoom();
 //プレイヤーの初期化
-unit CreatePlayer();
+void CreatePlayer();
 //プレイヤーの状態を表示する
 void ShowPlayerStatus();
 //敵の初期化
@@ -150,7 +150,7 @@ void Init() {
 	//空欄
 	CreateEmpty();
 	//プレイヤー生成
-	player = CreatePlayer();
+	CreatePlayer();
 	//敵の初期化
 	CreateEnemy();
 	//敵配置
@@ -240,35 +240,33 @@ void CreateMap() {
 *playerの生成
 *作者：荒井
 ***************************************/
-unit CreatePlayer() {
+void CreatePlayer() {
 	char flag;
-	unit tmpPlayer;
-	tmpPlayer.alive = true;
-	tmpPlayer.inventoryMode = false;
-	tmpPlayer.maxHp = 30;
-	tmpPlayer.hp = tmpPlayer.maxHp;
-	tmpPlayer.type = PLAYER;
-	tmpPlayer.weapon = fist;
-	tmpPlayer.armor = noArmor;
-	tmpPlayer.maxWeight = INIT_MAX_WEIGHT;
+	player.alive = true;
+	player.inventoryMode = false;
+	player.maxHp = 30;
+	player.hp = player.maxHp;
+	player.type = PLAYER;
+	player.weapon = fist;
+	player.armor = noArmor;
+	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
-		tmpPlayer.inventory[i] = nothing;
+		player.inventory[i] = nothing;
 	}
-	tmpPlayer.inventory[0] = simplePotion;
-	tmpPlayer.inventory[1] = simplePotion;
-	tmpPlayer.inventory[2] = simplePotion;
-	player.weight = tmpPlayer.inventory[0].weight + tmpPlayer.inventory[1].weight + tmpPlayer.inventory[2].weight;
+	player.inventory[0] = simplePotion;
+	player.inventory[1] = simplePotion;
+	player.inventory[2] = simplePotion;
+	player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
 	//プレイヤーの生成位置を決める
 	room[3][3].playerPos = true;
-	tmpPlayer.roomX = 3;
-	tmpPlayer.roomY = 3;
+	player.roomX = 3;
+	player.roomY = 3;
 	while (true) {
 		system("cls");
 		cout << "Please input name:";
-		cin >> tmpPlayer.name;
-		cout << "Your name is [" << tmpPlayer.name << "], are you sure?(y/n):";
-		return tmpPlayer;
+		cin >> player.name;
+		cout << "Your name is [" << player.name << "], are you sure?(y/n):";
 	}
 }
 /***************************************
@@ -379,7 +377,20 @@ void SpawnEnemy() {
 		}
 	}
 }
-
+/***************************************
+*enemyを削除する
+*作者：田子
+***************************************/
+void DeleteAllEnemy() {
+	for (int i = 0; i < ROOMRANGE; i++) {
+		for (int j = 0; j < ROOMRANGE; j++) {
+			room[i][j].enemyPos = false;
+		}
+	}
+	for (int i = 0; i < ENEMYNUMBER; i++) {
+		enemy[i].alive = false;
+	}
+}
 /***************************************
 *plyaerと同じ部屋のenemyを探す
 *作者：荒井
@@ -425,17 +436,7 @@ bool SearchEnemy() {
 	}
 	return false;
 }
-/***************************************
-*enemyを削除する
-*作者：田子
-***************************************/
-void DeleteAllEnemy() {
-	for (int i = 0; i < ROOMRANGE; i++) {
-		for (int j = 0; j < ROOMRANGE; j++) {
-			room[i][j].enemyPos = false;
-		}
-	}
-}
+
 /***************************************
 *プレーヤーのターン
 *作者：林
@@ -599,8 +600,8 @@ void EnemyMove(int enemyNumber) {
 		}
 	}
 	else {
-		if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
-			if (enemy[enemyNumber].roomX > player.roomX) {
+		if (enemyX != player.roomX ) {
+			if (enemy[enemyNumber].roomX > player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
 				room[enemyY][enemyX].enemyPos = false;
 				enemy[enemyNumber].roomX--;
 				enemyX = enemy[enemyNumber].roomX;
@@ -968,7 +969,6 @@ void ShowRoom() {
 							for (int i = 0; i < ENEMYNUMBER; i++)
 								if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
 									cout << enemy[i].name << " ";
-							//cout << "e ";
 						}
 						else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
 							cout << "  ";
@@ -981,30 +981,37 @@ void ShowRoom() {
 	}
 	cout << "===============================================================================" << endl;
 
-	/*cout << "---------------" << endl;
-	for (int y = 1; y < ROOMRANGE; y++) {
-		cout << "|";
-		for (int x = 1; x < ROOMRANGE; x++) {
-			if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
-				cout << "P";
-			}
-			else if (room[y][x].type == WALL) {
-				cout << "X";
-			}
-			else if (room[y][x].type == ENEMY) {
-				cout << "e";
-			}
-			else if (room[y][x].mark && room[y][x].playerPos != true) {
-				cout << "O";
-			}
-
-			if (room[y][x].type == FLOOR && !room[y][x].mark) {
-				cout << "?";
-			}
-		}
-		cout << "|" << endl;
-	}
-	cout << "===============================================================================" << endl;*/
+	//cout << "---------------" << endl;
+	//for (int y = 1; y < ROOMRANGE; y++) {
+	//	cout << "|";
+	//	for (int x = 1; x < ROOMRANGE; x++) {
+	//		if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
+	//			cout << "P ";
+	//		}
+	//		else if (room[y][x].type == WALL) {
+	//			cout << "X ";
+	//		}
+	//		else if (room[y][x].enemyPos == true) {
+	//			for (int i = 0; i < ENEMYNUMBER; i++)
+	//				if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
+	//					cout << enemy[i].name << " ";
+	//		}
+	//		else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
+	//			cout << "  ";
+	//		}
+	//		/*if (room[y][x].type == FLOOR && !room[y][x].mark) {
+	//			cout << "?";
+	//		}*/
+	//		if (x % 5 == 0)
+	//			cout << "|";
+	//	
+	//	}
+	//	if (y % 5 == 0) {
+	//		cout << endl;
+	//	}
+	//	cout << "|" << endl;
+	//}
+	//cout << "===============================================================================" << endl;
 
 }
 /***************************************
