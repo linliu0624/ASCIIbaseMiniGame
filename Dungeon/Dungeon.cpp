@@ -257,6 +257,7 @@ unit CreatePlayer() {
 	tmpPlayer.inventory[0] = simplePotion;
 	tmpPlayer.inventory[1] = simplePotion;
 	tmpPlayer.inventory[2] = simplePotion;
+	player.weight = tmpPlayer.inventory[0].weight + tmpPlayer.inventory[1].weight + tmpPlayer.inventory[2].weight;
 	//プレイヤーの生成位置を決める
 	room[3][3].playerPos = true;
 	tmpPlayer.roomX = 3;
@@ -601,7 +602,7 @@ void EnemyMove(int enemyNumber) {
 		}
 	}
 	else {
-		if (enemyX != player.roomX) {
+		if (enemyX != player.roomX && room[enemyY][enemyX - 1].enemyPos != true && room[enemyY][enemyX - 1].type != WALL) {
 			if (enemy[enemyNumber].roomX > player.roomX) {
 				room[enemyY][enemyX].enemyPos = false;
 				enemy[enemyNumber].roomX--;
@@ -855,17 +856,19 @@ void EnemyDieAndDrop(int number) {
 			player.inventory[i].mateTag != ITEM) {
 			if (enemy[number].weapon.weaponType != FIST) {
 				player.inventory[i] = enemy[number].weapon;
+				player.weight += player.inventory[i].weight;
 				enemy[number].weapon = fist;
-
 				continue;
 			}
 			else if (enemy[number].armor.armorType != NO_ARMOR) {
 				player.inventory[i] = enemy[number].armor;
+				player.weight += player.inventory[i].weight;
 				enemy[number].armor = noArmor;
 				continue;
 			}
 			else if (enemy[number].inventory[0].mateTag != NOTHING) {
 				player.inventory[i] = enemy[number].inventory[0];
+				player.weight += player.inventory[i].weight;
 				enemy[number].inventory[0] = nothing;
 				continue;
 			}
@@ -1012,7 +1015,7 @@ void ShowRoom() {
 						}
 						else if (room[y][x].enemyPos == true) {
 							for (int i = 0; i < ENEMYNUMBER; i++)
-								if (enemy[i].roomX == x && enemy[i].roomY == y)
+								if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
 									cout << enemy[i].name << " ";
 							//cout << "e ";
 						}
@@ -1227,8 +1230,9 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << "name:" << enemy[e].name << endl;
-									//cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
+									cout << e << "name:" << enemy[e].name << endl;
+									GotoXY(x, y++);
+									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
 									cout << "enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
