@@ -15,6 +15,7 @@ struct roomObj {
 	int y;
 	bool playerPos = false;
 	bool enemyPos = false;
+	bool exitPos = false;
 	bool mark = false;
 };
 extern bigmap dangeon[MAPRANGE][MAPRANGE];
