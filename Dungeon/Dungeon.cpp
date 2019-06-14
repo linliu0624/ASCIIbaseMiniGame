@@ -81,7 +81,7 @@ void InventoryManage();
 int Damage(int);
 //void Damage(int, int, int, bool);
 //攻撃
-void Attack(int, bool);
+void Attack(material, bool);
 //玩家死亡
 void PlayerDie();
 
@@ -472,7 +472,7 @@ void PlayerTurn() {
 				//いれば戦闘に入る
 				if (IsEnemy(UP) == true) {
 					//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
-					Attack(player.weapon.weaponType, true);
+					Attack(player.weapon, true);
 				}
 				else {
 					//なければ移動
@@ -486,7 +486,7 @@ void PlayerTurn() {
 			}
 			case DOWN: {
 				if (IsEnemy(DOWN) == true) {
-					Attack(player.weapon.weaponType, true);
+					Attack(player.weapon, true);
 				}
 				else {
 					if (player.roomY + 1 != ROOMRANGE && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
@@ -499,7 +499,7 @@ void PlayerTurn() {
 			}
 			case LEFT: {
 				if (IsEnemy(LEFT) == true) {
-					Attack(player.weapon.weaponType, true);
+					Attack(player.weapon, true);
 				}
 				else {
 					if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
@@ -512,7 +512,7 @@ void PlayerTurn() {
 			}
 			case RIGHT: {
 				if (IsEnemy(RIGHT) == true) {
-					Attack(player.weapon.weaponType, true);
+					Attack(player.weapon, true);
 				}
 				else {
 					if (player.roomX + 1 != ROOMRANGE && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
@@ -646,22 +646,22 @@ bool EnemyAttack(int enemyNumber) {
 		//下
 		if (room[enemyY + 1][enemyX].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//上
 		else if (room[enemyY - 1][enemyX].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//右
 		else if (room[enemyY][enemyX + 1].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//左
 		else if (room[enemyY][enemyX - 1].playerPos == true) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 	}
 	else if (enemyWeaponType.atkRange == TWO) {
@@ -669,25 +669,25 @@ bool EnemyAttack(int enemyNumber) {
 		if ((room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) &&
 			room[enemyY + 1][enemyX].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//上
 		else if ((room[enemyY - 1][enemyX].playerPos == true || room[enemyY - 2][enemyX].playerPos == true) &&
 			room[enemyY - 1][enemyX].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//右
 		else if ((room[enemyY][enemyX + 1].playerPos == true || room[enemyY][enemyX + 2].playerPos == true) &&
 			room[enemyY][enemyX + 1].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 		//左
 		else if ((room[enemyY][enemyX - 1].playerPos == true || room[enemyY][enemyX - 2].playerPos == true) &&
 			room[enemyY][enemyX - 1].type != WALL) {
 			//攻擊
-			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
+			Attack(enemy[enemyNumber].weapon, false); return false;
 		}
 	}
 	return true;
@@ -731,19 +731,29 @@ void CreateRoom() {
 *bool playerToEnemy プレイヤーの攻撃か
 *作者：荒井
 ****************************************/
-void Attack(int weaponType, bool playerToEnemy) {
+void Attack(material weapon, bool playerToEnemy) {
 
 	int totalDamage;
 	int armorDamage;
 	int bodyDamage;
 
-	totalDamage = Damage(weaponType);
+	totalDamage = Damage(weapon.weaponType);
 
 	if (playerToEnemy) {
 		for (int i = 0; i < ENEMYNUMBER; i++) {
 			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
-				armorDamage = enemy[i].armor.def * totalDamage;
+				float armorDef = enemy[i].armor.def;
+				if (weapon.atkType == CUT_STAB) {
+					armorDef = armorDef;
+				}
+				else if (weapon.atkType == CUT) {
+					armorDef = armorDef * 1.25f;
+				}
+				else if (weapon.atkType == STAB) {
+					armorDef = armorDef * 0.75f;
+				}
 
+				armorDamage = armorDef * totalDamage;
 				//armorDamage少なくても1
 				if (armorDamage < 1) {
 					armorDamage = 1;
@@ -770,7 +780,17 @@ void Attack(int weaponType, bool playerToEnemy) {
 		}
 	}
 	else {
-		armorDamage = player.armor.def * totalDamage;
+		float armorDef = player.armor.def;
+		if (weapon.atkType == CUT_STAB) {
+			armorDef = armorDef;
+		}
+		else if (weapon.atkType == CUT) {
+			armorDef = armorDef * 1.25f;
+		}
+		else if (weapon.atkType == STAB) {
+			armorDef = armorDef * 0.75f;
+		}
+		armorDamage = armorDef * totalDamage;
 
 		//armorDamage少なくても1
 		if (armorDamage < 1) {
@@ -788,6 +808,7 @@ void Attack(int weaponType, bool playerToEnemy) {
 			bodyDamage = 0;
 		}
 		player.hp -= bodyDamage;
+
 		//敵が死んだ時
 		if (player.hp <= 0) {
 			player.alive = false;

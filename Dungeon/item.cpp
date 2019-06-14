@@ -41,6 +41,7 @@ void WeaponInit() {
 	fist.value = 0;
 	fist.weight = 0.0f;
 	fist.atkRange = ONE;
+	fist.atkType = CUT_STAB;
 	fist.flag = true;
 
 	//長剣
