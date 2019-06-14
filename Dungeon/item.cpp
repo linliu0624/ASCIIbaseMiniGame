@@ -28,9 +28,11 @@ material scorpion;
 material noArmor;
 material leatherArmor;
 material heavyLeatherArmor;
+material chainmail;
 material nothing;
 
 material simplePotion;
+material superPotion;
 
 void WeaponInit() {
 	//拳
@@ -172,6 +174,7 @@ void ArmorInit() {
 	noArmor.maxHp = 0;
 	noArmor.hp = noArmor.maxHp;
 	noArmor.weight = 0.0f;
+	noArmor.defType = NORMAL_DEF;
 	noArmor.flag = true;
 
 	//皮甲
@@ -180,10 +183,11 @@ void ArmorInit() {
 	leatherArmor.armorType = LEATHER_ARMOR;
 	leatherArmor.value = 40;
 	leatherArmor.flag = true;
-	leatherArmor.maxHp = 40;
+	leatherArmor.maxHp = 400;
 	leatherArmor.hp = leatherArmor.maxHp;
 	leatherArmor.def = 0.2f;
-	leatherArmor.weight = 6.0f;
+	leatherArmor.weight = 5.0f;
+	leatherArmor.defType = NORMAL_DEF;
 
 	//重皮甲
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
@@ -191,20 +195,42 @@ void ArmorInit() {
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
 	heavyLeatherArmor.value = 45;
 	heavyLeatherArmor.flag = true;
-	heavyLeatherArmor.maxHp = 30;
+	heavyLeatherArmor.maxHp = 300;
 	heavyLeatherArmor.hp = heavyLeatherArmor.maxHp;
 	heavyLeatherArmor.def = 0.33f;
-	heavyLeatherArmor.weight = 8.5f;
+	heavyLeatherArmor.weight = 7.5f;
+	heavyLeatherArmor.defType = NORMAL_DEF;
+
+	//鎖甲(鎖帷子)
+	strcpy(chainmail.name, "chainmail");
+	chainmail.mateTag = ARMOR;
+	chainmail.armorType = CHAINMAIL;
+	chainmail.value = 150;
+	chainmail.flag = true;
+	chainmail.maxHp = 500;
+	chainmail.hp = chainmail.maxHp;
+	chainmail.def = 0.75f;
+	chainmail.weight = 14.0f;
+	chainmail.defType = CNAT_DEF_STAB;
 }
 void ItemInit() {
 	strcpy(simplePotion.name, "simple potion");
-	strcpy(simplePotion.text, "Use to +10 hp");
+	strcpy(simplePotion.text, "Use to +50 hp");
 	simplePotion.mateTag = ITEM;
 	simplePotion.itemType = SIMPLE_POTION;
 	simplePotion.value = 40;
 	simplePotion.flag = true;
-	simplePotion.hp = 10;
+	simplePotion.hp = 50;
 	simplePotion.weight = 0.2f;
+
+	strcpy(superPotion.name, "super potion");
+	strcpy(superPotion.text, "Use to restore all hp");
+	superPotion.mateTag = ITEM;
+	superPotion.itemType = SUPER_POTION;
+	superPotion.value = 200;
+	superPotion.flag = true;
+	superPotion.hp = 300;
+	superPotion.weight = 0.2f;
 }
 void CreateEmpty() {
 	strcpy(nothing.name, "nothing");
@@ -224,12 +250,11 @@ int Damage(int weaponType) {
 	int dice20 = rand() % 20 + 1;
 
 	if (weaponType == FIST)
-		return dice4; //1~4
-	else if (weaponType == LONG_SWORD)
-		return dice4 + 1; //2~5
+		return dice4 * 10; //10~40
+	else if (weaponType == SHORT_SWORD || weaponType == SPEAR)
+		return (dice4 + 1) * 10; //20~50
 	else if (weaponType == BATTLE_AXE)
-		return dice6 + 2; //3~8
-	else
-		return dice4;
+		return dice6 * 10; //10~60
+
 }
 

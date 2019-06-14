@@ -29,6 +29,9 @@
 #define STAB 1
 #define CUT_STAB 3
 #define BEATEN 4
+//護甲防禦類型
+#define NORMAL_DEF 0
+#define CNAT_DEF_STAB 1
 //武器
 #define FIST 0
 //剣
@@ -58,10 +61,10 @@
 #define NO_ARMOR 0
 #define LEATHER_ARMOR 1
 #define HEAVY_LEATHE_RARMOR 2
-
+#define CHAINMAIL 4
 //消耗品或寶藏
 #define SIMPLE_POTION 0
-
+#define SUPER_POTION 1
 //方向,72 77 80 75即表示方向键 上 右 下 左。
 #define UP 72
 #define DOWN 80

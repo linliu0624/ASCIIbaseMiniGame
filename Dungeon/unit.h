@@ -16,12 +16,13 @@ struct unit {
 	material armor;
 	material inventory[MAX_INVENTORY];
 	bool alive;
-	
-	
+
+
 	//ª±®a
 	float maxWeight;
 	float weight;
 	char name[100];
+	int loan = 0;
 	bool inventoryMode = false;
 	//¼Ä¤H
 	bool samePosWithPlayer = false;

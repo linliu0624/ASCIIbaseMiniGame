@@ -240,7 +240,7 @@ void CreatePlayer() {
 	char flag;
 	player.alive = true;
 	player.inventoryMode = false;
-	player.maxHp = 30;
+	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
 	player.weapon = fist;
@@ -250,9 +250,11 @@ void CreatePlayer() {
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		player.inventory[i] = nothing;
 	}
-	player.inventory[0] = simplePotion;
-	player.inventory[1] = simplePotion;
-	player.inventory[2] = simplePotion;
+	player.inventory[0] = superPotion;
+	player.inventory[1] = superPotion;
+	player.inventory[2] = superPotion;
+	for (int i = 0; i < MAX_INVENTORY; i++)
+		player.loan -= player.inventory[i].value;
 	player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
 	//プレイヤーの生成位置を決める
 	room[3][3].playerPos = true;
@@ -278,8 +280,8 @@ void CreateEnemy() {
 	int armorRnd;
 	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		enemy[i].maxHp = 30;
-		enemy[i].hp = 10 + rand() % 10 + rand() % 10;
+		enemy[i].maxHp = 300;
+		enemy[i].hp = 150 + rand() % 75 + rand() % 75;
 		enemy[i].type = ENEMY;
 		if (i % 4 == 0) {
 			strcpy(enemy[i].name, "!");
@@ -308,15 +310,19 @@ void CreateEnemy() {
 		else
 			enemy[i].weapon = shortSword;
 		//防具を装備する
-		if (armorRnd < 60)
+		if (armorRnd < 50)
 			enemy[i].armor = noArmor;
-		else if (armorRnd >= 60 && armorRnd < 90) {
+		else if (armorRnd >= 50 && armorRnd < 70) {
 			enemy[i].armor = leatherArmor;
-			enemy[i].armor.hp = rand() % 20 + 20;
+			enemy[i].armor.hp = rand() % 200 + 200;
+		}
+		else if (armorRnd >= 70 && armorRnd < 85) {
+			enemy[i].armor = heavyLeatherArmor;
+			enemy[i].armor.hp = rand() % 150 + 150;
 		}
 		else {
-			enemy[i].armor = heavyLeatherArmor;
-			enemy[i].armor.hp = rand() % 15 + 15;
+			enemy[i].armor = chainmail;
+			enemy[i].armor.hp = rand() % 250 + 250;
 		}
 
 		//アイテムを装備する
@@ -736,21 +742,35 @@ void Attack(material weapon, bool playerToEnemy) {
 	int totalDamage;
 	int armorDamage;
 	int bodyDamage;
-
 	totalDamage = Damage(weapon.weaponType);
+
 
 	if (playerToEnemy) {
 		for (int i = 0; i < ENEMYNUMBER; i++) {
 			if (enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
 				float armorDef = enemy[i].armor.def;
+				// 可砍可刺的武器對護甲造成的傷害一般
 				if (weapon.atkType == CUT_STAB) {
 					armorDef = armorDef;
 				}
+				//只能砍的武器對鎖甲造成的傷害低
 				else if (weapon.atkType == CUT) {
-					armorDef = armorDef * 1.25f;
+					if (enemy[i].armor.defType == CNAT_DEF_STAB) {
+						armorDef = armorDef * 1.4f;
+					}
+					else {
+						armorDef = armorDef;
+					}
+
 				}
+				//只能刺的武器對鎖甲造成傷害高
 				else if (weapon.atkType == STAB) {
-					armorDef = armorDef * 0.75f;
+					if (enemy[i].armor.defType == CNAT_DEF_STAB) {
+						armorDef = armorDef * 0.4f;
+					}
+					else {
+						armorDef = armorDef;
+					}
 				}
 
 				armorDamage = armorDef * totalDamage;
@@ -784,11 +804,23 @@ void Attack(material weapon, bool playerToEnemy) {
 		if (weapon.atkType == CUT_STAB) {
 			armorDef = armorDef;
 		}
+		//只能砍的武器對鎖甲造成的傷害低
 		else if (weapon.atkType == CUT) {
-			armorDef = armorDef * 1.25f;
+			if (player.armor.defType == CNAT_DEF_STAB) {
+				armorDef = armorDef * 1.4f;
+			}
+			else {
+				armorDef = armorDef;
+			}
 		}
+		//只能刺的武器對鎖甲造成傷害高
 		else if (weapon.atkType == STAB) {
-			armorDef = armorDef * 0.75f;
+			if (player.armor.defType == CNAT_DEF_STAB) {
+				armorDef = armorDef * 0.4f;
+			}
+			else {
+				armorDef = armorDef;
+			}
 		}
 		armorDamage = armorDef * totalDamage;
 
@@ -1088,11 +1120,11 @@ void InventoryManage() {
 	while (1) {
 		cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
 		cin >> a;
-		if (a < 1 || a > MAX_INVENTORY) {
+		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888) {
 			cin.clear();
 			cin.ignore(100, '\n');
 		}
-		else if (a > 0 && a < MAX_INVENTORY)break;
+		else if (a > 0 && a < MAX_INVENTORY || a == 999 || a == 888)break;
 	}
 
 	if (a == 888) {
@@ -1165,16 +1197,24 @@ void InventoryManage() {
 
 			}
 			else if (player.inventory[a].mateTag == ITEM) {
-				if (player.inventory[a].itemType == SIMPLE_POTION) {
+				if (player.inventory[a].itemType == SIMPLE_POTION ) {
 					if (player.hp + simplePotion.hp >= player.maxHp) {
 						player.hp = player.maxHp;
 					}
 					else {
 						player.hp += simplePotion.hp;
 					}
-					player.inventory[a] = nothing;
-					player.weight -= player.inventory[a].weight;
 				}
+				else if (player.inventory[a].itemType == SUPER_POTION) {
+					if (player.hp + superPotion.hp >= player.maxHp) {
+						player.hp = player.maxHp;
+					}
+					else {
+						player.hp += superPotion.hp;
+					}
+				}
+				player.inventory[a] = nothing;
+				player.weight -= player.inventory[a].weight;
 			}
 		}
 	}
@@ -1194,7 +1234,7 @@ void ShowPlayerStatus() {
 			value += player.inventory[i].value;
 	}
 
-	cout << "Name:" << player.name << "  |  All value:" << value << endl;
+	cout << "Name:" << player.name << "  |  All value:" << player.loan + value << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "  Weight:" << player.weight << "/" << player.maxWeight << endl;
 	//cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;

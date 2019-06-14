@@ -7,22 +7,21 @@ struct material {
 	int weaponType;
 	int armorType;
 	int itemType;
-
-	char name[32];
-	char text[128];
 	
 	int atk;
 	int atkRange;
 	int atkType;
+
+	float def;
+	int defType;
 	int hp;
 	int maxHp;
+
+	char name[32];
+	char text[128];
 	int value;
-
 	float weight;
-	float def;
-
 	bool flag = false;
-	bool drop;
 };
 extern material nothing;
 
@@ -45,8 +44,10 @@ extern material scorpion;
 extern material leatherArmor;
 extern material heavyLeatherArmor;
 extern material noArmor;
+extern material chainmail;
 
 extern material simplePotion;
+extern material superPotion;
 
 void WeaponInit();
 void ArmorInit();
