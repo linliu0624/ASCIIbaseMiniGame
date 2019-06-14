@@ -57,6 +57,8 @@ void DeleteAllEnemy();
 bool SearchEnemy();
 //敵の状態を表示する
 void ShowEnemyStatus();
+//ルールの表示
+void ShowRule();
 //戦闘
 void Battle();
 //プレイヤーの攻撃
@@ -134,7 +136,7 @@ void Init() {
 		cout << "Loading..." << endl;
 		flag = SearchRoom();
 	} while (flag == false);
-	Sleep(1000);
+	//Sleep(1000);
 	//武器の初期化
 	WeaponInit();
 	//アーマーの初期化
@@ -300,11 +302,11 @@ void CreateEnemy() {
 		if (weaponRnd <= 20)
 			enemy[i].weapon = fist;
 		else if (weaponRnd >= 20 && weaponRnd < 40)
-			enemy[i].weapon = axe;
+			enemy[i].weapon = battleAxe;
 		else if (weaponRnd >= 40 && weaponRnd < 60)
 			enemy[i].weapon = spear;
 		else
-			enemy[i].weapon = sword;
+			enemy[i].weapon = shortSword;
 		//防具を装備する
 		if (armorRnd < 60)
 			enemy[i].armor = noArmor;
@@ -634,12 +636,13 @@ void EnemyMove(int enemyNumber) {
 *作者：林
 ***************************************/
 bool EnemyAttack(int enemyNumber) {
-	int enemyX, enemyY, enemyWeaponType;
+	int enemyX, enemyY;
+	material enemyWeaponType;
 	enemyX = enemy[enemyNumber].roomX;
 	enemyY = enemy[enemyNumber].roomY;
-	enemyWeaponType = enemy[enemyNumber].weapon.weaponType;
+	enemyWeaponType = enemy[enemyNumber].weapon;
 	//-------------------是否會碰到玩家-----------------------
-	if (enemyWeaponType == 0 || enemyWeaponType == 1 || enemyWeaponType == 2) {
+	if (enemyWeaponType.atkRange == ONE) {
 		//下
 		if (room[enemyY + 1][enemyX].playerPos == true) {
 			//攻擊
@@ -661,7 +664,7 @@ bool EnemyAttack(int enemyNumber) {
 			Attack(enemy[enemyNumber].weapon.weaponType, false); return false;
 		}
 	}
-	else if (enemyWeaponType == 3) {
+	else if (enemyWeaponType.atkRange == TWO) {
 		//下
 		if ((room[enemyY + 1][enemyX].playerPos == true || room[enemyY + 2][enemyX].playerPos == true) &&
 			room[enemyY + 1][enemyX].type != WALL) {
@@ -831,7 +834,7 @@ void EnemyDieAndDrop(int number) {
 *作者：荒井
 ***************************************/
 bool IsEnemy(int dir) {
-	if (player.weapon.weaponType == FIST || player.weapon.weaponType == LONG_SWORD || player.weapon.weaponType == AXE) {
+	if (player.weapon.atkRange == ONE) {
 		if (dir == UP) {
 			enemyPosX = player.roomX;
 			enemyPosY = player.roomY - 1;
@@ -853,7 +856,7 @@ bool IsEnemy(int dir) {
 				return true;
 			}
 	}
-	else if (player.weapon.weaponType == SPEAR) {
+	else if (player.weapon.atkRange == TWO) {
 		if (dir == UP) {
 			enemyPosX = player.roomX;
 			enemyPosY = player.roomY - 1;
@@ -1214,7 +1217,7 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << e << "name:" << enemy[e].name << endl;
+									cout << "name:" << enemy[e].name << endl;
 									GotoXY(x, y++);
 									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
@@ -1238,6 +1241,13 @@ void ShowEnemyStatus() {
 			}
 		}
 	}
+}
+/***************************************
+*ルールを表示する
+*作者：林
+***************************************/
+void ShowRule() {
+	cout << "↑↓←→キーで移動と攻撃" << endl;
 }
 
 /***************************************

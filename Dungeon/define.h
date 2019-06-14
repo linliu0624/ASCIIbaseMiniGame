@@ -24,11 +24,30 @@
 #define ARMOR 1
 #define ITEM 2
 
+//武器攻擊類型
+#define CUT 0
+#define STAB 1
+#define CUT_STAB 3
+#define BEATEN 4
 //武器
 #define FIST 0
+//剣
 #define LONG_SWORD 1
-#define AXE 2
-#define SPEAR 3
+#define SHORT_SWORD 2
+#define BANANA 3
+#define GRADUATION_CERTIFICATE_TUBE 4
+#define CUTLASS 5
+//斧
+#define BATTLE_AXE 6
+#define KENDAMA 7
+#define MARIUS 8
+#define OBRIST 9
+//槍
+#define SPEAR 10
+#define POCKY 11
+#define GUNGNIR 12
+#define GAE_BULG 13
+#define SCORPION 14
 
 //武器攻擊方式
 #define ONE 1 //1格

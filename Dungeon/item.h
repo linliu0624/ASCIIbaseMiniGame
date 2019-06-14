@@ -13,6 +13,7 @@ struct material {
 	
 	int atk;
 	int atkRange;
+	int atkType;
 	int hp;
 	int maxHp;
 	int value;
@@ -26,9 +27,20 @@ struct material {
 extern material nothing;
 
 extern material fist;
-extern material sword;
-extern material axe;
+extern material longSword;
+extern material shortSword;
+extern material banana;
+extern material graduationCetificateTube;
+extern material cutlass;
+extern material battleAxe;
+extern material kendama;
+extern material obrist;
+extern material marius;
 extern material spear;
+extern material pocky;
+extern material gungnir;
+extern material gaeBolg;
+extern material scorpion;
 
 extern material leatherArmor;
 extern material heavyLeatherArmor;
