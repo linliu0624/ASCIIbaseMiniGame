@@ -172,6 +172,7 @@ void Update() {
 			}
 			Refresh();
 		}
+		if (player.hp <= 0)	PlayerDie();		
 	}
 	else {
 		InventoryManage();
@@ -1259,4 +1260,28 @@ inline void GotoXY(int x, int y)
 	coord.X = x;
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+/***************************************
+*プレイヤーが死んだときにリスタートするかを選ぶ
+*作者：荒井
+***************************************/
+void PlayerDie() {
+	system("cls");
+	char flag;
+	do {
+		printf("You died !!");
+		cout << "Restart?(y/n):";
+		cin >> flag;
+		if (flag == 'y' || flag == 'Y') {
+			break;
+		}
+		else if (flag == 'n' || flag == 'N') {
+			exit(0);
+		}
+		else {
+			system("cls");
+		}
+	} while (true);
+	Init();
 }
