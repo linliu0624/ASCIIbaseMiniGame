@@ -155,6 +155,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ranking.h" />
     <ClInclude Include="unit.h" />
   </ItemGroup>
   <ItemGroup>
