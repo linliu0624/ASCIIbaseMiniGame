@@ -65,6 +65,11 @@
 //消耗品或寶藏
 #define SIMPLE_POTION 0
 #define SUPER_POTION 1
+
+#define GOLD 11
+#define SILVER 12
+#define IVORY 13
+#define BROKEN_DIAMOND 14
 //方向,72 77 80 75即表示方向键 上 右 下 左。
 #define UP 72
 #define DOWN 80

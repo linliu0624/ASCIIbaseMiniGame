@@ -34,6 +34,10 @@ material nothing;
 material simplePotion;
 material superPotion;
 
+material gold;
+material silver;
+material ivory;
+material brokenDiamond;
 void WeaponInit() {
 	//拳
 	strcpy(fist.name, "fist");
@@ -176,7 +180,6 @@ void ArmorInit() {
 	noArmor.weight = 0.0f;
 	noArmor.defType = NORMAL_DEF;
 	noArmor.flag = true;
-
 	//皮甲
 	strcpy(leatherArmor.name, "leather armor");
 	leatherArmor.mateTag = ARMOR;
@@ -188,7 +191,6 @@ void ArmorInit() {
 	leatherArmor.def = 0.2f;
 	leatherArmor.weight = 5.0f;
 	leatherArmor.defType = NORMAL_DEF;
-
 	//重皮甲
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
 	heavyLeatherArmor.mateTag = ARMOR;
@@ -200,7 +202,6 @@ void ArmorInit() {
 	heavyLeatherArmor.def = 0.33f;
 	heavyLeatherArmor.weight = 7.5f;
 	heavyLeatherArmor.defType = NORMAL_DEF;
-
 	//鎖甲(鎖帷子)
 	strcpy(chainmail.name, "chainmail");
 	chainmail.mateTag = ARMOR;
@@ -214,15 +215,16 @@ void ArmorInit() {
 	chainmail.defType = CNAT_DEF_STAB;
 }
 void ItemInit() {
+	//簡易藥水
 	strcpy(simplePotion.name, "simple potion");
-	strcpy(simplePotion.text, "Use to +50 hp");
+	strcpy(simplePotion.text, "Use to +75 hp");
 	simplePotion.mateTag = ITEM;
 	simplePotion.itemType = SIMPLE_POTION;
 	simplePotion.value = 40;
 	simplePotion.flag = true;
-	simplePotion.hp = 50;
+	simplePotion.hp = 75;
 	simplePotion.weight = 0.2f;
-
+	//超級藥水
 	strcpy(superPotion.name, "super potion");
 	strcpy(superPotion.text, "Use to restore all hp");
 	superPotion.mateTag = ITEM;
@@ -231,6 +233,42 @@ void ItemInit() {
 	superPotion.flag = true;
 	superPotion.hp = 300;
 	superPotion.weight = 0.2f;
+
+	//黃金
+	strcpy(gold.name, "gold");
+	strcpy(gold.text, "Gold is a popular precious metal");
+	gold.mateTag = ITEM;
+	gold.itemType = GOLD;
+	gold.value = 100;
+	gold.flag = true;
+	gold.weight = 1.0f;
+
+	//銀
+	strcpy(silver.name, "silver");
+	strcpy(silver.text, "Silver is a popular precious metal");
+	silver.mateTag = ITEM;
+	silver.itemType = GOLD;
+	silver.value = 80;
+	silver.flag = true;
+	silver.weight = 1.0f;
+
+	//象牙
+	strcpy(ivory.name, "ivory");
+	strcpy(ivory.text, "Although selling ivory is not ethical, it is still valuable");
+	ivory.mateTag = ITEM;
+	ivory.itemType = IVORY;
+	ivory.value = 400;
+	ivory.flag = true;
+	ivory.weight = 20.0f;
+
+	//碎鑽
+	strcpy(brokenDiamond.name, "broken diamond");
+	strcpy(brokenDiamond.text, "Diamond fragment, not very valuable");
+	brokenDiamond.mateTag = ITEM;
+	brokenDiamond.itemType = IVORY;
+	brokenDiamond.value = 10;
+	brokenDiamond.flag = true;
+	brokenDiamond.weight = 0.01f;
 }
 void CreateEmpty() {
 	strcpy(nothing.name, "nothing");

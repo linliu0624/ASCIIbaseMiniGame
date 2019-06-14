@@ -7,7 +7,7 @@ struct material {
 	int weaponType;
 	int armorType;
 	int itemType;
-	
+
 	int atk;
 	int atkRange;
 	int atkType;
@@ -48,6 +48,11 @@ extern material chainmail;
 
 extern material simplePotion;
 extern material superPotion;
+
+extern material gold;
+extern material silver;
+extern material ivory;
+extern material brokenDiamond;
 
 void WeaponInit();
 void ArmorInit();

@@ -174,7 +174,7 @@ void Update() {
 			}
 			Refresh();
 		}
-		if (player.hp <= 0)	PlayerDie();		
+		if (player.hp <= 0)	PlayerDie();
 	}
 	else {
 		InventoryManage();
@@ -327,11 +327,23 @@ void CreateEnemy() {
 		}
 
 		//アイテムを装備する
-		if (itemRnd <= 80) {
-			enemy[i].inventory[0] = nothing;
+		if (itemRnd < 5) {
+			enemy[i].inventory[0] = ivory;
 		}
-		else {
+		else if (itemRnd >= 5 && itemRnd < 15) {
+			enemy[i].inventory[0] = silver;
+		}
+		else if (itemRnd >= 15 && itemRnd < 45) {
 			enemy[i].inventory[0] = simplePotion;
+		}
+		else if (itemRnd >= 45 && itemRnd < 50) {
+			enemy[i].inventory[0] = superPotion;
+		}
+		else if (itemRnd >= 50 && itemRnd < 60) {
+			enemy[i].inventory[0] = gold;
+		}
+		else if (itemRnd >= 60) {
+			enemy[i].inventory[0] = brokenDiamond;		
 		}
 	}
 }
@@ -1112,7 +1124,7 @@ void InventoryManage() {
 	cout << "Armor:" << player.armor.name << endl << "=======================" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << "[value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
+			cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
 				<< endl << "  " << player.inventory[i].text << endl;
 		}
 	}
@@ -1198,7 +1210,7 @@ void InventoryManage() {
 
 			}
 			else if (player.inventory[a].mateTag == ITEM) {
-				if (player.inventory[a].itemType == SIMPLE_POTION ) {
+				if (player.inventory[a].itemType == SIMPLE_POTION) {
 					if (player.hp + simplePotion.hp >= player.maxHp) {
 						player.hp = player.maxHp;
 					}
@@ -1227,7 +1239,7 @@ void InventoryManage() {
 *作者：荒井
 ***************************************/
 void ShowPlayerStatus() {
-	cout << "press 'i' to manage inventory, 'space' to wait" << endl;
+	cout << "press 'i' to manage inventory, 'space' to wait    |-----enemy status-----" << endl;
 	cout << endl;
 	int value = 0;
 	for (int i = 0; i < 64; i++) {
@@ -1279,17 +1291,17 @@ void ShowEnemyStatus() {
 									//sameMapEnemy[sameMapEnemyPtr] = e;
 									y = basicY;
 									GotoXY(x, y++);
-									cout << "name:" << enemy[e].name << endl;
+									cout << "|name:" << enemy[e].name << endl;
 									GotoXY(x, y++);
-									cout << "enemy(" << j % 5 << "," << i % 5 << ")" << endl;
+									cout << "|enemy(" << j % 5 << "," << i % 5 << ")" << endl;
 									GotoXY(x, y++);
-									cout << "enemy hp:" << enemy[e].hp << endl;
+									cout << "|enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
-									cout << "weapon:" << enemy[e].weapon.name << endl;
+									cout << "|weapon:" << enemy[e].weapon.name << endl;
 									GotoXY(x, y++);
-									cout << "armor:" << enemy[e].armor.name << endl;
+									cout << "|armor:" << enemy[e].armor.name << endl;
 									GotoXY(x, y++);
-									cout << "durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
+									cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
 									x += 25;
 								}
 								else {
@@ -1355,4 +1367,5 @@ void PlayerDie() {
 		}
 	} while (true);
 	Init();
+	Refresh();
 }
