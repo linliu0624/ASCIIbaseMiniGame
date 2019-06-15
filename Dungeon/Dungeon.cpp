@@ -135,7 +135,7 @@ void Init() {
 		CreateRoom();
 		cout << "Loading..." << endl;
 		flag = SearchRoom();
-	} while (flag == false);
+	} while (!flag);
 	//Sleep(1000);
 	//武器の初期化
 	WeaponInit();
@@ -199,6 +199,14 @@ static void Refresh() {
 ***************************************/
 void CreateMap() {
 	int wallNum = 5;
+	//地下城初期化
+	for (int i = 0; i < MAPRANGE; i++) {
+		for (int j = 0; j < MAPRANGE; j++) {
+			dangeon[i][j].type = ROOM;
+			dangeon[i][j].playerPos = false;
+		}
+	}
+
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			//如果不是邊框
@@ -248,6 +256,7 @@ void CreatePlayer() {
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
+	player.loan = 0;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		player.inventory[i] = nothing;
 	}
@@ -343,7 +352,7 @@ void CreateEnemy() {
 			enemy[i].inventory[0] = gold;
 		}
 		else if (itemRnd >= 60) {
-			enemy[i].inventory[0] = brokenDiamond;		
+			enemy[i].inventory[0] = brokenDiamond;
 		}
 	}
 }
@@ -717,6 +726,16 @@ bool EnemyAttack(int enemyNumber) {
 ***************************************/
 void CreateRoom() {
 	int rnd;
+	//房間初期化
+	for (int i = 1; i < ROOMRANGE; i++) {
+		for (int j = 1; j < ROOMRANGE; j++) {
+			room[i][j].type = FLOOR;
+			room[i][j].playerPos = false;
+			room[i][j].enemyPos = false;
+			room[i][j].mark = false;
+		}
+	}
+
 	//歩けるマスと壁の生成
 	for (int i = 1; i < ROOMRANGE; i++) {
 		for (int j = 1; j < ROOMRANGE; j++) {
@@ -1067,33 +1086,40 @@ void ShowRoom() {
 	//				}
 	//			}
 	//		else
-	//			if (room[y][x].type == FLOOR)
-	//				cout <<"  ";
-	//			else
+	//			if (room[y][x].type == FLOOR && !room[y][x].playerPos)
+	//				cout << "* ";
+	//			else if (!room[y][x].playerPos)
 	//				cout << "X ";
-
-	//		//if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
-	//		//	cout << "P ";
-	//		//}
-	//		//else if (room[y][x].type == WALL) {
-	//		//	cout << "X ";
-	//		//}
-	//		//else if (room[y][x].enemyPos == true) {
-	//		//	for (int i = 0; i < ENEMYNUMBER; i++)
-	//		//		if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
-	//		//			if (i < 10)
-	//		//				cout << i << " ";//cout << enemy[i].name << " ";
-	//		//			else
-	//		//				cout << i;
-	//		//}
-	//		//else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
-	//		//	cout << "  ";
-	//		//}
-	//		///*if (room[y][x].type == FLOOR && !room[y][x].mark) {
-	//		//	cout << "?";
-	//		//}*/
-	//		if (x % 5 == 0)
+	//		if (room[y][x].playerPos && room[y][x].type == FLOOR) {
+	//			cout << "P ";
+	//		}
+	//		if (x % 5 == 0) {
 	//			cout << "|";
+	//		}
+
+
+	//		//		//if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
+	//		//		//	cout << "P ";
+	//		//		//}
+	//		//		//else if (room[y][x].type == WALL) {
+	//		//		//	cout << "X ";
+	//		//		//}
+	//		//		//else if (room[y][x].enemyPos == true) {
+	//		//		//	for (int i = 0; i < ENEMYNUMBER; i++)
+	//		//		//		if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
+	//		//		//			if (i < 10)
+	//		//		//				cout << i << " ";//cout << enemy[i].name << " ";
+	//		//		//			else
+	//		//		//				cout << i;
+	//		//		//}
+	//		//		//else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
+	//		//		//	cout << "  ";
+	//		//		//}
+	//		//		///*if (room[y][x].type == FLOOR && !room[y][x].mark) {
+	//		//		//	cout << "?";
+	//		//		//}*/
+	//		//		if (x % 5 == 0)
+	//		//			cout << "|";
 
 	//	}
 	//	if (y % 5 == 0) {
@@ -1351,19 +1377,23 @@ inline void GotoXY(int x, int y)
 ***************************************/
 void PlayerDie() {
 	system("cls");
+	cin.clear();
+	room[player.roomY][player.roomX].playerPos = false;
+	player.roomX = -1;
+	player.roomY = -1;
+	player.alive = false;
 	char flag;
 	do {
-		printf("You died !!");
+		cout << ("You died !!");
 		cout << "Restart?(y/n):";
 		cin >> flag;
 		if (flag == 'y' || flag == 'Y') {
+			cin.clear();
+			cin.ignore(100, '\n');
 			break;
 		}
-		else if (flag == 'n' || flag == 'N') {
-			exit(0);
-		}
 		else {
-			system("cls");
+			exit(0);
 		}
 	} while (true);
 	Init();
