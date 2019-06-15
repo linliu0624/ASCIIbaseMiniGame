@@ -89,13 +89,11 @@ void PlayerDie();
 unit player;
 unit enemy[ENEMYNUMBER];
 
-//int sameMapEnemy[MAX_ENEMY_IN_ONEROOM];
 int playerMoveCounter = 0;
 //玩家裝備的武器與護甲價值
 int playerWAVAlue = 0;
-//int enemyPtr = 0;
-//int sameMapEnemyPtr = 0;
-
+//場景切換
+int scean = INIT_SCEAN;
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
 
@@ -107,13 +105,20 @@ bool isBattle;
 int main()
 {
 	StartRnd();
-	Init();
-	//画面表示
-	Refresh();
-	// ゲームの循環
-	while (true)
-	{
-		Update();
+	while (true) {
+		if (scean == INIT_SCEAN) {
+			Init();
+			//画面表示
+			Refresh();
+		}
+		// ゲームの循環
+		while (true)
+		{
+			if (scean == UPDATE_SCEAN)
+				Update();
+			else
+				break;
+		}
 	}
 	return 0;
 }
@@ -151,6 +156,8 @@ void Init() {
 	CreateEnemy();
 	//敵配置
 	SpawnEnemy();
+
+	scean = UPDATE_SCEAN;
 }
 /*更新*/
 void Update() {
@@ -1390,12 +1397,12 @@ void PlayerDie() {
 		if (flag == 'y' || flag == 'Y') {
 			cin.clear();
 			cin.ignore(100, '\n');
+			scean = INIT_SCEAN;
 			break;
 		}
 		else {
 			exit(0);
 		}
 	} while (true);
-	Init();
-	Refresh();
+
 }
