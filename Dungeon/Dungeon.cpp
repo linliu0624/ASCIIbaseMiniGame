@@ -1024,8 +1024,9 @@ void UpdateBigMap() {
 *作者：林
 ***************************************/
 void ShowBigMap() {
-	cout << ">dungenon map<" << endl;
+	cout << "                                        >dungenon map<" << endl;
 	for (int i = 0; i < MAPRANGE; i++) {
+		cout << "                                        ";
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (dangeon[i][j].type == WALL && dangeon[i][j].playerPos != true) {
 				cout << "X ";
@@ -1047,13 +1048,13 @@ void ShowBigMap() {
 ***************************************/
 void ShowRoom() {
 	//顯示玩家存在的區域的地圖
-	cout << "->room map<-" << endl;
+	cout << "                                        ->room map<-" << endl;
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
 			if (dangeon[i][j].playerPos == true)
 			{
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
-					cout << "|";
+					cout << "                                        |";
 					for (int x = j * 5 - 4; x <= j * 5; x++) {
 						if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
 							cout << "P ";
@@ -1276,7 +1277,7 @@ void InventoryManage() {
 *作者：荒井
 ***************************************/
 void ShowPlayerStatus() {
-	cout << "↑↓←→ to move and attack, 'space' to wait      |-----enemy status-----" << endl;
+	cout << "↑↓←→ to move and attack, 'space' to wait       |-----enemy status-----" << endl;
 	cout << "press 'i' to manage inventory";
 	if (player.roomX == 1 && player.roomY == 1) {
 		cout << ". Press ↑ to escape" << endl;
@@ -1313,7 +1314,7 @@ void ShowPlayerStatus() {
 ***************************************/
 void ShowEnemyStatus() {
 	int roomX_min, roomX_max, roomY_min, roomY_max;
-	int x = 50, y = 15;
+	int x = 51, y = 15;
 	GotoXY(x, y++);
 	//cout << "enemyPtr:" << enemyPtr + 1 << endl;
 	GotoXY(x, y++);
