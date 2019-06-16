@@ -14,13 +14,11 @@
 #include <queue>
 using namespace std;
 /*************待解決問題***************
-敵人的生成有時候會有bug(機率低)
-包包滿了的情況與重做
 逃出
 玩家死
 依照玩家的武器和護甲來決定敵人裝備物品
+依照敵人生成位置決定裝備
 商人
-敵人尋找路徑
 起始畫面
 **************************************/
 //初期化
@@ -84,6 +82,8 @@ int Damage(int);
 void Attack(material, bool);
 //玩家死亡
 void PlayerDie();
+//玩家逃出
+void PlayerEscape(int);
 
 
 unit player;
@@ -503,6 +503,7 @@ void PlayerTurn() {
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
+				PlayerEscape(UP);
 				//武器の攻撃範囲で敵がいるかどうかを判定する
 				//いれば戦闘に入る
 				if (IsEnemy(UP) == true) {
@@ -1250,6 +1251,8 @@ void InventoryManage() {
 					else {
 						player.hp += simplePotion.hp;
 					}
+					player.inventory[a] = nothing;
+					player.weight -= player.inventory[a].weight;
 				}
 				else if (player.inventory[a].itemType == SUPER_POTION) {
 					if (player.hp + superPotion.hp >= player.maxHp) {
@@ -1258,9 +1261,10 @@ void InventoryManage() {
 					else {
 						player.hp += superPotion.hp;
 					}
+					player.inventory[a] = nothing;
+					player.weight -= player.inventory[a].weight;
 				}
-				player.inventory[a] = nothing;
-				player.weight -= player.inventory[a].weight;
+
 			}
 		}
 	}
@@ -1272,14 +1276,21 @@ void InventoryManage() {
 *作者：荒井
 ***************************************/
 void ShowPlayerStatus() {
-	cout << "press 'i' to manage inventory, 'space' to wait    |-----enemy status-----" << endl;
+	cout << "↑↓←→ to move and attack, 'space' to wait      |-----enemy status-----" << endl;
+	cout << "press 'i' to manage inventory";
+	if (player.roomX == 1 && player.roomY == 1) {
+		cout << ". Press ↑ to escape" << endl;
+	}
+	else {
+		cout << endl;
+	}
 	cout << endl;
 	int value = 0;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true)
 			value += player.inventory[i].value;
 	}
-
+	value += player.weapon.value + player.armor.value;
 	cout << "Name:" << player.name << "  |  All value:" << player.loan + value << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "  Weight:" << player.weight << "/" << player.maxWeight << endl;
@@ -1351,10 +1362,10 @@ void ShowEnemyStatus() {
 }
 /***************************************
 *ルールを表示する
-*作者：林
+*作者：横林
 ***************************************/
 void ShowRule() {
-	cout << "↑↓←→キーで移動と攻撃" << endl;
+
 }
 
 /***************************************
@@ -1405,4 +1416,45 @@ void PlayerDie() {
 		}
 	} while (true);
 
+}
+/***************************************
+*プレイヤーが逃げた時
+*作者：林
+***************************************/
+void PlayerEscape(int ch)
+{
+	if (player.roomX == 1 && player.roomY == 1) {
+		if (ch == UP) {
+			char flag;
+			system("CLS");
+
+			int value = 0;
+			for (int i = 0; i < 64; i++) {
+				if (player.inventory[i].flag == true)
+					value += player.inventory[i].value;
+			}
+			value += player.weapon.value + player.armor.value + player.loan;
+			if (value < GOAL_VALUE) {
+				cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
+				cout << "If you escape now, you lose." << endl;
+			}
+			else {
+				cout << "You have " << value << " point" << endl;
+			}
+			cout << "Are you sure?(y/n):";
+			cin >> flag;
+			if (flag == 'y' || flag == 'Y') {
+				room[player.roomY][player.roomX].playerPos = false;
+				player.roomX = -1;
+				player.roomY = -1;
+				player.alive = false;
+				//back to main menu. and update the rank.
+			}
+			else {
+				cin.clear();
+				cin.ignore(100, '\n');
+			}
+
+		}
+	}
 }
