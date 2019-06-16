@@ -14,6 +14,15 @@
 #include <queue>
 using namespace std;
 /*************待解決問題***************
+bug:
+  1.攻擊距離2的武器會格地圖攻擊
+  2.換地圖的同時可能直接被敵人先手
+背包系統重做:
+  1.bug 不會掉落item(?)
+  2.bug 物品不正常增加(?)
+  3.InventoryManager()都還沒更新(除了使用superpotion的部分)
+
+
 逃出
 玩家死
 依照玩家的武器和護甲來決定敵人裝備物品
@@ -259,20 +268,23 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = fist;
+	player.weapon = spear;//fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
 	player.loan = 0;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		player.inventory[i] = nothing;
+		player.inventory[i].amount = 0;
 	}
 	player.inventory[0] = superPotion;
-	player.inventory[1] = superPotion;
-	player.inventory[2] = superPotion;
+	player.inventory[0].amount = 3;
+	//player.inventory[1] = superPotion;
+	//player.inventory[2] = superPotion;
 	for (int i = 0; i < MAX_INVENTORY; i++)
-		player.loan -= player.inventory[i].value;
-	player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
+		player.loan -= player.inventory[i].value * player.inventory[i].amount;
+	player.weight = player.inventory[0].weight * player.inventory[0].amount;
+	//player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
 	//プレイヤーの生成位置を決める
 	room[3][3].playerPos = true;
 	player.roomX = 3;
@@ -896,9 +908,95 @@ void Attack(material weapon, bool playerToEnemy) {
 void EnemyDieAndDrop(int number) {
 	enemy[number].hp = 0;
 	enemy[number].alive = false;
+	bool wflag = false, aflag = false, iflag = false;
+	int wempty = -1, aempty = -1, iempty = -1;
 	room[enemy[number].roomY][enemy[number].roomX].enemyPos = false;
 	for (int i = 0; i < MAX_INVENTORY; i++) {
-		if (player.inventory[i].mateTag != WEAPON && player.inventory[i].mateTag != ARMOR &&
+		if (player.inventory[i].mateTag == NOTHING) {
+			if (wempty == -1) {
+				wempty = i;
+			}
+			else if (aempty == -1) {
+				aempty = i;
+			}
+			else if (iempty == -1) {
+				iempty = i;
+			}
+		}
+
+		if (player.inventory[i].mateTag == WEAPON) {
+			if (player.inventory[i].weaponType == enemy[number].weapon.weaponType && enemy[number].weapon.weaponType != FIST) {
+				player.inventory[i].amount++;
+				player.weight += player.inventory[i].weight;
+				enemy[number].weapon = fist;
+				wflag = true;
+			}
+		}
+		else if (player.inventory[i].mateTag == ARMOR) {
+			if (player.inventory[i].armorType == enemy[number].armor.armorType && enemy[number].armor.armorType != NO_ARMOR) {
+				player.inventory[i].amount++;
+				player.weight += player.inventory[i].weight;
+				enemy[number].armor = noArmor;
+				aflag = true;
+			}
+		}
+		else if (player.inventory[i].mateTag == ITEM) {
+			if (player.inventory[i].itemType == enemy[number].inventory[0].itemType && enemy[number].inventory[0].mateTag != NOTHING) {
+				player.inventory[i].amount++;
+				player.weight += player.inventory[i].weight;
+				enemy[number].inventory[0] = nothing;
+				iflag = true;
+			}
+		}
+		if (enemy[number].weapon.weaponType == FIST) {
+			wflag = true;
+		}
+		if (enemy[number].armor.armorType == NO_ARMOR) {
+			aflag = true;
+		}
+		if (enemy[number].inventory[0].mateTag == NOTHING) {
+			iflag = true;
+		}
+
+		if ((!wflag || !aflag || !iflag) && i == MAX_INVENTORY - 1) {
+			if (!wflag && enemy[number].weapon.weaponType != FIST) {
+				player.inventory[wempty] = enemy[number].weapon;
+				player.inventory[wempty].amount = 1;
+				enemy[number].weapon = fist;
+				wflag = true;
+			}
+			if (!aflag && enemy[number].armor.armorType != NO_ARMOR) {
+				if (player.inventory[wempty].mateTag == NOTHING) {
+					player.inventory[wempty] = enemy[number].armor;
+					player.inventory[wempty].amount = 1;
+				}
+				else {
+					player.inventory[aempty] = enemy[number].armor;
+					player.inventory[aempty].amount = 1;
+				}
+				enemy[number].armor = noArmor;
+				aflag = true;
+			}
+			if (!iflag && enemy[number].inventory[0].mateTag != NOTHING) {
+				if (player.inventory[aempty].mateTag == NOTHING) {
+					player.inventory[aempty] = enemy[number].inventory[0];
+					player.inventory[aempty].amount = 1;
+				}
+				else {
+					player.inventory[iempty] = enemy[number].inventory[0];
+					player.inventory[iempty].amount = 1;
+				}
+				enemy[number].inventory[0] = nothing;
+				iflag = true;
+			}
+
+		}
+
+		if (wflag && aflag && iflag) {
+			break;
+		}
+
+		/*if (player.inventory[i].mateTag != WEAPON && player.inventory[i].mateTag != ARMOR &&
 			player.inventory[i].mateTag != ITEM) {
 			if (enemy[number].weapon.weaponType != FIST) {
 				player.inventory[i] = enemy[number].weapon;
@@ -918,7 +1016,7 @@ void EnemyDieAndDrop(int number) {
 				enemy[number].inventory[0] = nothing;
 				continue;
 			}
-		}
+		}*/
 	}
 }
 /***************************************
@@ -1252,8 +1350,16 @@ void InventoryManage() {
 					else {
 						player.hp += simplePotion.hp;
 					}
-					player.inventory[a] = nothing;
+					//
+					player.inventory[a].amount--;
 					player.weight -= player.inventory[a].weight;
+					if (player.inventory[a].amount <= 0) {
+						player.inventory[a] = nothing;
+						player.inventory[a].amount = 0;
+					}
+					//
+					//player.inventory[a] = nothing;
+					//player.weight -= player.inventory[a].weight;
 				}
 				else if (player.inventory[a].itemType == SUPER_POTION) {
 					if (player.hp + superPotion.hp >= player.maxHp) {
@@ -1262,8 +1368,16 @@ void InventoryManage() {
 					else {
 						player.hp += superPotion.hp;
 					}
-					player.inventory[a] = nothing;
+					//
+					player.inventory[a].amount--;
 					player.weight -= player.inventory[a].weight;
+					if (player.inventory[a].amount <= 0) {
+						player.inventory[a] = nothing;
+						player.inventory[a].amount = 0;
+					}
+					//
+					//player.inventory[a] = nothing;
+					//player.weight -= player.inventory[a].weight;
 				}
 
 			}
@@ -1287,9 +1401,9 @@ void ShowPlayerStatus() {
 	}
 	cout << endl;
 	int value = 0;
-	for (int i = 0; i < 64; i++) {
+	for (int i = 0; i < MAX_INVENTORY; i++) {
 		if (player.inventory[i].flag == true)
-			value += player.inventory[i].value;
+			value += player.inventory[i].value * player.inventory[i].amount;
 	}
 	value += player.weapon.value + player.armor.value;
 	cout << "Name:" << player.name << "  |  All value:" << player.loan + value << endl;
@@ -1303,7 +1417,7 @@ void ShowPlayerStatus() {
 	cout << "----Inventory----" << endl;
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
-			cout << i + 1 << "." << player.inventory[i].name << "[" << player.inventory[i].value << "]" << endl;
+			cout << i + 1 << "." << player.inventory[i].name << "[" << player.inventory[i].value << "]" << "  x " << player.inventory[i].amount << endl;
 		}
 	}
 }
@@ -1347,6 +1461,8 @@ void ShowEnemyStatus() {
 									cout << "|armor:" << enemy[e].armor.name << endl;
 									GotoXY(x, y++);
 									cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
+									GotoXY(x, y++);
+									cout << enemy[e].inventory[0].name << endl;
 									x += 25;
 								}
 								else {

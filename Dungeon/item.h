@@ -20,6 +20,7 @@ struct material {
 	char name[32];
 	char text[128];
 	int value;
+	int amount;//用在背包的堆疊
 	float weight;
 	bool flag = false;
 };
