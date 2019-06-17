@@ -14,21 +14,19 @@
 #include <queue>
 using namespace std;
 /*************待解決問題***************
-bug:
+1.bug:
   1.攻擊距離2的武器會格地圖攻擊
   2.換地圖的同時可能直接被敵人先手
-背包系統重做:
-  1.bug 不會掉落item(?)
-  2.bug 物品不正常增加(?)
-  3.InventoryManager()都還沒更新(除了使用superpotion的部分)
-
-
-逃出
-玩家死
-依照玩家的武器和護甲來決定敵人裝備物品
-依照敵人生成位置決定裝備
+  背包系統重做:
+     需檢查看看有沒有bug
+2.逃出
+3.玩家死
+4.平衡性調整
+   1.依照玩家的武器和護甲來決定敵人裝備物品
+   2.依照敵人生成位置決定裝備(越後面越強價值越高)
+   3.增加武器與護甲還有其耐久與價值跟重量
+5.起始畫面
 商人
-起始畫面
 **************************************/
 //初期化
 void Init();
@@ -263,7 +261,7 @@ void CreatePlayer() {
 	char flag;
 	player.alive = true;
 	player.inventoryMode = false;
-	player.maxHp = 30000;
+	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
 	player.weapon = fist;
@@ -1300,20 +1298,22 @@ void InventoryManage() {
 			if (player.inventory[a].mateTag == ARMOR) {
 				tmp = player.inventory[a];
 				if (player.armor.armorType != NO_ARMOR) {
-					player.inventory[a] = nothing;
+					player.inventory[a] = player.armor;
+					player.inventory[a].amount = 1;
 				}
 				else {
-					player.inventory[a] = player.armor;
+					player.inventory[a] = nothing;
 				}
 				player.armor = tmp;
 			}
 			else if (player.inventory[a].mateTag == WEAPON) {
 				tmp = player.inventory[a];
 				if (player.weapon.weaponType != FIST) {
-					player.inventory[a] = nothing;
+					player.inventory[a] = player.weapon;
+					player.inventory[a].amount = 1;
 				}
 				else {
-					player.inventory[a] = player.weapon;
+					player.inventory[a] = nothing;
 				}
 				player.weapon = tmp;
 
@@ -1369,7 +1369,7 @@ void Valuation()
 	}
 	for (int i = 0; i < MAX_INVENTORY; i++) {
 		if (player.inventory[i].mateTag != NOTHING && player.inventory[i].mateTag != ITEM) {
-			matDamage = player.inventory[i].hp /(float)player.inventory[i].maxHp;
+			matDamage = player.inventory[i].hp / (float)player.inventory[i].maxHp;
 			player.inventory[i].value = player.inventory[i].maxValue * matDamage;
 		}
 	}
@@ -1402,7 +1402,7 @@ void ShowPlayerStatus() {
 	cout << "[" << player.armor.name << "] def:+" << player.armor.def * 100 <<
 		"%  durability:" << player.armor.hp << "/" << player.armor.maxHp << endl;
 	if (player.weapon.weaponType != FIST)
-		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << ".  durability:" << player.weapon.hp << endl;
+		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << ".  durability:" << player.weapon.hp << "/" << player.weapon.maxHp << endl;
 	else
 		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << endl;
 	cout << "----Inventory----" << endl;

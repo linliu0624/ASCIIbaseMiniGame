@@ -143,9 +143,9 @@ void WeaponInit() {
 	strcpy(spear.atktext, "atk: 20~50");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
-	spear.maxValue = 20;
+	spear.maxValue = 45;
 	spear.value = spear.maxValue;
-	spear.maxHp = 30;
+	spear.maxHp = 20;
 	spear.hp = shortSword.maxHp;
 	spear.weight = 3.5f;
 	spear.atkRange = TWO;
