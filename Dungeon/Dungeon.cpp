@@ -266,7 +266,7 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = spear;//fist;
+	player.weapon =fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
@@ -277,8 +277,6 @@ void CreatePlayer() {
 	}
 	player.inventory[0] = superPotion;
 	player.inventory[0].amount = 3;
-	//player.inventory[1] = superPotion;
-	//player.inventory[2] = superPotion;
 	for (int i = 0; i < MAX_INVENTORY; i++)
 		player.loan -= player.inventory[i].value * player.inventory[i].amount;
 	player.weight = player.inventory[0].weight * player.inventory[0].amount;
@@ -1484,8 +1482,6 @@ void ShowEnemyStatus() {
 									cout << "|armor:" << enemy[e].armor.name << endl;
 									GotoXY(x, y++);
 									cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
-									GotoXY(x, y++);
-									cout << enemy[e].inventory[0].name << endl;
 									x += 25;
 								}
 								else {
