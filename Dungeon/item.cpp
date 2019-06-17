@@ -51,26 +51,30 @@ void WeaponInit() {
 	fist.atkType = CUT_STAB;
 	fist.flag = true;
 
-	//長剣
-	strcpy(longSword.name, "long sword");
-	//strcpy(longSword.atktext, "atk=1~4");
-	longSword.mateTag = WEAPON;
-	longSword.weaponType = LONG_SWORD;
-	longSword.value = 15;
-	longSword.weight = 2.0f;
-	longSword.atkRange = ONE;
-	longSword.atkType = CUT_STAB;
-	longSword.flag = true;
 	//短剣
 	strcpy(shortSword.name, "short sword");
 	strcpy(shortSword.atktext, "atk: 20~50");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
-	shortSword.value = 15;
-	longSword.weight = 1.5f;
+	shortSword.maxValue = 15;
+	shortSword.value = shortSword.maxValue;
+	shortSword.maxHp = 30;
+	shortSword.hp = shortSword.maxHp;
+	shortSword.weight = 1.5f;
 	shortSword.atkRange = ONE;
 	shortSword.atkType = CUT_STAB;
 	shortSword.flag = true;
+	//長剣
+	strcpy(longSword.name, "long sword");
+	//strcpy(longSword.atktext, "atk=1~4");
+	longSword.mateTag = WEAPON;
+	longSword.weaponType = LONG_SWORD;
+	longSword.maxValue = 15;
+	longSword.value = longSword.maxValue;
+	longSword.weight = 2.0f;
+	longSword.atkRange = ONE;
+	longSword.atkType = CUT_STAB;
+	longSword.flag = true;
 	//バナナ剣
 	strcpy(banana.name, "banana");
 	banana.mateTag = WEAPON;
@@ -101,7 +105,10 @@ void WeaponInit() {
 	strcpy(battleAxe.atktext, "atk: 10~60");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
-	battleAxe.value = 20;
+	battleAxe.maxValue = 20;
+	battleAxe.value = battleAxe.maxValue;
+	battleAxe.maxHp = 30;
+	battleAxe.hp = shortSword.maxHp;
 	battleAxe.weight = 2.5f;
 	battleAxe.atkRange = ONE;
 	battleAxe.armorType = CUT;
@@ -136,7 +143,10 @@ void WeaponInit() {
 	strcpy(spear.atktext, "atk: 20~50");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
-	spear.value = 20;
+	spear.maxValue = 20;
+	spear.value = spear.maxValue;
+	spear.maxHp = 30;
+	spear.hp = shortSword.maxHp;
 	spear.weight = 3.5f;
 	spear.atkRange = TWO;
 	spear.atkType = STAB;
@@ -190,7 +200,8 @@ void ArmorInit() {
 	strcpy(leatherArmor.name, "leather armor");
 	leatherArmor.mateTag = ARMOR;
 	leatherArmor.armorType = LEATHER_ARMOR;
-	leatherArmor.value = 40;
+	leatherArmor.maxValue = 40;
+	leatherArmor.value = leatherArmor.maxValue;
 	leatherArmor.flag = true;
 	leatherArmor.maxHp = 400;
 	leatherArmor.hp = leatherArmor.maxHp;
@@ -201,7 +212,8 @@ void ArmorInit() {
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
 	heavyLeatherArmor.mateTag = ARMOR;
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
-	heavyLeatherArmor.value = 45;
+	heavyLeatherArmor.maxValue = 45;
+	heavyLeatherArmor.value = heavyLeatherArmor.maxValue;
 	heavyLeatherArmor.flag = true;
 	heavyLeatherArmor.maxHp = 300;
 	heavyLeatherArmor.hp = heavyLeatherArmor.maxHp;
@@ -212,7 +224,8 @@ void ArmorInit() {
 	strcpy(chainmail.name, "chainmail");
 	chainmail.mateTag = ARMOR;
 	chainmail.armorType = CHAINMAIL;
-	chainmail.value = 150;
+	chainmail.maxValue = 150;
+	chainmail.value = chainmail.maxValue;
 	chainmail.flag = true;
 	chainmail.maxHp = 500;
 	chainmail.hp = chainmail.maxHp;

@@ -66,10 +66,6 @@ bool SearchEnemy();
 void ShowEnemyStatus();
 //ルールの表示
 void ShowRule();
-//戦闘
-void Battle();
-//プレイヤーの攻撃
-void PlayerAttack();
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -84,6 +80,8 @@ void EnemyMove(int);
 void EnemyDieAndDrop(int);
 //装備管理
 void InventoryManage();
+//判定價值
+void Valuation();
 //ダメージの計算
 int Damage(int);
 //void Damage(int, int, int, bool);
@@ -93,6 +91,7 @@ void Attack(material, bool);
 void PlayerDie();
 //玩家逃出
 void PlayerEscape(int);
+
 
 unit player;
 unit enemy[ENEMYNUMBER];
@@ -186,6 +185,7 @@ void Update() {
 				SpawnEnemy();
 				playerMoveCounter = 0;
 			}
+			Valuation();
 			Refresh();
 		}
 		if (player.hp <= 0)	PlayerDie();
@@ -285,14 +285,11 @@ void CreatePlayer() {
 	room[3][3].playerPos = true;
 	player.roomX = 3;
 	player.roomY = 3;
-	//while (true) {
 	system("cls");
 	cout << "Please input name:";
 	cin >> player.name;
 	cin.clear();
 	cin.ignore(100, '\n');
-	//	cout << "Your name is [" << player.name << "], are you sure?(y/n):";
-	//}
 }
 /***************************************
 *enemyの生成
@@ -338,7 +335,7 @@ void CreateEnemy() {
 		else {
 			enemy[i].weapon = shortSword;
 		}
-		enemy[i].weapon.hp = 30 - rand() % 5;
+		enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
 		//防具を装備する
 		if (armorRnd < 50)
 			enemy[i].armor = noArmor;
@@ -1356,6 +1353,28 @@ void InventoryManage() {
 	clsFlag_Inventory = false;
 }
 /***************************************
+*playerが持っているものの価値を判断する
+*作者：林
+***************************************/
+void Valuation()
+{
+	float matDamage;
+	if (player.armor.armorType != NO_ARMOR) {
+		matDamage = player.armor.hp / (float)player.armor.maxHp;
+		player.armor.value = player.armor.maxValue * matDamage;
+	}
+	if (player.weapon.weaponType != FIST) {
+		matDamage = player.weapon.hp / (float)player.weapon.maxHp;
+		player.weapon.value = player.weapon.maxValue * matDamage;
+	}
+	for (int i = 0; i < MAX_INVENTORY; i++) {
+		if (player.inventory[i].mateTag != NOTHING && player.inventory[i].mateTag != ITEM) {
+			matDamage = player.inventory[i].hp /(float)player.inventory[i].maxHp;
+			player.inventory[i].value = player.inventory[i].maxValue * matDamage;
+		}
+	}
+}
+/***************************************
 *playerの状態を表示する
 *作者：荒井
 ***************************************/
@@ -1458,26 +1477,7 @@ void ShowRule() {
 
 }
 
-/***************************************
-*ランダムの初期化
-*作者：林
-***************************************/
-void StartRnd() {
-	unsigned seed;
-	seed = (unsigned)time(NULL);
-	srand(seed);
-}
-/***************************************
-*画面の座標を(x,y)に移動する
-*作者：林
-***************************************/
-inline void GotoXY(int x, int y)
-{
-	COORD coord;
-	coord.X = x;
-	coord.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
+
 
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
@@ -1548,4 +1548,25 @@ void PlayerEscape(int ch)
 
 		}
 	}
+}
+
+/***************************************
+*ランダムの初期化
+*作者：林
+***************************************/
+void StartRnd() {
+	unsigned seed;
+	seed = (unsigned)time(NULL);
+	srand(seed);
+}
+/***************************************
+*画面の座標を(x,y)に移動する
+*作者：林
+***************************************/
+inline void GotoXY(int x, int y)
+{
+	COORD coord;
+	coord.X = x;
+	coord.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }

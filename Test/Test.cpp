@@ -21,9 +21,13 @@ using namespace std;
 void StartRnd();
 inline void GotoXY(int, int);
 void main() {
-	int i;
-	cin >> i;
-	cout << i;
+	//int i;
+	//cin >> i;
+	//cout << i;
+	int i = 50;
+	float n = 0.51;
+	int a = i * n;
+	cout << a << endl;
 }
 
 // 執行程式: Ctrl + F5 或 [偵錯] > [啟動但不偵錯] 功能表
