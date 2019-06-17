@@ -263,7 +263,7 @@ void CreatePlayer() {
 	char flag;
 	player.alive = true;
 	player.inventoryMode = false;
-	player.maxHp = 30000;
+	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
 	player.weapon = spear;//fist;
@@ -371,8 +371,6 @@ void CreateEnemy() {
 		else if (itemRnd >= 60) {
 			enemy[i].inventory[0] = brokenDiamond;
 		}
-
-		enemy[i].inventory[0] = ivory;
 	}
 }
 /***************************************
