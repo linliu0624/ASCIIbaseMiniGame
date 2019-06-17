@@ -9,6 +9,7 @@ struct material {
 	int itemType;
 
 	int atk;
+	char atktext[128];
 	int atkRange;
 	int atkType;
 

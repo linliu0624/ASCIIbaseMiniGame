@@ -41,7 +41,8 @@ material brokenDiamond;
 void WeaponInit() {
 	//拳
 	strcpy(fist.name, "fist");
-	strcpy(fist.text, "~ Just hands, attack distance is one. atk=1~4 ~");
+	strcpy(fist.text, "~ Just hands, attack distance is one. atk = 10~40 ~");
+	strcpy(fist.atktext, "atk: 10~40");
 	fist.mateTag = WEAPON;
 	fist.weaponType = FIST;
 	fist.value = 0;
@@ -52,6 +53,7 @@ void WeaponInit() {
 
 	//長剣
 	strcpy(longSword.name, "long sword");
+	//strcpy(longSword.atktext, "atk=1~4");
 	longSword.mateTag = WEAPON;
 	longSword.weaponType = LONG_SWORD;
 	longSword.value = 15;
@@ -61,9 +63,11 @@ void WeaponInit() {
 	longSword.flag = true;
 	//短剣
 	strcpy(shortSword.name, "short sword");
+	strcpy(shortSword.atktext, "atk: 20~50");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
 	shortSword.value = 15;
+	longSword.weight = 1.5f;
 	shortSword.atkRange = ONE;
 	shortSword.atkType = CUT_STAB;
 	shortSword.flag = true;
@@ -94,6 +98,7 @@ void WeaponInit() {
 
 	//斧
 	strcpy(battleAxe.name, "battle axe");
+	strcpy(battleAxe.atktext, "atk: 10~60");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
 	battleAxe.value = 20;
@@ -128,6 +133,7 @@ void WeaponInit() {
 
 	//槍
 	strcpy(spear.name, "spear");
+	strcpy(spear.atktext, "atk: 20~50");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
 	spear.value = 20;
