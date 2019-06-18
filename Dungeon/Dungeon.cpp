@@ -15,8 +15,6 @@
 using namespace std;
 /*************待解決問題***************
 1.bug:
-  1.換地圖的同時可能直接被敵人先手 或是 敵人會追到換地圖
-  2.攻擊距離2的武器可能會穿地圖攻擊
   背包系統重做:
 	 需檢查看看有沒有bug
 2.逃出
@@ -263,10 +261,10 @@ void CreatePlayer() {
 	char flag;
 	player.alive = true;
 	player.inventoryMode = false;
-	player.maxHp = 30000;
+	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = spear;//fist;
+	player.weapon = fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
@@ -480,7 +478,11 @@ bool SearchEnemy() {
 	}
 	return false;
 }
-
+/***************************************
+*plyaerと同じ部屋のenemyを探す
+*int number:指定されているenemy
+*作者：林
+***************************************/
 bool SearchEnemy(int number)
 {
 	int roomX_min, roomY_min, roomX_max, roomY_max;
