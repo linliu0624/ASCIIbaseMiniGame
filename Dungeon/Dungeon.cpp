@@ -317,10 +317,8 @@ void CreateEnemy() {
 		}
 		if (i % 2 == 0)enemy[i].moveWay = true;
 		else enemy[i].moveWay = false;
-		weaponRnd = rand() % 100 + 1;
-		armorRnd = rand() % 100 + 1;
-		itemRnd = rand() % 100 + 1;
 		//武器を装備する
+		weaponRnd = rand() % 100 + 1;
 		if (weaponRnd <= 20) {
 			enemy[i].weapon = fist;
 		}
@@ -335,6 +333,7 @@ void CreateEnemy() {
 		}
 		enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
 		//防具を装備する
+		armorRnd = rand() % 100 + 1;
 		if (armorRnd < 50)
 			enemy[i].armor = noArmor;
 		else if (armorRnd >= 50 && armorRnd < 70) {
@@ -351,23 +350,31 @@ void CreateEnemy() {
 		}
 
 		//アイテムを装備する
-		if (itemRnd < 5) {
-			enemy[i].inventory[0] = ivory;
+		itemRnd = rand() % 100 + 1;
+		if (player.hp / (float)player.maxHp > 0.5f) {
+			if (itemRnd < 5) {
+				enemy[i].inventory[0] = ivory;
+			}
+			else if (itemRnd >= 5 && itemRnd < 15) {
+				enemy[i].inventory[0] = silver;
+			}
+			else if (itemRnd >= 15 && itemRnd < 45) {
+				enemy[i].inventory[0] = simplePotion;
+			}
+			else if (itemRnd >= 45 && itemRnd < 50) {
+				enemy[i].inventory[0] = superPotion;
+			}
+			else if (itemRnd >= 50 && itemRnd < 58) {
+				enemy[i].inventory[0] = gold;
+			}
+			else if (itemRnd >= 58) {
+				enemy[i].inventory[0] = brokenDiamond;
+			}
 		}
-		else if (itemRnd >= 5 && itemRnd < 15) {
-			enemy[i].inventory[0] = silver;
-		}
-		else if (itemRnd >= 15 && itemRnd < 45) {
-			enemy[i].inventory[0] = simplePotion;
-		}
-		else if (itemRnd >= 45 && itemRnd < 50) {
-			enemy[i].inventory[0] = superPotion;
-		}
-		else if (itemRnd >= 50 && itemRnd < 60) {
-			enemy[i].inventory[0] = gold;
-		}
-		else if (itemRnd >= 60) {
-			enemy[i].inventory[0] = brokenDiamond;
+		else {
+			if (itemRnd > 60) {
+				enemy[i].inventory[0] = simplePotion;
+			}
 		}
 	}
 }
@@ -1083,7 +1090,7 @@ bool IsEnemy(int dir) {
 		}
 		for (int i = 0; i < ENEMYNUMBER; i++) {
 			if (room[enemyPosY][enemyPosX].enemyPos && enemy[i].samePosWithPlayer &&
-				enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY ) {
+				enemy[i].roomX == enemyPosX && enemy[i].roomY == enemyPosY) {
 				return true;
 			}
 		}
@@ -1143,94 +1150,94 @@ void ShowBigMap() {
 void ShowRoom() {
 	//顯示玩家存在的區域的地圖
 	cout << "                                        ->room map<-" << endl;
-	//for (int i = 1; i < MAPRANGE; i++) {
-	//	for (int j = 1; j < MAPRANGE; j++) {
-	//		if (dangeon[i][j].playerPos == true)
-	//		{
-	//			for (int y = i * 5 - 4; y <= i * 5; y++) {
-	//				cout << "                                        |";
-	//				for (int x = j * 5 - 4; x <= j * 5; x++) {
-	//					if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
-	//						cout << "P ";
-	//					}
-	//					else if (room[y][x].type == WALL) {
-	//						cout << "X ";
-	//					}
-	//					else if (room[y][x].enemyPos == true) {
-	//						for (int i = 0; i < ENEMYNUMBER; i++)
-	//							if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
-	//								cout << enemy[i].name << " ";
-	//					}
-	//					else if (room[y][x].type == FLOOR && room[y][x].playerPos != true && !room[y][x].exitPos) {
-	//						cout << "  ";
-	//					}
-	//					if (room[y][x].exitPos && !room[y][x].playerPos) {
-	//						cout << "E ";
-	//					}
-	//				}
-	//				cout << "|" << endl;
-	//			}
-	//		}
-	//	}
-	//}
-	//cout << "===============================================================================" << endl;
-	//顯示所有區域的地圖(debug mode)
-	cout << "---------------" << endl;
-	for (int y = 1; y < ROOMRANGE; y++) {
-		cout << "|";
-		for (int x = 1; x < ROOMRANGE; x++) {
-			if (room[y][x].enemyPos)
-				for (int i = 0; i < ENEMYNUMBER; i++) {
-					if (enemy[i].roomX == x && enemy[i].roomY == y) {
-						if (i < 10)
-							cout << i << " ";
-						else
-							cout << i;
+	for (int i = 1; i < MAPRANGE; i++) {
+		for (int j = 1; j < MAPRANGE; j++) {
+			if (dangeon[i][j].playerPos == true)
+			{
+				for (int y = i * 5 - 4; y <= i * 5; y++) {
+					cout << "                                        |";
+					for (int x = j * 5 - 4; x <= j * 5; x++) {
+						if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
+							cout << "P ";
+						}
+						else if (room[y][x].type == WALL) {
+							cout << "X ";
+						}
+						else if (room[y][x].enemyPos == true) {
+							for (int i = 0; i < ENEMYNUMBER; i++)
+								if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
+									cout << enemy[i].name << " ";
+						}
+						else if (room[y][x].type == FLOOR && room[y][x].playerPos != true && !room[y][x].exitPos) {
+							cout << "  ";
+						}
+						if (room[y][x].exitPos && !room[y][x].playerPos) {
+							cout << "E ";
+						}
 					}
+					cout << "|" << endl;
 				}
-			else
-				if (room[y][x].type == FLOOR && !room[y][x].playerPos)
-					cout << "* ";
-				else if (!room[y][x].playerPos)
-					cout << "X ";
-			if (room[y][x].playerPos && room[y][x].type == FLOOR) {
-				cout << "P ";
 			}
-			if (x % 5 == 0) {
-				cout << "|";
-			}
-
-
-			//		//		//if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
-			//		//		//	cout << "P ";
-			//		//		//}
-			//		//		//else if (room[y][x].type == WALL) {
-			//		//		//	cout << "X ";
-			//		//		//}
-			//		//		//else if (room[y][x].enemyPos == true) {
-			//		//		//	for (int i = 0; i < ENEMYNUMBER; i++)
-			//		//		//		if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
-			//		//		//			if (i < 10)
-			//		//		//				cout << i << " ";//cout << enemy[i].name << " ";
-			//		//		//			else
-			//		//		//				cout << i;
-			//		//		//}
-			//		//		//else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
-			//		//		//	cout << "  ";
-			//		//		//}
-			//		//		///*if (room[y][x].type == FLOOR && !room[y][x].mark) {
-			//		//		//	cout << "?";
-			//		//		//}*/
-			//		//		if (x % 5 == 0)
-			//		//			cout << "|";
-
 		}
-		if (y % 5 == 0) {
-			cout << endl;
-		}
-		cout << "|" << endl;
 	}
 	cout << "===============================================================================" << endl;
+	//顯示所有區域的地圖(debug mode)
+	//cout << "---------------" << endl;
+	//for (int y = 1; y < ROOMRANGE; y++) {
+	//	cout << "|";
+	//	for (int x = 1; x < ROOMRANGE; x++) {
+	//		if (room[y][x].enemyPos)
+	//			for (int i = 0; i < ENEMYNUMBER; i++) {
+	//				if (enemy[i].roomX == x && enemy[i].roomY == y) {
+	//					if (i < 10)
+	//						cout << i << " ";
+	//					else
+	//						cout << i;
+	//				}
+	//			}
+	//		else
+	//			if (room[y][x].type == FLOOR && !room[y][x].playerPos)
+	//				cout << "* ";
+	//			else if (!room[y][x].playerPos)
+	//				cout << "X ";
+	//		if (room[y][x].playerPos && room[y][x].type == FLOOR) {
+	//			cout << "P ";
+	//		}
+	//		if (x % 5 == 0) {
+	//			cout << "|";
+	//		}
+
+
+	//				//		//if (room[y][x].type == FLOOR && room[y][x].playerPos == true) {
+	//				//		//	cout << "P ";
+	//				//		//}
+	//				//		//else if (room[y][x].type == WALL) {
+	//				//		//	cout << "X ";
+	//				//		//}
+	//				//		//else if (room[y][x].enemyPos == true) {
+	//				//		//	for (int i = 0; i < ENEMYNUMBER; i++)
+	//				//		//		if (enemy[i].roomX == x && enemy[i].roomY == y && enemy[i].alive)
+	//				//		//			if (i < 10)
+	//				//		//				cout << i << " ";//cout << enemy[i].name << " ";
+	//				//		//			else
+	//				//		//				cout << i;
+	//				//		//}
+	//				//		//else if (room[y][x].type == FLOOR && room[y][x].playerPos != true) {
+	//				//		//	cout << "  ";
+	//				//		//}
+	//				//		///*if (room[y][x].type == FLOOR && !room[y][x].mark) {
+	//				//		//	cout << "?";
+	//				//		//}*/
+	//				//		if (x % 5 == 0)
+	//				//			cout << "|";
+
+	//	}
+	//	if (y % 5 == 0) {
+	//		cout << endl;
+	//	}
+	//	cout << "|" << endl;
+	//}
+	//cout << "===============================================================================" << endl;
 
 }
 /***************************************
