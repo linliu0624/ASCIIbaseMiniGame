@@ -53,15 +53,15 @@ void WeaponInit() {
 	fist.atkType = CUT_STAB;
 	fist.flag = true;
 
-	//短剣
+	//匕首
 	strcpy(dagger.name, "dagger");
 	strcpy(dagger.atktext, "atk: 10~200");
 	dagger.mateTag = WEAPON;
 	dagger.weaponType = SHORT_SWORD;
 	dagger.maxValue = 10;
-	dagger.value = shortSword.maxValue;
+	dagger.value = dagger.maxValue;
 	dagger.maxHp = 10;
-	dagger.hp = shortSword.maxHp;
+	dagger.hp = dagger.maxHp;
 	dagger.weight = 1.0f;
 	dagger.atkRange = ONE;
 	dagger.atkType = CUT_STAB;

@@ -1365,8 +1365,9 @@ void InventoryManage() {
 				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
 				<< "  x " << player.inventory[i].amount << endl << "  ~" << player.inventory[i].text << "~" << endl;
 			else
-				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
-				<< endl << "  ~" << player.inventory[i].text << "~" << endl;
+				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" <<
+				player.inventory[i].weight << " , durability:" << player.inventory[i].hp << " / " << player.inventory[i].maxHp << "]" <<
+				endl << "  ~" << player.inventory[i].text << "~" << endl;
 		}
 	}
 
@@ -1643,7 +1644,7 @@ void ShowRule() {
 	cout << "E:ゴール位置を表す" << endl;
 	cout << "P:プレイヤーの位置を表す" << endl;
 	cout << "$,!,@,#:敵の位置を表す" << endl;
-	
+
 	cout << "Press any key to continue" << endl;
 	char tmp;
 	tmp = _getch();
@@ -1754,6 +1755,9 @@ void Start() {
 		else if (flag == '3') {
 			scean = RULE_SCEAN;
 			break;
+		}
+		else {
+			system("cls");
 		}
 	} while (true);
 }
