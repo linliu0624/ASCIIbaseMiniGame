@@ -274,7 +274,7 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = battleAxe;//fist;
+	player.weapon = fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
