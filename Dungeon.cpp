@@ -102,7 +102,7 @@ int playerMoveCounter = 0;
 //玩家裝備的武器與護甲價值
 int playerWAValue = 0;
 //場景切換
-int scean = INIT_SCEAN;
+int scean = START_SCEAN;
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
 
@@ -112,13 +112,18 @@ bool isBattle;
 
 int main()
 {
-	Start();
 	StartRnd();
 	while (true) {
-		if (scean == INIT_SCEAN) {
+		if (scean == START_SCEAN) {
+			Start();
+		}
+		else if (scean == INIT_SCEAN) {
 			Init();
 			//画面表示
 			Refresh();
+		}
+		else if (scean == RULE_SCEAN) {
+			ShowRule();
 		}
 		// ゲームの循環
 		while (true)
@@ -269,7 +274,7 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = fist;
+	player.weapon = battleAxe;//fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
@@ -305,8 +310,8 @@ void CreateEnemy() {
 	int armorRnd;
 	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		enemy[i].maxHp = 300;
-		enemy[i].hp = 150 + rand() % 75 + rand() % 75;
+		enemy[i].maxHp = 250;
+		enemy[i].hp = 130 + rand() % 75 + rand() % 75;
 		enemy[i].type = ENEMY;
 		if (i % 4 == 0) {
 			strcpy(enemy[i].name, "!");
@@ -939,7 +944,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				//只能砍的武器對鎖甲造成的傷害低
 				else if (weapon.atkType == CUT) {
 					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
-						armorDef = armorDef * 1.4f;
+						armorDef = armorDef * 1.1f;
 					}
 					else {
 						armorDef = armorDef;
@@ -949,7 +954,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				//只能刺的武器對鎖甲造成傷害高
 				else if (weapon.atkType == STAB) {
 					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
-						armorDef = armorDef * 0.4f;
+						armorDef = armorDef * 0.5f;
 					}
 					else {
 						armorDef = armorDef;
@@ -967,7 +972,7 @@ void Attack(material weapon, bool playerToEnemy) {
 					enemy[i].armor = noArmor;
 					armorDamage = 0;
 				}
-				enemy[i].armor.hp -= armorDamage;
+				//enemy[i].armor.hp -= armorDamage;
 				bodyDamage = totalDamage - armorDamage;
 				if (bodyDamage <= 0) {
 					bodyDamage = 0;
@@ -1360,20 +1365,22 @@ void InventoryManage() {
 				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
 				<< "  x " << player.inventory[i].amount << endl << "  ~" << player.inventory[i].text << "~" << endl;
 			else
-				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
-				<< endl << "  ~" << player.inventory[i].text << "~" << endl;
+				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" <<
+				player.inventory[i].weight << " , durability:" << player.inventory[i].hp << " / " << player.inventory[i].maxHp << "]" <<
+				endl << "  ~" << player.inventory[i].text << "~" << endl;
 		}
 	}
 
 	cout << endl;
 	while (1) {
-		cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
+		cout << "Input a number that you want to change" << endl <<
+			"(twice time same number to equip or use, '666' to undress armor, '777' to undress weapon, '888' to back ,'999' to discard):";
 		cin >> a;
-		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888) {
+		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888 && a != 666 && a != 777) {
 			cin.clear();
 			cin.ignore(100, '\n');
 		}
-		else if (a > 0 && a < MAX_INVENTORY || a == 999 || a == 888)break;
+		else if (a > 0 && a < MAX_INVENTORY || a == 999 || a == 888 || a == 666 || a == 777)break;
 	}
 
 	if (a == 888) {
@@ -1402,6 +1409,30 @@ void InventoryManage() {
 			}
 			else {
 				break;
+			}
+		}
+	}
+	else if (a == 777) {
+		if (player.weapon.weaponType != FIST) {
+			for (int i = 1; i < MAX_INVENTORY; i++) {
+				if (player.inventory[i].mateTag == NOTHING) {
+					player.inventory[i] = player.weapon;
+					player.inventory[i].amount = 1;
+					player.weapon = fist;
+					break;
+				}
+			}
+		}
+	}
+	else if (a == 666) {
+		if (player.armor.armorType != NO_ARMOR) {
+			for (int i = 1; i < MAX_INVENTORY; i++) {
+				if (player.inventory[i].mateTag == NOTHING) {
+					player.inventory[i] = player.armor;
+					player.inventory[i].amount = 1;
+					player.armor = noArmor;
+					break;
+				}
 			}
 		}
 	}
@@ -1623,6 +1654,26 @@ void ShowEnemyStatus() {
 *作者：横林
 ***************************************/
 void ShowRule() {
+	system("CLS");
+	cout << "このゲームはダンジョン内を探索し、最終的に集めた金額で争います。" << endl;
+	cout << "目標金額があります。まずはそれを達成しましょう！" << endl;
+	cout << "勝利条件" << endl;
+	cout << "・目標金額を満たし、ダンジョンを抜け出す。" << endl;
+	cout << "敗北条件" << endl;
+	cout << "・目標金額に満たないまま、ダンジョンを抜け出す。" << endl;
+	cout << "・HPが0になり、死んでしまう。" << endl;
+	cout << "(その際、スコアも0になってしまうので気を付けましょう。)" << endl;
+
+	cout << "X:マップの進めない場所や壁を表す" << endl;
+	cout << "|:部屋の横壁を表す" << endl;
+	cout << "E:ゴール位置を表す" << endl;
+	cout << "P:プレイヤーの位置を表す" << endl;
+	cout << "$,!,@,#:敵の位置を表す" << endl;
+
+	cout << "Press any key to continue" << endl;
+	char tmp;
+	tmp = _getch();
+	scean = START_SCEAN;
 
 }
 
@@ -1651,7 +1702,9 @@ void PlayerDie() {
 			break;
 		}
 		else {
-			exit(0);
+			scean = START_SCEAN;
+			break;
+			//exit(0);
 		}
 	} while (true);
 
@@ -1670,10 +1723,11 @@ void PlayerEscape(int ch)
 			int value = 0;
 			for (int i = 0; i < 64; i++) {
 				if (player.inventory[i].flag == true)
-					value += player.inventory[i].value;
+					value += player.inventory[i].value * player.inventory[i].amount;
 			}
 			value += player.weapon.value + player.armor.value + player.loan;
 			if (value < GOAL_VALUE) {
+
 				cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
 				cout << "If you escape now, you lose." << endl;
 			}
@@ -1698,6 +1752,41 @@ void PlayerEscape(int ch)
 		}
 	}
 }
+/***************************************
+*start scean
+*作者：荒井
+***************************************/
+void Start() {
+	system("cls");
+	char flag;
+	do {
+		int chr;
+		char fname[] = "start.txt";
+		FILE* fp = fopen(fname, "r");
+		while ((chr = fgetc(fp)) != EOF) {
+			putchar(chr);
+		}
+		fclose(fp);
+		cout << endl;
+		cout << "1.Start this game" << endl;
+		cout << "2.Display Ranking List" << endl;
+		cout << "3.Check the rule" << endl;
+		cout << "Select number:";
+		cin >> flag;
+		cout << endl;
+		if (flag == '1') {
+			scean = INIT_SCEAN;
+			break;
+		}
+		else if (flag == '3') {
+			scean = RULE_SCEAN;
+			break;
+		}
+		else {
+			system("cls");
+		}
+	} while (true);
+}
 
 /***************************************
 *ランダムの初期化
@@ -1720,26 +1809,4 @@ inline void GotoXY(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void Start() {
-	system("cls");
-	char flag;
-	do {
-		int chr;
-		char fname[] = "start.txt";
-		FILE* fp = fopen(fname, "r");
-		while ((chr = fgetc(fp)) != EOF) {
-			putchar(chr);
-		}
-		fclose(fp);
-		cout << endl;
-		cout << "1.Start this game" << endl;
-		cout <<"2.Display Ranking List"<< endl;
-		cout <<"3.Check the rule"<< endl;
-		cout << "Select number:";
-		cin >> flag;
-		cout << endl;
-		if (flag == '1') {
-			break;
-		}
-	}while (true);
-}
+
