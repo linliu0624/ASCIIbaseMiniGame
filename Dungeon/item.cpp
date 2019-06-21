@@ -257,7 +257,7 @@ void ArmorInit() {
 	chainmail.flag = true;
 	chainmail.maxHp = 500;
 	chainmail.hp = chainmail.maxHp;
-	chainmail.def = 0.75f;
+	chainmail.def = 0.6f;
 	chainmail.weight = 14.0f;
 	chainmail.defType = CANNOT_DEF_STAB;
 }

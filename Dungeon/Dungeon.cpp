@@ -274,7 +274,7 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = fist;
+	player.weapon = battleAxe;//fist;
 	player.armor = noArmor;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
@@ -944,7 +944,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				//只能砍的武器對鎖甲造成的傷害低
 				else if (weapon.atkType == CUT) {
 					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
-						armorDef = armorDef * 1.4f;
+						armorDef = armorDef * 1.3f;
 					}
 					else {
 						armorDef = armorDef;
@@ -954,7 +954,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				//只能刺的武器對鎖甲造成傷害高
 				else if (weapon.atkType == STAB) {
 					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
-						armorDef = armorDef * 0.4f;
+						armorDef = armorDef * 0.5f;
 					}
 					else {
 						armorDef = armorDef;
@@ -972,7 +972,7 @@ void Attack(material weapon, bool playerToEnemy) {
 					enemy[i].armor = noArmor;
 					armorDamage = 0;
 				}
-				enemy[i].armor.hp -= armorDamage;
+				//enemy[i].armor.hp -= armorDamage;
 				bodyDamage = totalDamage - armorDamage;
 				if (bodyDamage <= 0) {
 					bodyDamage = 0;
@@ -1373,13 +1373,14 @@ void InventoryManage() {
 
 	cout << endl;
 	while (1) {
-		cout << "Input a number that you want to change(twice time same number to equip or use , '888' to back ,'999' to discard):";
+		cout << "Input a number that you want to change" << endl <<
+			"(twice time same number to equip or use, '666' to undress armor, '777' to undress weapon, '888' to back ,'999' to discard):";
 		cin >> a;
-		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888) {
+		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888 && a != 666 && a != 777) {
 			cin.clear();
 			cin.ignore(100, '\n');
 		}
-		else if (a > 0 && a < MAX_INVENTORY || a == 999 || a == 888)break;
+		else if (a > 0 && a < MAX_INVENTORY || a == 999 || a == 888 || a == 666 || a == 777)break;
 	}
 
 	if (a == 888) {
@@ -1408,6 +1409,30 @@ void InventoryManage() {
 			}
 			else {
 				break;
+			}
+		}
+	}
+	else if (a == 777) {
+		if (player.weapon.weaponType != FIST) {
+			for (int i = 1; i < MAX_INVENTORY; i++) {
+				if (player.inventory[i].mateTag == NOTHING) {
+					player.inventory[i] = player.weapon;
+					player.inventory[i].amount = 1;
+					player.weapon = fist;
+					break;
+				}
+			}
+		}
+	}
+	else if (a == 666) {
+		if (player.armor.armorType != NO_ARMOR) {
+			for (int i = 1; i < MAX_INVENTORY; i++) {
+				if (player.inventory[i].mateTag == NOTHING) {
+					player.inventory[i] = player.armor;
+					player.inventory[i].amount = 1;
+					player.armor = noArmor;
+					break;
+				}
 			}
 		}
 	}
