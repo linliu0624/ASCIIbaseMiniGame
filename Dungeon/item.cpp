@@ -73,7 +73,7 @@ void WeaponInit() {
 	strcpy(shortSword.text, "The sword is a weapon with a very balanced and a stable attack.");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
-	shortSword.maxValue = 15;
+	shortSword.maxValue = 40;
 	shortSword.value = shortSword.maxValue;
 	shortSword.maxHp = 30;
 	shortSword.hp = shortSword.maxHp;
@@ -125,7 +125,7 @@ void WeaponInit() {
 	strcpy(battleAxe.text, "Can only cut, and attack value is unstable but high");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
-	battleAxe.maxValue = 20;
+	battleAxe.maxValue = 60;
 	battleAxe.value = battleAxe.maxValue;
 	battleAxe.maxHp = 30;
 	battleAxe.hp = shortSword.maxHp;
@@ -169,7 +169,7 @@ void WeaponInit() {
 	strcpy(spear.text, "Long-handled weapon, it can two enemy farther");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
-	spear.maxValue = 45;
+	spear.maxValue = 80;
 	spear.value = spear.maxValue;
 	spear.maxHp = 20;
 	spear.hp = shortSword.maxHp;
