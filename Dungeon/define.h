@@ -14,7 +14,7 @@
 #define MAX_ENEMY_IN_ONEROOM 3
 #define ENEMYNUMBER 64
 #define RE_ENEMYNUMBER 20 //移動步數
-#define ENEMY_SPAWN_PROBABILITY 20 //生成機率
+#define ENEMY_SPAWN_PROBABILITY 10 //生成機率
 #define MAX_INVENTORY 128
 #define INIT_MAX_WEIGHT 50
 #define GOAL_VALUE 250
@@ -32,7 +32,7 @@
 #define BEATEN 4
 //護甲防禦類型
 #define NORMAL_DEF 0
-#define CNAT_DEF_STAB 1
+#define CANNOT_DEF_STAB 1
 //武器
 #define FIST 0
 //剣
@@ -66,6 +66,7 @@
 //消耗品或寶藏
 #define SIMPLE_POTION 0
 #define SUPER_POTION 1
+#define POWER_POTION 2
 
 #define GOLD 11
 #define SILVER 12

@@ -33,6 +33,7 @@ material nothing;
 
 material simplePotion;
 material superPotion;
+material powerPostion;
 
 material gold;
 material silver;
@@ -231,7 +232,7 @@ void ArmorInit() {
 	chainmail.hp = chainmail.maxHp;
 	chainmail.def = 0.75f;
 	chainmail.weight = 14.0f;
-	chainmail.defType = CNAT_DEF_STAB;
+	chainmail.defType = CANNOT_DEF_STAB;
 }
 void ItemInit() {
 	//簡易藥水
@@ -252,7 +253,15 @@ void ItemInit() {
 	superPotion.flag = true;
 	superPotion.hp = 300;
 	superPotion.weight = 0.2f;
-
+	//耐重要水
+	strcpy(powerPostion.name, "power potion");
+	strcpy(powerPostion.text, "Use to increase 10 of the max heavy weight");
+	powerPostion.mateTag = ITEM;
+	powerPostion.itemType = POWER_POTION;
+	powerPostion.value = 100;
+	powerPostion.flag = true;
+	powerPostion.hp = 10;
+	powerPostion.weight = 0.2f;
 	//黃金
 	strcpy(gold.name, "gold");
 	strcpy(gold.text, "Gold is a popular precious metal");

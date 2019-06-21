@@ -51,6 +51,7 @@ extern material chainmail;
 
 extern material simplePotion;
 extern material superPotion;
+extern material powerPostion;
 
 extern material gold;
 extern material silver;

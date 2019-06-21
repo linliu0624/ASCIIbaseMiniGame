@@ -78,6 +78,8 @@ void EnemyMove(int);
 void EnemyDieAndDrop(int);
 //装備管理
 void InventoryManage();
+//ポーションを使う
+void UsePotion(int);
 //判定價值
 void Valuation();
 //ダメージの計算
@@ -96,7 +98,7 @@ unit enemy[ENEMYNUMBER];
 
 int playerMoveCounter = 0;
 //玩家裝備的武器與護甲價值
-int playerWAVAlue = 0;
+int playerWAValue = 0;
 //場景切換
 int scean = INIT_SCEAN;
 //攻撃先の敵の座標
@@ -284,7 +286,7 @@ void CreatePlayer() {
 	player.roomX = 3;
 	player.roomY = 3;
 	system("cls");
-	cout << "Please input name:";
+	cout << "What's your name:";
 	cin >> player.name;
 	cin.clear();
 	cin.ignore(100, '\n');
@@ -295,7 +297,7 @@ void CreatePlayer() {
 ***************************************/
 void CreateEnemy() {
 	//未來可以依照玩家的武器和護甲來決定敵人裝備物品
-	playerWAVAlue = player.weapon.value + player.armor.value;
+	playerWAValue = player.weapon.value + player.armor.value;
 	int weaponRnd;
 	int armorRnd;
 	int itemRnd;
@@ -317,63 +319,167 @@ void CreateEnemy() {
 		}
 		if (i % 2 == 0)enemy[i].moveWay = true;
 		else enemy[i].moveWay = false;
-		//武器を装備する
 		weaponRnd = rand() % 100 + 1;
-		if (weaponRnd <= 20) {
-			enemy[i].weapon = fist;
-		}
-		else if (weaponRnd >= 20 && weaponRnd < 40) {
-			enemy[i].weapon = battleAxe;
-		}
-		else if (weaponRnd >= 40 && weaponRnd < 60) {
-			enemy[i].weapon = spear;
-		}
-		else {
-			enemy[i].weapon = shortSword;
-		}
-		enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
-		//防具を装備する
 		armorRnd = rand() % 100 + 1;
-		if (armorRnd < 50)
-			enemy[i].armor = noArmor;
-		else if (armorRnd >= 50 && armorRnd < 70) {
-			enemy[i].armor = leatherArmor;
-			enemy[i].armor.hp = rand() % 200 + 200;
-		}
-		else if (armorRnd >= 70 && armorRnd < 85) {
-			enemy[i].armor = heavyLeatherArmor;
-			enemy[i].armor.hp = rand() % 150 + 150;
-		}
-		else {
-			enemy[i].armor = chainmail;
-			enemy[i].armor.hp = rand() % 250 + 250;
-		}
-
-		//アイテムを装備する
 		itemRnd = rand() % 100 + 1;
-		if (player.hp / (float)player.maxHp > 0.5f) {
-			if (itemRnd < 5) {
-				enemy[i].inventory[0] = ivory;
+
+		if (playerWAValue < 100) {
+			
+			//武器を装備する
+			if (weaponRnd <= 20) {
+				enemy[i].weapon = fist;
 			}
-			else if (itemRnd >= 5 && itemRnd < 15) {
-				enemy[i].inventory[0] = silver;
+			else if (weaponRnd >= 20 && weaponRnd < 40) {
+				enemy[i].weapon = battleAxe;
 			}
-			else if (itemRnd >= 15 && itemRnd < 45) {
-				enemy[i].inventory[0] = simplePotion;
+			else if (weaponRnd >= 40 && weaponRnd < 60) {
+				enemy[i].weapon = spear;
 			}
-			else if (itemRnd >= 45 && itemRnd < 50) {
-				enemy[i].inventory[0] = superPotion;
+			else {
+				enemy[i].weapon = shortSword;
 			}
-			else if (itemRnd >= 50 && itemRnd < 58) {
-				enemy[i].inventory[0] = gold;
+			enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
+			//防具を装備する
+
+			if (armorRnd < 50)
+				enemy[i].armor = noArmor;
+			else if (armorRnd >= 50 && armorRnd < 70) {
+				enemy[i].armor = leatherArmor;
+				enemy[i].armor.hp = rand() % 200 + 200;
 			}
-			else if (itemRnd >= 58) {
-				enemy[i].inventory[0] = brokenDiamond;
+			else if (armorRnd >= 70 && armorRnd < 85) {
+				enemy[i].armor = heavyLeatherArmor;
+				enemy[i].armor.hp = rand() % 150 + 150;
+			}
+			else {
+				enemy[i].armor = chainmail;
+				enemy[i].armor.hp = rand() % 250 + 250;
+			}
+
+			//アイテムを装備する
+
+			if (player.hp / (float)player.maxHp > 0.3f) {
+				if (itemRnd < 5) {
+					enemy[i].inventory[0] = ivory;
+				}
+				else if (itemRnd >= 5 && itemRnd < 15) {
+					enemy[i].inventory[0] = silver;
+				}
+				else if (itemRnd >= 15 && itemRnd < 45) {
+					enemy[i].inventory[0] = simplePotion;
+				}
+				else if (itemRnd >= 45 && itemRnd < 50) {
+					enemy[i].inventory[0] = superPotion;
+				}
+				else if (itemRnd >= 50 && itemRnd < 58) {
+					enemy[i].inventory[0] = gold;
+				}
+				else if (itemRnd >= 58) {
+					enemy[i].inventory[0] = brokenDiamond;
+				}
+			}
+			else {
+				if (itemRnd > 60) {
+					enemy[i].inventory[0] = simplePotion;
+				}
+				else if (itemRnd <= 60 && itemRnd > 40) {
+					enemy[i].inventory[0] = superPotion;
+				}
+				else if (itemRnd <= 40 && itemRnd > 30) {
+					enemy[i].inventory[0] = powerPostion;
+				}
+				else if (itemRnd <= 30 && itemRnd > 20) {
+					enemy[i].inventory[0] = ivory;
+				}
+				else if (itemRnd <= 20) {
+					enemy[i].inventory[0] = chainmail;
+				}
 			}
 		}
 		else {
-			if (itemRnd > 60) {
-				enemy[i].inventory[0] = simplePotion;
+			if (i % 4 == 0) {
+				strcpy(enemy[i].name, "!");
+			}
+			else if (i % 4 == 1) {
+				strcpy(enemy[i].name, "@");
+			}
+			else if (i % 4 == 2) {
+				strcpy(enemy[i].name, "#");
+			}
+			else if (i % 4 == 3) {
+				strcpy(enemy[i].name, "$");
+			}
+			if (i % 2 == 0)enemy[i].moveWay = true;
+			else enemy[i].moveWay = false;
+			//武器を装備する
+			weaponRnd = rand() % 100 + 1;
+			if (weaponRnd <= 20) {
+				enemy[i].weapon = fist;
+			}
+			else if (weaponRnd >= 20 && weaponRnd < 40) {
+				enemy[i].weapon = battleAxe;
+			}
+			else if (weaponRnd >= 40 && weaponRnd < 60) {
+				enemy[i].weapon = spear;
+			}
+			else {
+				enemy[i].weapon = shortSword;
+			}
+			enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
+			//防具を装備する
+			armorRnd = rand() % 100 + 1;
+			if (armorRnd < 50)
+				enemy[i].armor = noArmor;
+			else if (armorRnd >= 50 && armorRnd < 70) {
+				enemy[i].armor = leatherArmor;
+				enemy[i].armor.hp = rand() % 200 + 200;
+			}
+			else if (armorRnd >= 70 && armorRnd < 85) {
+				enemy[i].armor = heavyLeatherArmor;
+				enemy[i].armor.hp = rand() % 150 + 150;
+			}
+			else {
+				enemy[i].armor = chainmail;
+				enemy[i].armor.hp = rand() % 250 + 250;
+			}
+
+			//アイテムを装備する
+			if (player.hp / (float)player.maxHp > 0.3f) {
+				if (itemRnd < 5) {
+					enemy[i].inventory[0] = ivory;
+				}
+				else if (itemRnd >= 5 && itemRnd < 15) {
+					enemy[i].inventory[0] = silver;
+				}
+				else if (itemRnd >= 15 && itemRnd < 45) {
+					enemy[i].inventory[0] = simplePotion;
+				}
+				else if (itemRnd >= 45 && itemRnd < 50) {
+					enemy[i].inventory[0] = superPotion;
+				}
+				else if (itemRnd >= 50 && itemRnd < 58) {
+					enemy[i].inventory[0] = gold;
+				}
+				else if (itemRnd >= 58) {
+					enemy[i].inventory[0] = brokenDiamond;
+				}
+			}
+			else {
+				if (itemRnd > 60) {
+					enemy[i].inventory[0] = simplePotion;
+				}
+				else if (itemRnd <= 60 && itemRnd > 40) {
+					enemy[i].inventory[0] = superPotion;
+				}
+				else if (itemRnd <= 40 && itemRnd > 30) {
+					enemy[i].inventory[0] = powerPostion;
+				}
+				else if (itemRnd <= 30 && itemRnd > 20) {
+					enemy[i].inventory[0] = ivory;
+				}
+				else if (itemRnd <= 20) {
+					enemy[i].inventory[0] = chainmail;
+				}
 			}
 		}
 	}
@@ -401,7 +507,7 @@ void SpawnEnemy() {
 								(roomY % 5 != 0 && roomY % 5 != 1) && (roomX % 5 != 0 && roomX % 5 != 1)) {
 								//敵の出現確率
 								int rnd = rand() % ENEMY_SPAWN_PROBABILITY;
-								if (rnd == 3 || rnd == 5) {
+								if (rnd == 3) {
 									//敵の出現
 									room[roomY][roomX].enemyPos = true;
 									enemy[enemyPtr].alive = true;
@@ -842,7 +948,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				}
 				//只能砍的武器對鎖甲造成的傷害低
 				else if (weapon.atkType == CUT) {
-					if (enemy[i].armor.defType == CNAT_DEF_STAB) {
+					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
 						armorDef = armorDef * 1.4f;
 					}
 					else {
@@ -852,7 +958,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				}
 				//只能刺的武器對鎖甲造成傷害高
 				else if (weapon.atkType == STAB) {
-					if (enemy[i].armor.defType == CNAT_DEF_STAB) {
+					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
 						armorDef = armorDef * 0.4f;
 					}
 					else {
@@ -893,7 +999,7 @@ void Attack(material weapon, bool playerToEnemy) {
 		}
 		//只能砍的武器對鎖甲造成的傷害低
 		else if (weapon.atkType == CUT) {
-			if (player.armor.defType == CNAT_DEF_STAB) {
+			if (player.armor.defType == CANNOT_DEF_STAB) {
 				armorDef = armorDef * 1.4f;
 			}
 			else {
@@ -902,7 +1008,7 @@ void Attack(material weapon, bool playerToEnemy) {
 		}
 		//只能刺的武器對鎖甲造成傷害高
 		else if (weapon.atkType == STAB) {
-			if (player.armor.defType == CNAT_DEF_STAB) {
+			if (player.armor.defType == CANNOT_DEF_STAB) {
 				armorDef = armorDef * 0.4f;
 			}
 			else {
@@ -1359,27 +1465,7 @@ void InventoryManage() {
 
 			}
 			else if (player.inventory[a].mateTag == ITEM) {
-				if (player.inventory[a].itemType == SIMPLE_POTION) {
-					if (player.hp + simplePotion.hp >= player.maxHp) {
-						player.hp = player.maxHp;
-					}
-					else {
-						player.hp += simplePotion.hp;
-					}
-					player.inventory[a].amount--;
-					player.weight -= player.inventory[a].weight;
-				}
-				else if (player.inventory[a].itemType == SUPER_POTION) {
-					if (player.hp + superPotion.hp >= player.maxHp) {
-						player.hp = player.maxHp;
-					}
-					else {
-						player.hp += superPotion.hp;
-					}
-					player.inventory[a].amount--;
-					player.weight -= player.inventory[a].weight;
-				}
-
+				UsePotion(a);
 			}
 		}
 	}
@@ -1391,6 +1477,39 @@ void InventoryManage() {
 	}
 	player.inventoryMode = false;
 	clsFlag_Inventory = false;
+}
+/***************************************
+*ポーションを使う
+*int number:プレイヤーが入力した番号
+*作者：林
+***************************************/
+void UsePotion(int number) {
+	if (player.inventory[number].itemType == SIMPLE_POTION) {
+		if (player.hp + simplePotion.hp >= player.maxHp) {
+			player.hp = player.maxHp;
+		}
+		else {
+			player.hp += simplePotion.hp;
+		}
+		player.inventory[number].amount--;
+		player.weight -= player.inventory[number].weight;
+	}
+	else if (player.inventory[number].itemType == SUPER_POTION) {
+		if (player.hp + superPotion.hp >= player.maxHp) {
+			player.hp = player.maxHp;
+		}
+		else {
+			player.hp += superPotion.hp;
+		}
+		player.inventory[number].amount--;
+		player.weight -= player.inventory[number].weight;
+	}
+	else if (player.inventory[number].itemType == POWER_POTION) {
+		player.maxWeight += powerPostion.hp;
+		player.inventory[number].amount--;
+		player.weight -= player.inventory[number].weight;
+	}
+
 }
 /***************************************
 *playerが持っているものの価値を判断する
