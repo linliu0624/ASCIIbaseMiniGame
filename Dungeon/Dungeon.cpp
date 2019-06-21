@@ -992,6 +992,13 @@ void Attack(material weapon, bool playerToEnemy) {
 					enemy[i].armor = noArmor;
 					armorDamage = 0;
 				}
+				//weaponが壊れた時
+				if (player.weapon.weaponType != FIST) {
+					if (player.weapon.hp <= 0) {
+						player.weapon.hp = 0;
+						player.weapon = fist;
+					}
+				}
 				//enemy[i].armor.hp -= armorDamage;
 				bodyDamage = totalDamage - armorDamage;
 				if (bodyDamage <= 0) {
@@ -1042,13 +1049,7 @@ void Attack(material weapon, bool playerToEnemy) {
 			player.armor = noArmor;
 			armorDamage = 0;
 		}
-		//weaponが壊れた時
-		if (player.weapon.weaponType != FIST) {
-			if (player.weapon.hp <= 0) {
-				player.weapon.hp = 0;
-				player.weapon = fist;
-			}
-		}
+
 		player.armor.hp -= armorDamage;
 		bodyDamage = totalDamage - armorDamage;
 		if (bodyDamage <= 0) {

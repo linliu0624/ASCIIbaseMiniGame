@@ -70,6 +70,7 @@ void WeaponInit() {
 	//短剣
 	strcpy(shortSword.name, "short sword");
 	strcpy(shortSword.atktext, "atk: 20~50");
+	strcpy(shortSword.text, "The sword is a weapon with a very balanced and a stable attack.");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
 	shortSword.maxValue = 15;
@@ -121,6 +122,7 @@ void WeaponInit() {
 	//斧
 	strcpy(battleAxe.name, "battle axe");
 	strcpy(battleAxe.atktext, "atk: 10~80");
+	strcpy(battleAxe.text, "Can only cut, and attack value is unstable but high");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
 	battleAxe.maxValue = 20;
@@ -164,6 +166,7 @@ void WeaponInit() {
 	//槍
 	strcpy(spear.name, "spear");
 	strcpy(spear.atktext, "atk: 20~50");
+	strcpy(spear.text, "Long-handled weapon, it can two enemy farther");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
 	spear.maxValue = 45;
@@ -226,6 +229,7 @@ void ArmorInit() {
 	noArmor.flag = true;
 	//皮甲
 	strcpy(leatherArmor.name, "leather armor");
+	strcpy(leatherArmor.text, "An armor made of animal skin");
 	leatherArmor.mateTag = ARMOR;
 	leatherArmor.armorType = LEATHER_ARMOR;
 	leatherArmor.maxValue = 40;
@@ -238,6 +242,7 @@ void ArmorInit() {
 	leatherArmor.defType = NORMAL_DEF;
 	//重皮甲
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
+	strcpy(heavyLeatherArmor.text,"Thicker then leather armor");
 	heavyLeatherArmor.mateTag = ARMOR;
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
 	heavyLeatherArmor.maxValue = 45;
@@ -250,6 +255,7 @@ void ArmorInit() {
 	heavyLeatherArmor.defType = NORMAL_DEF;
 	//鎖甲(鎖帷子)
 	strcpy(chainmail.name, "chainmail");
+	strcpy(chainmail.text, "A kind of expensive and tough armor, but being stabbed is easy to break ");
 	chainmail.mateTag = ARMOR;
 	chainmail.armorType = CHAINMAIL;
 	chainmail.maxValue = 150;
