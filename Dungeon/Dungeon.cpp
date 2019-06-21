@@ -653,6 +653,7 @@ void PlayerTurn() {
 				if (IsEnemy(UP) == true) {
 					//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					//なければ移動
@@ -660,6 +661,10 @@ void PlayerTurn() {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY - 1][player.roomX].playerPos = true;
 						player.roomY--;
+						flag = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -667,12 +672,17 @@ void PlayerTurn() {
 			case DOWN: {
 				if (IsEnemy(DOWN) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomY + 1 != ROOMRANGE && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY + 1][player.roomX].playerPos = true;
 						player.roomY++;
+						flag = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -680,12 +690,17 @@ void PlayerTurn() {
 			case LEFT: {
 				if (IsEnemy(LEFT) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX - 1].playerPos = true;
 						player.roomX--;
+						flag = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -693,12 +708,17 @@ void PlayerTurn() {
 			case RIGHT: {
 				if (IsEnemy(RIGHT) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomX + 1 != ROOMRANGE && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX + 1].playerPos = true;
 						player.roomX++;
+						flag = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -708,7 +728,7 @@ void PlayerTurn() {
 			if (currentX != newX || currentY != newY) {
 				playerMoveCounter++;
 			}
-			flag = true;
+			
 		}
 		else if (ch == SPACE) {
 			flag = true;
