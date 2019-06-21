@@ -32,6 +32,8 @@ void Init();
 void Update();
 //古い画面を削除して、新しい画面を表示する。
 void Refresh();
+//スタート画面
+void Start();
 //指定されているさ表に移動（表示関連）
 inline void GotoXY(int, int);
 //ランダム機能の初期化
@@ -100,7 +102,7 @@ int playerMoveCounter = 0;
 //玩家裝備的武器與護甲價值
 int playerWAValue = 0;
 //場景切換
-int scean = INIT_SCEAN;
+int scean = START_SCEAN;
 //攻撃先の敵の座標
 int enemyPosX, enemyPosY;
 
@@ -112,10 +114,16 @@ int main()
 {
 	StartRnd();
 	while (true) {
-		if (scean == INIT_SCEAN) {
+		if (scean == START_SCEAN) {
+			Start();
+		}
+		else if (scean == INIT_SCEAN) {
 			Init();
 			//画面表示
 			Refresh();
+		}
+		else if (scean == RULE_SCEAN) {
+			ShowRule();
 		}
 		// ゲームの循環
 		while (true)
@@ -645,7 +653,6 @@ void PlayerTurn() {
 				if (IsEnemy(UP) == true) {
 					//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
 					Attack(player.weapon, true);
-					flag = true;
 				}
 				else {
 					//なければ移動
@@ -653,10 +660,6 @@ void PlayerTurn() {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY - 1][player.roomX].playerPos = true;
 						player.roomY--;
-						flag = true;
-					}
-					else {
-
 					}
 				}
 				break;
@@ -664,17 +667,12 @@ void PlayerTurn() {
 			case DOWN: {
 				if (IsEnemy(DOWN) == true) {
 					Attack(player.weapon, true);
-					flag = true;
 				}
 				else {
 					if (player.roomY + 1 != ROOMRANGE && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY + 1][player.roomX].playerPos = true;
 						player.roomY++;
-						flag = true;
-					}
-					else {
-
 					}
 				}
 				break;
@@ -682,17 +680,12 @@ void PlayerTurn() {
 			case LEFT: {
 				if (IsEnemy(LEFT) == true) {
 					Attack(player.weapon, true);
-					flag = true;
 				}
 				else {
 					if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX - 1].playerPos = true;
 						player.roomX--;
-						flag = true;
-					}
-					else {
-
 					}
 				}
 				break;
@@ -700,17 +693,12 @@ void PlayerTurn() {
 			case RIGHT: {
 				if (IsEnemy(RIGHT) == true) {
 					Attack(player.weapon, true);
-					flag = true;
 				}
 				else {
 					if (player.roomX + 1 != ROOMRANGE && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX + 1].playerPos = true;
 						player.roomX++;
-						flag = true;
-					}
-					else {
-
 					}
 				}
 				break;
@@ -720,7 +708,7 @@ void PlayerTurn() {
 			if (currentX != newX || currentY != newY) {
 				playerMoveCounter++;
 			}
-
+			flag = true;
 		}
 		else if (ch == SPACE) {
 			flag = true;
@@ -1640,6 +1628,26 @@ void ShowEnemyStatus() {
 *作者：横林
 ***************************************/
 void ShowRule() {
+	system("CLS");
+	cout << "このゲームはダンジョン内を探索し、最終的に集めた金額で争います。" << endl;
+	cout << "目標金額があります。まずはそれを達成しましょう！" << endl;
+	cout << "勝利条件" << endl;
+	cout << "・目標金額を満たし、ダンジョンを抜け出す。" << endl;
+	cout << "敗北条件" << endl;
+	cout << "・目標金額に満たないまま、ダンジョンを抜け出す。" << endl;
+	cout << "・HPが0になり、死んでしまう。" << endl;
+	cout << "(その際、スコアも0になってしまうので気を付けましょう。)" << endl;
+
+	cout << "X:マップの進めない場所や壁を表す" << endl;
+	cout << "|:部屋の横壁を表す" << endl;
+	cout << "E:ゴール位置を表す" << endl;
+	cout << "P:プレイヤーの位置を表す" << endl;
+	cout << "$,!,@,#:敵の位置を表す" << endl;
+	
+	cout << "Press any key to continue" << endl;
+	char tmp;
+	tmp = _getch();
+	scean = START_SCEAN;
 
 }
 
@@ -1668,7 +1676,9 @@ void PlayerDie() {
 			break;
 		}
 		else {
-			exit(0);
+			scean = START_SCEAN;
+			break;
+			//exit(0);
 		}
 	} while (true);
 
@@ -1715,6 +1725,38 @@ void PlayerEscape(int ch)
 		}
 	}
 }
+/***************************************
+*start scean
+*作者：荒井
+***************************************/
+void Start() {
+	system("cls");
+	char flag;
+	do {
+		int chr;
+		char fname[] = "start.txt";
+		FILE* fp = fopen(fname, "r");
+		while ((chr = fgetc(fp)) != EOF) {
+			putchar(chr);
+		}
+		fclose(fp);
+		cout << endl;
+		cout << "1.Start this game" << endl;
+		cout << "2.Display Ranking List" << endl;
+		cout << "3.Check the rule" << endl;
+		cout << "Select number:";
+		cin >> flag;
+		cout << endl;
+		if (flag == '1') {
+			scean = INIT_SCEAN;
+			break;
+		}
+		else if (flag == '3') {
+			scean = RULE_SCEAN;
+			break;
+		}
+	} while (true);
+}
 
 /***************************************
 *ランダムの初期化
@@ -1736,3 +1778,5 @@ inline void GotoXY(int x, int y)
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+
