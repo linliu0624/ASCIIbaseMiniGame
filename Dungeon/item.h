@@ -29,6 +29,7 @@ struct material {
 extern material nothing;
 
 extern material fist;
+extern material dagger;
 extern material longSword;
 extern material shortSword;
 extern material banana;

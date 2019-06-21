@@ -8,6 +8,7 @@
 #include"item.h"
 
 material fist;
+material dagger;
 material longSword;
 material shortSword;
 material banana;
@@ -53,6 +54,20 @@ void WeaponInit() {
 	fist.flag = true;
 
 	//短剣
+	strcpy(dagger.name, "dagger");
+	strcpy(dagger.atktext, "atk: 10~200");
+	dagger.mateTag = WEAPON;
+	dagger.weaponType = SHORT_SWORD;
+	dagger.maxValue = 10;
+	dagger.value = shortSword.maxValue;
+	dagger.maxHp = 10;
+	dagger.hp = shortSword.maxHp;
+	dagger.weight = 1.0f;
+	dagger.atkRange = ONE;
+	dagger.atkType = CUT_STAB;
+	dagger.flag = true;
+
+	//短剣
 	strcpy(shortSword.name, "short sword");
 	strcpy(shortSword.atktext, "atk: 20~50");
 	shortSword.mateTag = WEAPON;
@@ -67,11 +82,13 @@ void WeaponInit() {
 	shortSword.flag = true;
 	//長剣
 	strcpy(longSword.name, "long sword");
-	//strcpy(longSword.atktext, "atk=1~4");
+	strcpy(longSword.atktext, "atk=40~100");
 	longSword.mateTag = WEAPON;
 	longSword.weaponType = LONG_SWORD;
-	longSword.maxValue = 15;
+	longSword.maxValue = 40;
 	longSword.value = longSword.maxValue;
+	longSword.maxHp = 15;
+	longSword.hp = shortSword.maxHp;
 	longSword.weight = 2.0f;
 	longSword.atkRange = ONE;
 	longSword.atkType = CUT_STAB;
@@ -103,7 +120,7 @@ void WeaponInit() {
 
 	//斧
 	strcpy(battleAxe.name, "battle axe");
-	strcpy(battleAxe.atktext, "atk: 10~60");
+	strcpy(battleAxe.atktext, "atk: 10~80");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
 	battleAxe.maxValue = 20;
@@ -123,10 +140,15 @@ void WeaponInit() {
 	kendama.armorType = CUT;
 	kendama.flag = true;
 	//長斧(?)
-	strcpy(marius.name, "marius");
+	strcpy(marius.name, "marius(axe)");
+	strcpy(marius.atktext, "atk:30~120");
 	marius.mateTag = WEAPON;
 	marius.weaponType = MARIUS;
-	marius.value = 20;
+	marius.maxValue = 50;
+	marius.value = marius.maxValue;
+	marius.maxHp = 15;
+	marius.hp = marius.maxHp;
+	marius.weight = 3.5f;
 	marius.atkRange = ONE;
 	marius.armorType = CUT;
 	marius.flag = true;
@@ -178,9 +200,14 @@ void WeaponInit() {
 	gaeBolg.flag = true;
 	//蠍刺(?)
 	strcpy(scorpion.name, "scorpion");
+	strcpy(scorpion.atktext, "atk: 40~100");
 	scorpion.mateTag = WEAPON;
 	scorpion.weaponType = SCORPION;
-	scorpion.value = 20;
+	scorpion.maxValue = 100;
+	scorpion.value = scorpion.maxValue;
+	scorpion.maxHp = 10;
+	scorpion.hp = scorpion.maxHp;
+	scorpion.weight = 5.0f;
 	scorpion.atkRange = TWO;
 	scorpion.atkType = STAB;
 	scorpion.flag = true;
@@ -318,9 +345,15 @@ int Damage(int weaponType) {
 	if (weaponType == FIST)
 		return dice4 * 10; //10~40
 	else if (weaponType == SHORT_SWORD || weaponType == SPEAR)
-		return (dice4 + 1) * 10; //20~50
+		return dice4 * 10 + 10; //20~50
 	else if (weaponType == BATTLE_AXE)
-		return dice6 * 10; //10~60
+		return dice8 * 10; //10~80
+	else if (weaponType == SCORPION || weaponType == LONG_SWORD)
+		return (dice4 + dice4) * 10 + 20;
+	else if (weaponType == MARIUS)
+		return (dice4 + dice4 + dice4) * 10;
+	else if (weaponType == DAGGER)
+		return dice20;
 
 }
 

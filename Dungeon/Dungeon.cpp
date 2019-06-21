@@ -319,169 +319,156 @@ void CreateEnemy() {
 		}
 		if (i % 2 == 0)enemy[i].moveWay = true;
 		else enemy[i].moveWay = false;
+
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
 		itemRnd = rand() % 100 + 1;
-
-		if (playerWAValue < 100) {
-			
+		//if (playerWAValue < 100) {
 			//武器を装備する
-			if (weaponRnd <= 20) {
-				enemy[i].weapon = fist;
-			}
-			else if (weaponRnd >= 20 && weaponRnd < 40) {
-				enemy[i].weapon = battleAxe;
-			}
-			else if (weaponRnd >= 40 && weaponRnd < 60) {
-				enemy[i].weapon = spear;
-			}
-			else {
-				enemy[i].weapon = shortSword;
-			}
-			enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
-			//防具を装備する
+		if (weaponRnd <= 20) {
+			enemy[i].weapon = fist;
+		}
+		else if (weaponRnd >= 20 && weaponRnd < 40) {
+			enemy[i].weapon = battleAxe;
+		}
+		else if (weaponRnd >= 40 && weaponRnd < 60) {
+			enemy[i].weapon = spear;
+		}
+		else {
+			enemy[i].weapon = shortSword;
+		}
+		enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
 
-			if (armorRnd < 50)
-				enemy[i].armor = noArmor;
-			else if (armorRnd >= 50 && armorRnd < 70) {
-				enemy[i].armor = leatherArmor;
-				enemy[i].armor.hp = rand() % 200 + 200;
-			}
-			else if (armorRnd >= 70 && armorRnd < 85) {
-				enemy[i].armor = heavyLeatherArmor;
-				enemy[i].armor.hp = rand() % 150 + 150;
-			}
-			else {
-				enemy[i].armor = chainmail;
-				enemy[i].armor.hp = rand() % 250 + 250;
-			}
+		//防具を装備する
+		if (armorRnd < 50)
+			enemy[i].armor = noArmor;
+		else if (armorRnd >= 50 && armorRnd < 70) {
+			enemy[i].armor = leatherArmor;
+			enemy[i].armor.hp = rand() % 200 + 200;
+		}
+		else if (armorRnd >= 70 && armorRnd < 85) {
+			enemy[i].armor = heavyLeatherArmor;
+			enemy[i].armor.hp = rand() % 150 + 150;
+		}
+		else {
+			enemy[i].armor = chainmail;
+			enemy[i].armor.hp = rand() % 250 + 250;
+		}
 
-			//アイテムを装備する
-
-			if (player.hp / (float)player.maxHp > 0.3f) {
-				if (itemRnd < 5) {
-					enemy[i].inventory[0] = ivory;
-				}
-				else if (itemRnd >= 5 && itemRnd < 15) {
-					enemy[i].inventory[0] = silver;
-				}
-				else if (itemRnd >= 15 && itemRnd < 45) {
-					enemy[i].inventory[0] = simplePotion;
-				}
-				else if (itemRnd >= 45 && itemRnd < 50) {
-					enemy[i].inventory[0] = superPotion;
-				}
-				else if (itemRnd >= 50 && itemRnd < 58) {
-					enemy[i].inventory[0] = gold;
-				}
-				else if (itemRnd >= 58) {
-					enemy[i].inventory[0] = brokenDiamond;
-				}
+		//アイテムを装備する
+		if (player.hp / (float)player.maxHp > 0.3f) {
+			if (itemRnd < 5) {
+				enemy[i].inventory[0] = ivory;
 			}
-			else {
-				if (itemRnd > 60) {
-					enemy[i].inventory[0] = simplePotion;
-				}
-				else if (itemRnd <= 60 && itemRnd > 40) {
-					enemy[i].inventory[0] = superPotion;
-				}
-				else if (itemRnd <= 40 && itemRnd > 30) {
-					enemy[i].inventory[0] = powerPostion;
-				}
-				else if (itemRnd <= 30 && itemRnd > 20) {
-					enemy[i].inventory[0] = ivory;
-				}
-				else if (itemRnd <= 20) {
-					enemy[i].inventory[0] = chainmail;
-				}
+			else if (itemRnd >= 5 && itemRnd < 15) {
+				enemy[i].inventory[0] = silver;
+			}
+			else if (itemRnd >= 15 && itemRnd < 45) {
+				enemy[i].inventory[0] = simplePotion;
+			}
+			else if (itemRnd >= 45 && itemRnd < 50) {
+				enemy[i].inventory[0] = superPotion;
+			}
+			else if (itemRnd >= 50 && itemRnd < 58) {
+				enemy[i].inventory[0] = gold;
+			}
+			else if (itemRnd >= 58 && itemRnd < 63) {
+				enemy[i].inventory[0] = dagger;
+			}
+			else if (itemRnd >= 63) {
+				enemy[i].inventory[0] = brokenDiamond
 			}
 		}
 		else {
-			if (i % 4 == 0) {
-				strcpy(enemy[i].name, "!");
+			if (itemRnd > 60) {
+				enemy[i].inventory[0] = simplePotion;
 			}
-			else if (i % 4 == 1) {
-				strcpy(enemy[i].name, "@");
+			else if (itemRnd <= 60 && itemRnd > 40) {
+				enemy[i].inventory[0] = superPotion;
 			}
-			else if (i % 4 == 2) {
-				strcpy(enemy[i].name, "#");
+			else if (itemRnd <= 40 && itemRnd > 30) {
+				enemy[i].inventory[0] = powerPostion;
 			}
-			else if (i % 4 == 3) {
-				strcpy(enemy[i].name, "$");
+			else if (itemRnd <= 30 && itemRnd > 20) {
+				enemy[i].inventory[0] = ivory;
 			}
-			if (i % 2 == 0)enemy[i].moveWay = true;
-			else enemy[i].moveWay = false;
-			//武器を装備する
-			weaponRnd = rand() % 100 + 1;
-			if (weaponRnd <= 20) {
-				enemy[i].weapon = fist;
-			}
-			else if (weaponRnd >= 20 && weaponRnd < 40) {
-				enemy[i].weapon = battleAxe;
-			}
-			else if (weaponRnd >= 40 && weaponRnd < 60) {
-				enemy[i].weapon = spear;
-			}
-			else {
-				enemy[i].weapon = shortSword;
-			}
-			enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
-			//防具を装備する
-			armorRnd = rand() % 100 + 1;
-			if (armorRnd < 50)
-				enemy[i].armor = noArmor;
-			else if (armorRnd >= 50 && armorRnd < 70) {
-				enemy[i].armor = leatherArmor;
-				enemy[i].armor.hp = rand() % 200 + 200;
-			}
-			else if (armorRnd >= 70 && armorRnd < 85) {
-				enemy[i].armor = heavyLeatherArmor;
-				enemy[i].armor.hp = rand() % 150 + 150;
-			}
-			else {
-				enemy[i].armor = chainmail;
-				enemy[i].armor.hp = rand() % 250 + 250;
-			}
-
-			//アイテムを装備する
-			if (player.hp / (float)player.maxHp > 0.3f) {
-				if (itemRnd < 5) {
-					enemy[i].inventory[0] = ivory;
-				}
-				else if (itemRnd >= 5 && itemRnd < 15) {
-					enemy[i].inventory[0] = silver;
-				}
-				else if (itemRnd >= 15 && itemRnd < 45) {
-					enemy[i].inventory[0] = simplePotion;
-				}
-				else if (itemRnd >= 45 && itemRnd < 50) {
-					enemy[i].inventory[0] = superPotion;
-				}
-				else if (itemRnd >= 50 && itemRnd < 58) {
-					enemy[i].inventory[0] = gold;
-				}
-				else if (itemRnd >= 58) {
-					enemy[i].inventory[0] = brokenDiamond;
-				}
-			}
-			else {
-				if (itemRnd > 60) {
-					enemy[i].inventory[0] = simplePotion;
-				}
-				else if (itemRnd <= 60 && itemRnd > 40) {
-					enemy[i].inventory[0] = superPotion;
-				}
-				else if (itemRnd <= 40 && itemRnd > 30) {
-					enemy[i].inventory[0] = powerPostion;
-				}
-				else if (itemRnd <= 30 && itemRnd > 20) {
-					enemy[i].inventory[0] = ivory;
-				}
-				else if (itemRnd <= 20) {
-					enemy[i].inventory[0] = chainmail;
-				}
+			else if (itemRnd <= 20) {
+				enemy[i].inventory[0] = chainmail;
 			}
 		}
+		//}
+		//else {
+		//	//武器を装備する
+		//	weaponRnd = rand() % 100 + 1;
+		//	if (weaponRnd <= 20) {
+		//		enemy[i].weapon = fist;
+		//	}
+		//	else if (weaponRnd >= 20 && weaponRnd < 40) {
+		//		enemy[i].weapon = battleAxe;
+		//	}
+		//	else if (weaponRnd >= 40 && weaponRnd < 60) {
+		//		enemy[i].weapon = spear;
+		//	}
+		//	else {
+		//		enemy[i].weapon = shortSword;
+		//	}
+		//	enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
+
+		//	//防具を装備する
+		//	if (armorRnd < 50)
+		//		enemy[i].armor = noArmor;
+		//	else if (armorRnd >= 50 && armorRnd < 70) {
+		//		enemy[i].armor = leatherArmor;
+		//		enemy[i].armor.hp = rand() % 200 + 200;
+		//	}
+		//	else if (armorRnd >= 70 && armorRnd < 85) {
+		//		enemy[i].armor = heavyLeatherArmor;
+		//		enemy[i].armor.hp = rand() % 150 + 150;
+		//	}
+		//	else {
+		//		enemy[i].armor = chainmail;
+		//		enemy[i].armor.hp = rand() % 250 + 250;
+		//	}
+
+		//	//アイテムを装備する
+		//	if (player.hp / (float)player.maxHp > 0.3f) {
+		//		if (itemRnd < 5) {
+		//			enemy[i].inventory[0] = ivory;
+		//		}
+		//		else if (itemRnd >= 5 && itemRnd < 15) {
+		//			enemy[i].inventory[0] = silver;
+		//		}
+		//		else if (itemRnd >= 15 && itemRnd < 45) {
+		//			enemy[i].inventory[0] = simplePotion;
+		//		}
+		//		else if (itemRnd >= 45 && itemRnd < 50) {
+		//			enemy[i].inventory[0] = superPotion;
+		//		}
+		//		else if (itemRnd >= 50 && itemRnd < 58) {
+		//			enemy[i].inventory[0] = gold;
+		//		}
+		//		else if (itemRnd >= 58) {
+		//			enemy[i].inventory[0] = brokenDiamond;
+		//		}
+		//	}
+		//	else {
+		//		if (itemRnd > 60) {
+		//			enemy[i].inventory[0] = simplePotion;
+		//		}
+		//		else if (itemRnd <= 60 && itemRnd > 40) {
+		//			enemy[i].inventory[0] = superPotion;
+		//		}
+		//		else if (itemRnd <= 40 && itemRnd > 30) {
+		//			enemy[i].inventory[0] = powerPostion;
+		//		}
+		//		else if (itemRnd <= 30 && itemRnd > 20) {
+		//			enemy[i].inventory[0] = ivory;
+		//		}
+		//		else if (itemRnd <= 20) {
+		//			enemy[i].inventory[0] = chainmail;
+		//		}
+		//	}
+		//}
 	}
 }
 /***************************************

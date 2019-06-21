@@ -41,6 +41,7 @@
 #define BANANA 3
 #define GRADUATION_CERTIFICATE_TUBE 4
 #define CUTLASS 5
+#define DAGGER 6
 //斧
 #define BATTLE_AXE 6
 #define KENDAMA 7
