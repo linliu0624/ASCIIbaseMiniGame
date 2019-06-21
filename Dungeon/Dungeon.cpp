@@ -92,7 +92,7 @@ void Attack(material, bool);
 //玩家死亡
 void PlayerDie();
 //玩家逃出
-void PlayerEscape(int);
+bool PlayerEscape(int);
 
 
 unit player;
@@ -647,7 +647,7 @@ void PlayerTurn() {
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
-				PlayerEscape(UP);
+				flag = PlayerEscape(UP);
 				//武器の攻撃範囲で敵がいるかどうかを判定する
 				//いれば戦闘に入る
 				if (IsEnemy(UP) == true) {
@@ -728,7 +728,7 @@ void PlayerTurn() {
 			if (currentX != newX || currentY != newY) {
 				playerMoveCounter++;
 			}
-			
+
 		}
 		else if (ch == SPACE) {
 			flag = true;
@@ -1734,7 +1734,7 @@ void PlayerDie() {
 *プレイヤーが逃げた時
 *作者：林
 ***************************************/
-void PlayerEscape(int ch)
+bool PlayerEscape(int ch)
 {
 	if (player.roomX == 1 && player.roomY == 1) {
 		if (ch == UP) {
@@ -1744,7 +1744,7 @@ void PlayerEscape(int ch)
 			int value = 0;
 			for (int i = 0; i < 64; i++) {
 				if (player.inventory[i].flag == true)
-					value += player.inventory[i].value;
+					value += player.inventory[i].value * player.inventory[i].amount;
 			}
 			value += player.weapon.value + player.armor.value + player.loan;
 			if (value < GOAL_VALUE) {
@@ -1761,12 +1761,16 @@ void PlayerEscape(int ch)
 				player.roomX = -1;
 				player.roomY = -1;
 				player.alive = false;
-				exit(1);
+				scean = START_SCEAN;
+				return true;
+				//exit(1);
 				//back to main menu. and update the rank.
 			}
 			else {
 				cin.clear();
 				cin.ignore(100, '\n');
+				Refresh();
+				return false;
 			}
 
 		}
