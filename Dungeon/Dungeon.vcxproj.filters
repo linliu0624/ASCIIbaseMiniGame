@@ -47,5 +47,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>資源檔</Filter>
     </ClCompile>
+    <ClCompile Include="ranking.cpp">
+      <Filter>資源檔</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

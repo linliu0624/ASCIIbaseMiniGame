@@ -18,6 +18,7 @@
 #define MAX_INVENTORY 128
 #define INIT_MAX_WEIGHT 50
 #define GOAL_VALUE 250
+#define RANK_LENGTH 8
 
 //道具
 #define NOTHING -1
