@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <time.h>
-#include <malloc.h>
 #include <time.h>
 #include <cstdlib>
 #include "item.h"
@@ -11,7 +10,6 @@
 #include "define.h"
 #include "map.h"
 #include "unit.h"
-#include "ranking.h"
 using namespace std;
 /*************待解決問題***************
 1.bug:
@@ -66,6 +64,8 @@ bool SearchEnemy(int);
 void ShowEnemyStatus();
 //ルールの表示
 void ShowRule();
+//ランキングを表示する
+//void ShowRank(ranking r[]);
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -113,7 +113,7 @@ bool isBattle;
 int main()
 {
 	StartRnd();
-	MakeFile();
+	//MakeFile();
 	while (true) {
 		if (scean == START_SCEAN) {
 			Start();
@@ -123,6 +123,10 @@ int main()
 			//画面表示
 			Refresh();
 		}
+		/*else if (scean == RANK_SCEAN) {
+			OutputFile(gameRank);
+			ShowRank(gameRank);
+		}*/
 		else if (scean == RULE_SCEAN) {
 			ShowRule();
 		}
@@ -1698,8 +1702,36 @@ void ShowRule() {
 	scean = START_SCEAN;
 
 }
-
-
+/***************************************
+*ランキングを表示する
+*作者：林
+***************************************/
+//void ShowRank(ranking r[]) {
+//	cout << "No.  Name      Score      time" << endl;
+//	cout << "================================================" << endl;
+//	int n = 1;
+//	int x = 1, y = 1;
+//	for (int i = 0; i < RANK_LENGTH - 1; i++) {
+//		if (r[i].score > 0) {
+//			GotoXY(x, y);
+//			cout << n << '.';
+//			x += 10;
+//			GotoXY(x, y);
+//			cout << r[i].name;
+//			x += 10;
+//			GotoXY(x, y);
+//			cout << r[i].score;
+//			x += 10;
+//			GotoXY(x, y);
+//			cout << r[i].strTime;
+//			x = 1;
+//			y++;
+//			if (r[i].score != r[i + 1].score) {
+//				n++;
+//			}
+//		}
+//	}
+//}
 
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
@@ -1762,7 +1794,27 @@ bool PlayerEscape(int ch)
 				player.roomX = -1;
 				player.roomY = -1;
 				player.alive = false;
-				scean = START_SCEAN;
+
+				////把資料塞進ranking
+				//ranking tmp;
+				//strcpy(tmp.name, player.name);
+				//tmp.score = value;
+				//tmp.nowTime = time(0);
+				////下面4行用來把時間轉成字串
+				//struct tm  tstruct;
+				//char       buf[80];
+				//tstruct = *localtime(&tmp.nowTime);
+				//strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+				//tmp.strTime = buf;
+				////文件中的資料寫進內存
+				//OutputFile(gameRank);
+				////排序內存中的資料
+				//SortRank(gameRank, tmp);
+				////內存中的資料寫進文件
+				//InputFile(gameRank);
+
+
+				scean = RANK_SCEAN;
 				return true;
 				//exit(1);
 				//back to main menu. and update the rank.
@@ -1833,5 +1885,7 @@ inline void GotoXY(int x, int y)
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+
 
 

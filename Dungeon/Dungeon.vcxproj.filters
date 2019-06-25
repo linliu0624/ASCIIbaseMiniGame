@@ -30,9 +30,6 @@
     <ClInclude Include="item.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="ranking.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dungeon.cpp">
@@ -45,9 +42,6 @@
       <Filter>資源檔</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>資源檔</Filter>
-    </ClCompile>
-    <ClCompile Include="ranking.cpp">
       <Filter>資源檔</Filter>
     </ClCompile>
   </ItemGroup>
