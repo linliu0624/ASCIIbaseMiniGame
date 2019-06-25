@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <time.h>
-#include <time.h>
 #include <cstdlib>
 #include "item.h"
 #include "conio.h"
