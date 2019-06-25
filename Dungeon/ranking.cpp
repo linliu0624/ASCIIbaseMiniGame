@@ -68,7 +68,7 @@ void ShowRank(ranking r[]) {
 	}
 }
 
-void CreateFile() {
+void MakeFile() {
 	ofstream file; 
 	file.open(fileName);
 	file.close();

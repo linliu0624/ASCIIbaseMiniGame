@@ -80,6 +80,7 @@
 #define UPDATE_SCEAN 1
 #define START_SCEAN 2
 #define RULE_SCEAN 3
+#define RANK_SCEAN 4
 //方向,72 77 80 75即表示方向键 上 右 下 左。
 #define UP 72
 #define DOWN 80

@@ -36,8 +36,8 @@ struct ranking {
 ranking arank[RANK_LENGTH];
 string fileName = "rank.txt";
 void InputFile(ranking[]);
-void SortRank(ranking[]);
-void OutputFile(ranking[], ranking);
+void SortRank(ranking[], ranking);
+void OutputFile(ranking[]);
 void ShowRank(ranking[]);
 
 void main() {
@@ -53,12 +53,12 @@ void main() {
 	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 	tmp.sTime = buf;
 
-	OutputFile(arank, tmp);
+	OutputFile(arank);
+	SortRank(arank, tmp);
 	InputFile(arank);
-	SortRank(arank);
 	ShowRank(arank);
 }
-
+/*把資料從Code寫進文件*/
 void InputFile(ranking r[]) {
 	//fstream file;
 	//file.open("rank.txt", ios::out);//寫入文件
@@ -67,43 +67,32 @@ void InputFile(ranking r[]) {
 	if (file)
 		for (int i = 0; i < RANK_LENGTH - 1; i++)
 			if (r[i].score > 0)
-				file << "     " << r[i].name << "     " << r[i].score << "      " << r[i].sTime << endl;
+				file << r[i].name << " " << r[i].score << " " << r[i].sTime << endl;
 	file.close();
 }
-void OutputFile(ranking r[], ranking newPlayer) {
+/*把文件中的資料存進code*/
+void OutputFile(ranking r[]) {
 	fstream file;
-	file.open(fileName, ios::in | ios::out);
+	file.open(fileName, ios::in);
 	int n = 0;
-	while (true) {
-		if (r[n].score == 0) {
-			strcpy(r[n].name, newPlayer.name);
-			r[n].score = newPlayer.score;
-			r[n].sTime = newPlayer.sTime;
-			file >> r[n].name;
-			file >> r[n].score;
-			file >> r[n].sTime;
-			file << endl;
-			break;
-		}
-		else if (r[n].score > 0) {
-			file >> r[n].name;
-			file >> r[n].score;
-			file >> r[n].sTime;
-			file << endl;
-			n++;
-		}
-		if (n == RANK_LENGTH - 1) {
-			break;
-		}
+	while (!file.eof()) {
+		file >> r[n].name;
+		file >> r[n].score;
+		file >> r[n].sTime;
+		file << endl;
+		n++;
 	}
 	file.close();
 }
 /*insert sort*/
-void SortRank(ranking r[]) {
+void SortRank(ranking r[], ranking newPlayer) {
+	if (newPlayer.score > r[RANK_LENGTH - 1].score) {
+		r[RANK_LENGTH - 1] = newPlayer;
+	}
 	for (int i = 0; i < RANK_LENGTH; i++) {
 		int n = i;
 		ranking tmp = r[n];
-		while (i > 0 && r[i].score > 0) {
+		while (i > 0) {
 			if (r[n].score > r[n - 1].score && n > 0) {
 				r[n] = r[n - 1];
 				r[n - 1] = tmp;
@@ -116,12 +105,12 @@ void SortRank(ranking r[]) {
 }
 
 void ShowRank(ranking r[]) {
-	cout << "No.  Name      Score      time" << endl;
+	cout << "No.  Name          Score      time" << endl;
 	cout << "================================================" << endl;
 	int n = 1;
 	for (int i = 0; i < RANK_LENGTH - 1; i++) {
 		if (r[i].score > 0) {
-			cout << n << ".      " << r[i].name << "      " << r[i].score << "      " << r[i].sTime << endl;
+			cout << n << ".   " << r[i].name << "          " << r[i].score << "      " << r[i].sTime << endl;
 			if (r[i].score != r[i + 1].score) {
 				n++;
 			}

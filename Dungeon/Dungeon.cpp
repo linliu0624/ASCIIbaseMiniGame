@@ -11,7 +11,7 @@
 #include "define.h"
 #include "map.h"
 #include "unit.h"
-#include <queue>
+#include "ranking.h"
 using namespace std;
 /*************待解決問題***************
 1.bug:
@@ -113,6 +113,7 @@ bool isBattle;
 int main()
 {
 	StartRnd();
+	MakeFile();
 	while (true) {
 		if (scean == START_SCEAN) {
 			Start();

@@ -21,4 +21,4 @@ void InputFile(ranking[]);
 void SortRank(ranking[]);
 void OutputFile(ranking[], ranking);
 void ShowRank(ranking[]);
-void CreateFile();
+void MakeFile();
