@@ -294,7 +294,7 @@ void CreatePlayer() {
 	player.roomX = 3;
 	player.roomY = 3;
 	system("cls");
-	cout << "What's your name:";
+	cout << "What's your name(please don't input space):";
 	cin >> player.name;
 	cin.clear();
 	cin.ignore(100, '\n');

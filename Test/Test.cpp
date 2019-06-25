@@ -14,6 +14,7 @@
 #include <math.h>
 #include <fstream>
 #include <string>
+#include <time.h>
 //#pragma warning( disable : 4996 )
 using namespace std;
 #define UP 72
@@ -26,51 +27,83 @@ inline void GotoXY(int, int);
 /*
 從文件中把資料存到變數身上時，string遇到空白時候就會被分割
 */
-
-
-
-typedef struct ranking {
+struct ranking {
 	char name[32];
-	int score;
-}tmpRank;
+	int score = 0;
+	time_t nowTime = time(0);
+	string sTime;
+};
+ranking arank[RANK_LENGTH];
+string fileName = "rank.txt";
+void InputFile(ranking[]);
+void SortRank(ranking[]);
+void OutputFile(ranking[], ranking);
+void ShowRank(ranking[]);
 
-void inputFile(rank[], int);
-void sortRank(rank[], int);
-void outputFile(rank[], rank);
+void main() {
+	ranking tmp;
+	cout << "what's you name:";
+	cin >> tmp.name;
+	cout << "set score:";
+	cin >> tmp.score;
 
-void inputFile(rank r[], int size) {
+	struct tm  tstruct;
+	char       buf[80];
+	tstruct = *localtime(&tmp.nowTime);
+	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+	tmp.sTime = buf;
+
+	OutputFile(arank, tmp);
+	InputFile(arank);
+	SortRank(arank);
+	ShowRank(arank);
+}
+
+void InputFile(ranking r[]) {
 	//fstream file;
 	//file.open("rank.txt", ios::out);//寫入文件
 	ofstream file; //類似 file.open("....", ios::out) 
-	file.open("rank.txt");
-	for (int i = 0; i < size - 1; i++)
-		file << r[i].name << " " << r[i].score << endl;
+	file.open(fileName);
+	if (file)
+		for (int i = 0; i < RANK_LENGTH - 1; i++)
+			if (r[i].score > 0)
+				file << "     " << r[i].name << "     " << r[i].score << "      " << r[i].sTime << endl;
 	file.close();
 }
-void outputFile(rank r[], rank newguy) {
+void OutputFile(ranking r[], ranking newPlayer) {
 	fstream file;
-	file.open("rank.txt", ios::in);
+	file.open(fileName, ios::in | ios::out);
 	int n = 0;
 	while (true) {
-		file >> r[n].name;
-		file >> r[n].score;
-		cout << r[n].name << " " << r[n].score << endl;
-		file << endl;
-		n++;
+		if (r[n].score == 0) {
+			strcpy(r[n].name, newPlayer.name);
+			r[n].score = newPlayer.score;
+			r[n].sTime = newPlayer.sTime;
+			file >> r[n].name;
+			file >> r[n].score;
+			file >> r[n].sTime;
+			file << endl;
+			break;
+		}
+		else if (r[n].score > 0) {
+			file >> r[n].name;
+			file >> r[n].score;
+			file >> r[n].sTime;
+			file << endl;
+			n++;
+		}
 		if (n == RANK_LENGTH - 1) {
-			strcpy_s(r[n].name, newguy.name);
-			r[n].score = newguy.score;
 			break;
 		}
 	}
 	file.close();
 }
 /*insert sort*/
-void sortRank(rank r[], int size) {
-	for (int i = 0; i < size; i++) {
+void SortRank(ranking r[]) {
+	for (int i = 0; i < RANK_LENGTH; i++) {
 		int n = i;
-		rank tmp = r[n];
-		while (i > 0) {
+		ranking tmp = r[n];
+		while (i > 0 && r[i].score > 0) {
 			if (r[n].score > r[n - 1].score && n > 0) {
 				r[n] = r[n - 1];
 				r[n - 1] = tmp;
@@ -81,35 +114,21 @@ void sortRank(rank r[], int size) {
 		}
 	}
 }
-void main() {
-	StartRnd();
-	rank mainRank[RANK_LENGTH];
-	for (int i = 0; i < RANK_LENGTH; i++) {
-		strcpy_s(mainRank[i].name, "");
-		mainRank[i].score = 0;
-	}
-	strcpy_s(mainRank[0].name, "kyon");
-	strcpy_s(mainRank[1].name, "yume");
-	strcpy_s(mainRank[2].name, "aa");
-	strcpy_s(mainRank[3].name, "bb");
-	strcpy_s(mainRank[4].name, "cc");
-	strcpy_s(mainRank[5].name, "dd");
-	strcpy_s(mainRank[6].name, "ee");
+
+void ShowRank(ranking r[]) {
+	cout << "No.  Name      Score      time" << endl;
+	cout << "================================================" << endl;
+	int n = 1;
 	for (int i = 0; i < RANK_LENGTH - 1; i++) {
-		mainRank[i].score = rand() % 100;
+		if (r[i].score > 0) {
+			cout << n << ".      " << r[i].name << "      " << r[i].score << "      " << r[i].sTime << endl;
+			if (r[i].score != r[i + 1].score) {
+				n++;
+			}
+		}
 	}
-	rank newGuy;
-	strcpy_s(newGuy.name, "newone");
-	newGuy.score = rand() % 100;
-	//outputFile(mainRank, newGuy);
-
-
-	int size = sizeof(mainRank) / sizeof(rank);
-	sortRank(mainRank, size);
-	inputFile(mainRank, size);
-
-
 }
+
 inline void GotoXY(int x, int y)
 {
 	COORD coord;

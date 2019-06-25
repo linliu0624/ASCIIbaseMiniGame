@@ -1,41 +1,48 @@
+﻿/***************************************
+*Rankの処理に関して
+*作者：林
+***************************************/
 #include "ranking.h"
 using namespace std;
 ranking rank[RANK_LENGTH];
-string fileName = "rank.txt";
+const string fileName = "rank.txt";
 
-void inputFile(ranking r[], int size) {
+void InputFile(ranking r[]) {
 	//fstream file;
-	//file.open("rank.txt", ios::out);//�g�J���
-	ofstream file; //���� file.open("....", ios::out) 
+	//file.open("rank.txt", ios::out);//寫入文件
+	ofstream file; //類似 file.open("....", ios::out) 
 	file.open(fileName);
-	for (int i = 0; i < size - 1; i++)
-		file << r[i].name << " " << r[i].score << endl;
+	for (int i = 0; i < RANK_LENGTH - 1; i++)
+		file <<"     "<< r[i].name << "     " << r[i].score << "      " << r[i].time << endl;
 	file.close();
 }
-void outputFile(ranking r[], ranking newguy) {
+void OutputFile(ranking r[], ranking newPlayer) {
 	fstream file;
 	file.open(fileName, ios::in);
 	int n = 0;
 	while (true) {
+		if (r[n].score == 0) {
+			strcpy_s(r[n].name, newPlayer.name);
+			r[n].score = newPlayer.score;
+			r[n].time = newPlayer.time;
+		}
 		file >> r[n].name;
 		file >> r[n].score;
-		cout << r[n].name << " " << r[n].score << endl;
+		file >> r[n].time;
 		file << endl;
 		n++;
 		if (n == RANK_LENGTH - 1) {
-			strcpy_s(r[n].name, newguy.name);
-			r[n].score = newguy.score;
 			break;
 		}
 	}
 	file.close();
 }
 /*insert sort*/
-void sortRank(ranking r[], int size) {
-	for (int i = 0; i < size; i++) {
+void SortRank(ranking r[]) {
+	for (int i = 0; i < RANK_LENGTH; i++) {
 		int n = i;
 		ranking tmp = r[n];
-		while (i > 0) {
+		while (i > 0 && r[i].score > 0) {
 			if (r[n].score > r[n - 1].score && n > 0) {
 				r[n] = r[n - 1];
 				r[n - 1] = tmp;
@@ -45,4 +52,24 @@ void sortRank(ranking r[], int size) {
 				break;
 		}
 	}
+}
+
+void ShowRank(ranking r[]) {
+	cout << "No.  Name      Score      time" << endl;
+	cout << "================================================" << endl;
+	int n = 1;
+	for (int i = 0; i < RANK_LENGTH - 1; i++) {
+		if (r[i].score > 0) {
+			cout << n << ".      " << r[i].name << "      " << r[i].score << "      " << r[i].time << endl;
+			if (r[i].score != r[i + 1].score) {
+				n++;
+			}
+		}
+	}
+}
+
+void CreateFile() {
+	ofstream file; 
+	file.open(fileName);
+	file.close();
 }
