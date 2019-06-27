@@ -9,6 +9,7 @@
 #include "define.h"
 #include "map.h"
 #include "unit.h"
+#include "rank.h"
 using namespace std;
 /*************待解決問題***************
 1.bug:
@@ -64,7 +65,7 @@ void ShowEnemyStatus();
 //ルールの表示
 void ShowRule();
 //ランキングを表示する
-//void ShowRank(ranking r[]);
+void ShowRank(ranking r[]);
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -122,10 +123,10 @@ int main()
 			//画面表示
 			Refresh();
 		}
-		/*else if (scean == RANK_SCEAN) {
+		else if (scean == RANK_SCEAN) {
 			OutputFile(gameRank);
 			ShowRank(gameRank);
-		}*/
+		}
 		else if (scean == RULE_SCEAN) {
 			ShowRule();
 		}
@@ -228,8 +229,8 @@ void CreateMap() {
 	//地下城初期化
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
-			dangeon[i][j].type = ROOM;
-			dangeon[i][j].playerPos = false;
+			dungeon[i][j].type = ROOM;
+			dungeon[i][j].playerPos = false;
 		}
 	}
 
@@ -239,8 +240,8 @@ void CreateMap() {
 			if (i != 0 && i != MAPRANGE - 1 && j != 0 && j != MAPRANGE - 1) {
 				//一番左上はプレイヤーの生成位置
 				if (i == 1 && j == 1) {
-					dangeon[i][j].type = ROOM;
-					dangeon[i][j].playerPos = true;
+					dungeon[i][j].type = ROOM;
+					dungeon[i][j].playerPos = true;
 				}
 				else {
 					//部屋の生成
@@ -254,14 +255,14 @@ void CreateMap() {
 					else {
 						type = ROOM;
 					}
-					dangeon[i][j].type = type;
-					dangeon[i][j].playerPos = false;
+					dungeon[i][j].type = type;
+					dungeon[i][j].playerPos = false;
 
 				}
 			}
 			else {
-				dangeon[i][j].type = WALL;
-				dangeon[i][j].playerPos = false;
+				dungeon[i][j].type = WALL;
+				dungeon[i][j].playerPos = false;
 
 			}
 		}
@@ -495,7 +496,7 @@ void SpawnEnemy() {
 	//ダンジョンの部屋の移動
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].playerPos != true) {
 				//部屋のマスの移動
 				for (int roomY = i * 5 - 4; roomY <= i * 5; roomY++) {
 					for (int roomX = j * 5 - 4; roomX <= j * 5; roomX++) {
@@ -555,7 +556,7 @@ bool SearchEnemy() {
 	bool haveEnemy = false;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//轉換大地圖座標為房間座標
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -601,7 +602,7 @@ bool SearchEnemy(int number)
 	bool haveEnemy = false;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//轉換大地圖座標為房間座標
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -931,7 +932,7 @@ void CreateRoom() {
 	//ダンジョンこの地域は壁だと、部屋も壁
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].type == WALL) {
+			if (dungeon[i][j].type == WALL) {
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					for (int x = j * 5 - 4; x <= j * 5; x++) {
 						room[y][x].type = WALL;
@@ -1235,13 +1236,13 @@ void UpdateBigMap() {
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (i == mapY && j == mapX) {
-				dangeon[mapY][mapX].playerPos = true;
+				dungeon[mapY][mapX].playerPos = true;
 				player.mapX = mapX;
 				player.mapY = mapY;
 			}
 			else
 			{
-				dangeon[i][j].playerPos = false;
+				dungeon[i][j].playerPos = false;
 			}
 		}
 	}
@@ -1251,17 +1252,17 @@ void UpdateBigMap() {
 *作者：林
 ***************************************/
 void ShowBigMap() {
-	cout << "                                        >dungenon map<" << endl;
+	cout << "                                        >dungeon map<" << endl;
 	for (int i = 0; i < MAPRANGE; i++) {
 		cout << "                                        ";
 		for (int j = 0; j < MAPRANGE; j++) {
-			if (dangeon[i][j].type == WALL && dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].type == WALL && dungeon[i][j].playerPos != true) {
 				cout << "X ";
 			}
-			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].type == ROOM && dungeon[i][j].playerPos != true) {
 				cout << "  ";
 			}
-			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].type == ROOM && dungeon[i][j].playerPos == true) {
 				cout << "P ";
 			}
 
@@ -1278,7 +1279,7 @@ void ShowRoom() {
 	cout << "                                        ->room map<-" << endl;
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (dangeon[i][j].playerPos == true)
+			if (dungeon[i][j].playerPos == true)
 			{
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					cout << "                                        |";
@@ -1635,7 +1636,7 @@ void ShowEnemyStatus() {
 	//プレイヤーがダンジョンのどこにいるかを探す
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//ダンジョンの座標を部屋の座標に転換する
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -1705,32 +1706,37 @@ void ShowRule() {
 *ランキングを表示する
 *作者：林
 ***************************************/
-//void ShowRank(ranking r[]) {
-//	cout << "No.  Name      Score      time" << endl;
-//	cout << "================================================" << endl;
-//	int n = 1;
-//	int x = 1, y = 1;
-//	for (int i = 0; i < RANK_LENGTH - 1; i++) {
-//		if (r[i].score > 0) {
-//			GotoXY(x, y);
-//			cout << n << '.';
-//			x += 10;
-//			GotoXY(x, y);
-//			cout << r[i].name;
-//			x += 10;
-//			GotoXY(x, y);
-//			cout << r[i].score;
-//			x += 10;
-//			GotoXY(x, y);
-//			cout << r[i].strTime;
-//			x = 1;
-//			y++;
-//			if (r[i].score != r[i + 1].score) {
-//				n++;
-//			}
-//		}
-//	}
-//}
+void ShowRank(ranking r[]) {
+	cout << "No.  Name      Score      time" << endl;
+	cout << "================================================" << endl;
+	int n = 1;
+	int x = 1, y = 1;
+	for (int i = 0; i < RANK_LENGTH - 1; i++) {
+		if (r[i].score > 0) {
+			GotoXY(x, y);
+			cout << n << '.';
+			x += 10;
+			GotoXY(x, y);
+			cout << r[i].name;
+			x += 10;
+			GotoXY(x, y);
+			cout << r[i].score;
+			x += 10;
+			GotoXY(x, y);
+			cout << r[i].strTime;
+			x = 1;
+			y++;
+			if (r[i].score != r[i + 1].score) {
+				n++;
+			}
+		}
+	}
+	char ch;
+	cout << "Press any key to back" << endl;
+	ch = _getch();
+	scean = START_SCEAN;
+
+}
 
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
@@ -1794,23 +1800,23 @@ bool PlayerEscape(int ch)
 				player.roomY = -1;
 				player.alive = false;
 
-				////把資料塞進ranking
-				//ranking tmp;
-				//strcpy(tmp.name, player.name);
-				//tmp.score = value;
-				//tmp.nowTime = time(0);
-				////下面4行用來把時間轉成字串
-				//struct tm  tstruct;
-				//char       buf[80];
-				//tstruct = *localtime(&tmp.nowTime);
-				//strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-				//tmp.strTime = buf;
-				////文件中的資料寫進內存
-				//OutputFile(gameRank);
-				////排序內存中的資料
-				//SortRank(gameRank, tmp);
-				////內存中的資料寫進文件
-				//InputFile(gameRank);
+				//把資料塞進ranking
+				ranking tmp;
+				strcpy(tmp.name, player.name);
+				tmp.score = value;
+				tmp.nowTime = time(0);
+				//下面4行用來把時間轉成字串
+				struct tm  tstruct;
+				char       buf[80];
+				tstruct = *localtime(&tmp.nowTime);
+				strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+				tmp.strTime = buf;
+				//文件中的資料寫進內存
+				OutputFile(gameRank);
+				//排序內存中的資料
+				SortRank(gameRank, tmp);
+				//內存中的資料寫進文件
+				InputFile(gameRank);
 
 
 				scean = RANK_SCEAN;
@@ -1852,6 +1858,10 @@ void Start() {
 		cout << endl;
 		if (flag == '1') {
 			scean = INIT_SCEAN;
+			break;
+		}
+		else if (flag == '2') {
+			scean = RANK_SCEAN;
 			break;
 		}
 		else if (flag == '3') {

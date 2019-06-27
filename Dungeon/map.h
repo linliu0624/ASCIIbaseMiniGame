@@ -18,6 +18,6 @@ struct roomObj {
 	bool exitPos = false;
 	bool mark = false;
 };
-extern bigmap dangeon[MAPRANGE][MAPRANGE];
+extern bigmap dungeon[MAPRANGE][MAPRANGE];
 extern roomObj room[ROOMRANGE][ROOMRANGE];
 bool SearchRoom();

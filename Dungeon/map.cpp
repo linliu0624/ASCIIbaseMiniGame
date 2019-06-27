@@ -6,7 +6,7 @@
 #include "define.h"
 #include <queue>
 using namespace std;
-bigmap dangeon[MAPRANGE][MAPRANGE];
+bigmap dungeon[MAPRANGE][MAPRANGE];
 roomObj room[ROOMRANGE][ROOMRANGE];
 struct point {
 	int x, y;
