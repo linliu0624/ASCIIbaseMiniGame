@@ -1,2 +1,4 @@
-﻿  Test.cpp
-  Test.vcxproj -> D:\Code\Game\ThemeA\Debug\Test.exe
+﻿  pch.cpp
+  Test.cpp
+D:\Code\Game\Test\Test.cpp(43,13): warning C4326:  'main' 的傳回類型應該是 'int'，而非 'void'
+  Test.vcxproj -> D:\Code\Game\Debug\Test.exe

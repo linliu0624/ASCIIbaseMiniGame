@@ -166,7 +166,7 @@ void WeaponInit() {
 	//槍
 	strcpy(spear.name, "spear");
 	strcpy(spear.atktext, "atk: 20~50");
-	strcpy(spear.text, "Long-handled weapon, it can two enemy farther");
+	strcpy(spear.text, "Long-handled weapon, it can attack two enemy farther");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
 	spear.maxValue = 100;

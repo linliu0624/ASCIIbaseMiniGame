@@ -16,4 +16,5 @@ extern std::string fileName;
 void InputFile(ranking[]);
 void SortRank(ranking[], ranking);
 void OutputFile(ranking[]);
+void MakeFile();
 //void ShowRank(ranking[]);

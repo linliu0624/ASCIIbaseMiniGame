@@ -4,7 +4,7 @@ using namespace std;
 
 ranking gameRank[RANK_LENGTH];
 std::string fileName = "rank.txt";
-/*把資料從Code寫進文件*/
+
 void InputFile(ranking r[]) {
 	//fstream file;
 	//file.open("rank.txt", ios::out);//寫入文件
@@ -50,6 +50,11 @@ void SortRank(ranking r[], ranking newPlayer) {
 	}
 }
 
+void MakeFile() {
+	fstream file;
+	file.open(fileName, ios::in);
+	file.close();
+}
 //void ShowRank(ranking r[]) {
 //	cout << "No.  Name          Score      time" << endl;
 //	cout << "================================================" << endl;

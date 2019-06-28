@@ -54,6 +54,8 @@ void CreatePlayer();
 void ShowPlayerStatus();
 //敵の初期化
 void CreateEnemy();
+//敵のアイテム初期化
+void CreateEnemyItem();
 //敵の配置
 void SpawnEnemy();
 //敵の削除
@@ -146,7 +148,6 @@ int main()
 
 /*初始化*/
 void Init() {
-
 	//ゲーム画面の大きさを設定する
 	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	//char flag;
@@ -191,6 +192,7 @@ void Update() {
 		//Refresh();
 		if (player.inventoryMode == false) {
 			//haveEnemy = SearchEnemy();
+			CreateEnemyItem();
 			if (haveEnemy)
 				EnemyTurn();
 			//敵を削除して。生成と配置をし直す。
@@ -322,7 +324,7 @@ void CreateEnemy() {
 	playerWAValue = player.weapon.value + player.armor.value;
 	int weaponRnd;
 	int armorRnd;
-	int itemRnd;
+	//int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
 		enemy[i].maxHp = 300;
 		enemy[i].hp = 150 + rand() % 75 + rand() % 75;
@@ -344,7 +346,7 @@ void CreateEnemy() {
 
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
-		itemRnd = rand() % 100 + 1;
+		//itemRnd = rand() % 100 + 1;
 		//if (playerWAValue < 100) {
 			//武器を装備する
 		if (weaponRnd <= 20) {
@@ -377,6 +379,60 @@ void CreateEnemy() {
 			enemy[i].armor.hp = rand() % 250 + 250;
 		}
 
+		////アイテムを装備する
+		//if (player.hp / (float)player.maxHp > 0.33f) {
+		//	if (itemRnd < 5) {
+		//		enemy[i].inventory[0] = ivory;
+		//	}
+		//	else if (itemRnd >= 5 && itemRnd < 15) {
+		//		enemy[i].inventory[0] = silver;
+		//	}
+		//	else if (itemRnd >= 15 && itemRnd < 45) {
+		//		enemy[i].inventory[0] = simplePotion;
+		//	}
+		//	else if (itemRnd >= 45 && itemRnd < 50) {
+		//		enemy[i].inventory[0] = superPotion;
+		//	}
+		//	else if (itemRnd >= 50 && itemRnd < 58) {
+		//		enemy[i].inventory[0] = gold;
+		//	}
+		//	else if (itemRnd >= 58 && itemRnd < 63) {
+		//		enemy[i].inventory[0] = dagger;
+		//	}
+		//	else if (itemRnd >= 63 && itemRnd < 68) {
+		//		enemy[i].inventory[0] = powerPostion;
+		//	}
+		//	else if (itemRnd >= 68) {
+		//		enemy[i].inventory[0] = brokenDiamond;
+		//	}
+		//}
+		//else if (player.hp / (float)player.maxHp > 0.33f && player.hp > 50) {
+		//	if (itemRnd > 60) {
+		//		enemy[i].inventory[0] = simplePotion;
+		//	}
+		//	else if (itemRnd <= 60 && itemRnd > 40) {
+		//		enemy[i].inventory[0] = superPotion;
+		//	}
+		//	else if (itemRnd <= 40 && itemRnd > 30) {
+		//		enemy[i].inventory[0] = powerPostion;
+		//	}
+		//	else if (itemRnd <= 30 && itemRnd > 20) {
+		//		enemy[i].inventory[0] = ivory;
+		//	}
+		//	else if (itemRnd <= 20) {
+		//		enemy[i].inventory[0] = chainmail;
+		//	}
+		//}
+		//else if (player.hp <= 50) {
+		//	enemy[i].inventory[0] = superPotion;
+		//}
+
+	}
+}
+void CreateEnemyItem() {
+	int itemRnd;
+	for (int i = 0; i < ENEMYNUMBER; i++) {
+		itemRnd = rand() % 100 + 1;
 		//アイテムを装備する
 		if (player.hp / (float)player.maxHp > 0.33f) {
 			if (itemRnd < 5) {
@@ -424,79 +480,6 @@ void CreateEnemy() {
 		else if (player.hp <= 50) {
 			enemy[i].inventory[0] = superPotion;
 		}
-		//}
-		//else {
-		//	//武器を装備する
-		//	weaponRnd = rand() % 100 + 1;
-		//	if (weaponRnd <= 20) {
-		//		enemy[i].weapon = fist;
-		//	}
-		//	else if (weaponRnd >= 20 && weaponRnd < 40) {
-		//		enemy[i].weapon = battleAxe;
-		//	}
-		//	else if (weaponRnd >= 40 && weaponRnd < 60) {
-		//		enemy[i].weapon = spear;
-		//	}
-		//	else {
-		//		enemy[i].weapon = shortSword;
-		//	}
-		//	enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
-
-		//	//防具を装備する
-		//	if (armorRnd < 50)
-		//		enemy[i].armor = noArmor;
-		//	else if (armorRnd >= 50 && armorRnd < 70) {
-		//		enemy[i].armor = leatherArmor;
-		//		enemy[i].armor.hp = rand() % 200 + 200;
-		//	}
-		//	else if (armorRnd >= 70 && armorRnd < 85) {
-		//		enemy[i].armor = heavyLeatherArmor;
-		//		enemy[i].armor.hp = rand() % 150 + 150;
-		//	}
-		//	else {
-		//		enemy[i].armor = chainmail;
-		//		enemy[i].armor.hp = rand() % 250 + 250;
-		//	}
-
-		//	//アイテムを装備する
-		//	if (player.hp / (float)player.maxHp > 0.3f) {
-		//		if (itemRnd < 5) {
-		//			enemy[i].inventory[0] = ivory;
-		//		}
-		//		else if (itemRnd >= 5 && itemRnd < 15) {
-		//			enemy[i].inventory[0] = silver;
-		//		}
-		//		else if (itemRnd >= 15 && itemRnd < 45) {
-		//			enemy[i].inventory[0] = simplePotion;
-		//		}
-		//		else if (itemRnd >= 45 && itemRnd < 50) {
-		//			enemy[i].inventory[0] = superPotion;
-		//		}
-		//		else if (itemRnd >= 50 && itemRnd < 58) {
-		//			enemy[i].inventory[0] = gold;
-		//		}
-		//		else if (itemRnd >= 58) {
-		//			enemy[i].inventory[0] = brokenDiamond;
-		//		}
-		//	}
-		//	else {
-		//		if (itemRnd > 60) {
-		//			enemy[i].inventory[0] = simplePotion;
-		//		}
-		//		else if (itemRnd <= 60 && itemRnd > 40) {
-		//			enemy[i].inventory[0] = superPotion;
-		//		}
-		//		else if (itemRnd <= 40 && itemRnd > 30) {
-		//			enemy[i].inventory[0] = powerPostion;
-		//		}
-		//		else if (itemRnd <= 30 && itemRnd > 20) {
-		//			enemy[i].inventory[0] = ivory;
-		//		}
-		//		else if (itemRnd <= 20) {
-		//			enemy[i].inventory[0] = chainmail;
-		//		}
-		//	}
-		//}
 	}
 }
 /***************************************
