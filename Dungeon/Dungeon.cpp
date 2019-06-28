@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <time.h>
 #include <cstdlib>
+#include <cctype>
 #include "item.h"
 #include "conio.h"
 #include "define.h"
@@ -13,15 +14,16 @@
 using namespace std;
 /*************待解決問題***************
 1.bug:
-  背包系統重做:
-	 需檢查看看有沒有bug
-2.逃出
-3.玩家死
-4.平衡性調整
+  各種遊戲bug
+  需特別注意:
+	  需檢查排行榜bug
+	  需檢查背包bug
+2.玩家名稱輸入空白鍵要轉底線
+3.平衡性調整
    1.依照玩家的武器和護甲來決定敵人裝備物品
    2.依照敵人生成位置決定裝備(越後面越強價值越高)
    3.增加武器與護甲還有其耐久與價值跟重量
-5.起始畫面
+4.起始畫面
 商人
 **************************************/
 //初期化
@@ -302,8 +304,13 @@ void CreatePlayer() {
 	system("cls");
 	cout << "What's your name(please don't input space):";
 	cin >> player.name;
+	//for (auto& c : player.name) {
+	//	if (isspace(c)) {
+	//		
+	//	}
+	//}
 	cin.clear();
-	cin.ignore(100, '\n');
+	cin.ignore(100, '\n');	
 }
 /***************************************
 *enemyの生成
@@ -759,7 +766,7 @@ void EnemyTurn() {
 			if (!EnemyAttack(i))
 				//再次判定是否為跟玩家同個房間,同房才移動
 				//if (SearchEnemy(i))
-					EnemyMove(i);
+				EnemyMove(i);
 			continue;
 		}
 	}
@@ -1712,7 +1719,7 @@ void ShowRank(ranking r[]) {
 	cout << "No.  Name      Score         time" << endl;
 	cout << "================================================" << endl;
 	int n = 1;
-	int x = 0, y =2;
+	int x = 0, y = 2;
 	for (int i = 0; i < RANK_LENGTH - 1; i++) {
 		if (r[i].score > 0) {
 			GotoXY(x, y);
@@ -1861,17 +1868,22 @@ void Start() {
 		cout << endl;
 		if (flag == '1') {
 			scean = INIT_SCEAN;
+			cin.ignore(100, '\n');
 			break;
 		}
 		else if (flag == '2') {
 			scean = RANK_SCEAN;
+			cin.ignore(100, '\n');
 			break;
 		}
 		else if (flag == '3') {
 			scean = RULE_SCEAN;
+			cin.ignore(100, '\n');
 			break;
 		}
 		else {
+			cin.clear();
+			cin.ignore(100);
 			system("cls");
 		}
 	} while (true);
