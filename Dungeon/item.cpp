@@ -69,7 +69,7 @@ void WeaponInit() {
 
 	//短剣
 	strcpy(shortSword.name, "short sword");
-	strcpy(shortSword.atktext, "atk: 20~50");
+	strcpy(shortSword.atktext, "atk: 30~60");
 	strcpy(shortSword.text, "The sword is a weapon with a very balanced and a stable attack.");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
@@ -165,7 +165,7 @@ void WeaponInit() {
 
 	//槍
 	strcpy(spear.name, "spear");
-	strcpy(spear.atktext, "atk: 20~50");
+	strcpy(spear.atktext, "atk: 30~60");
 	strcpy(spear.text, "Long-handled weapon, it can attack two enemy farther");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
@@ -352,7 +352,7 @@ int Damage(int weaponType) {
 	if (weaponType == FIST)
 		return dice4 * 10; //10~40
 	else if (weaponType == SHORT_SWORD || weaponType == SPEAR)
-		return dice4 * 10 + 10; //20~50
+		return dice4 * 10 + 10 + 10; //30~60
 	else if (weaponType == BATTLE_AXE)
 		return dice8 * 10; //10~80
 	else if (weaponType == SCORPION || weaponType == LONG_SWORD)
