@@ -1658,11 +1658,11 @@ void ShowEnemyStatus() {
 									GotoXY(x, y++);
 									cout << "|enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
-									cout << "|weapon:" << enemy[e].weapon.name << endl;
-									GotoXY(x, y++);
 									cout << "|armor:" << enemy[e].armor.name << endl;
 									GotoXY(x, y++);
-									cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
+									cout << "|weapon:" << enemy[e].weapon.name << endl;
+									//GotoXY(x, y++);
+									//cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
 									x += 25;
 								}
 								else {
