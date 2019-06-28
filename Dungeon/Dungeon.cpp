@@ -464,7 +464,7 @@ void CreateEnemyItem() {
 				enemy[i].inventory[0] = brokenDiamond;
 			}
 		}
-		else if (player.hp / (float)player.maxHp > 0.33f && player.hp > 50) {
+		else if (player.hp / (float)player.maxHp > 0.4f && player.hp > 50) {
 			if (itemRnd > 60) {
 				enemy[i].inventory[0] = simplePotion;
 			}
