@@ -378,7 +378,7 @@ void CreateEnemy() {
 		}
 
 		//アイテムを装備する
-		if (player.hp / (float)player.maxHp > 0.3f) {
+		if (player.hp / (float)player.maxHp > 0.33f) {
 			if (itemRnd < 5) {
 				enemy[i].inventory[0] = ivory;
 			}
@@ -397,11 +397,14 @@ void CreateEnemy() {
 			else if (itemRnd >= 58 && itemRnd < 63) {
 				enemy[i].inventory[0] = dagger;
 			}
-			else if (itemRnd >= 63) {
+			else if (itemRnd >= 63 && itemRnd < 68) {
+				enemy[i].inventory[0] = powerPostion;
+			}
+			else if (itemRnd >= 68) {
 				enemy[i].inventory[0] = brokenDiamond;
 			}
 		}
-		else {
+		else if (player.hp / (float)player.maxHp > 0.33f && player.hp > 50) {
 			if (itemRnd > 60) {
 				enemy[i].inventory[0] = simplePotion;
 			}
@@ -417,6 +420,9 @@ void CreateEnemy() {
 			else if (itemRnd <= 20) {
 				enemy[i].inventory[0] = chainmail;
 			}
+		}
+		else if (player.hp <= 50) {
+			enemy[i].inventory[0] = superPotion;
 		}
 		//}
 		//else {
