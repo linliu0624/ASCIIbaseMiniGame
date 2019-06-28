@@ -21,7 +21,7 @@ struct unit {
 	//ª±®a
 	float maxWeight;
 	float weight;
-	char name[100];
+	char name[32] = { NULL };
 	int loan = 0;
 	bool inventoryMode = false;
 	//¼Ä¤H

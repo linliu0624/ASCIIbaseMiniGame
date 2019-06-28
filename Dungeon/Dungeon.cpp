@@ -302,15 +302,16 @@ void CreatePlayer() {
 	player.roomX = 3;
 	player.roomY = 3;
 	system("cls");
-	cout << "What's your name(please don't input space):";
-	cin >> player.name;
-	//for (auto& c : player.name) {
-	//	if (isspace(c)) {
-	//		
-	//	}
-	//}
+	cout << "What's your name:";
+	//cin >> player.name;
+	cin.get(player.name, sizeof(player.name));
+	for (auto& c : player.name) {
+		if (isspace(c)) {
+			c = '_';
+		}
+	}
 	cin.clear();
-	cin.ignore(100, '\n');	
+	cin.ignore(100, '\n');
 }
 /***************************************
 *enemyの生成
@@ -1608,7 +1609,7 @@ void ShowPlayerStatus() {
 			value += player.inventory[i].value * player.inventory[i].amount;
 	}
 	value += player.weapon.value + player.armor.value;
-	cout << "Name:" << player.name << "  |  All value:" << player.loan + value << endl;
+	cout << "Name:" << player.name << "  |  Property:" << player.loan + value << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
 	cout << "  Weight:" << player.weight << "/" << player.maxWeight << endl;
 	//cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
@@ -1741,7 +1742,7 @@ void ShowRank(ranking r[]) {
 		}
 	}
 	char ch;
-	GotoXY(1, y + 5);
+	GotoXY(0, y + 5);
 	cout << "Press any key to back" << endl;
 	ch = _getch();
 	scean = START_SCEAN;
