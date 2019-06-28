@@ -73,7 +73,7 @@ void WeaponInit() {
 	strcpy(shortSword.text, "The sword is a weapon with a very balanced and a stable attack.");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
-	shortSword.maxValue = 40;
+	shortSword.maxValue = 60;
 	shortSword.value = shortSword.maxValue;
 	shortSword.maxHp = 30;
 	shortSword.hp = shortSword.maxHp;
@@ -125,7 +125,7 @@ void WeaponInit() {
 	strcpy(battleAxe.text, "Can only cut, and attack value is unstable but high");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
-	battleAxe.maxValue = 60;
+	battleAxe.maxValue = 75;
 	battleAxe.value = battleAxe.maxValue;
 	battleAxe.maxHp = 30;
 	battleAxe.hp = shortSword.maxHp;
@@ -169,7 +169,7 @@ void WeaponInit() {
 	strcpy(spear.text, "Long-handled weapon, it can two enemy farther");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
-	spear.maxValue = 80;
+	spear.maxValue = 100;
 	spear.value = spear.maxValue;
 	spear.maxHp = 20;
 	spear.hp = shortSword.maxHp;
@@ -232,7 +232,7 @@ void ArmorInit() {
 	strcpy(leatherArmor.text, "An armor made of animal skin");
 	leatherArmor.mateTag = ARMOR;
 	leatherArmor.armorType = LEATHER_ARMOR;
-	leatherArmor.maxValue = 40;
+	leatherArmor.maxValue = 90;
 	leatherArmor.value = leatherArmor.maxValue;
 	leatherArmor.flag = true;
 	leatherArmor.maxHp = 400;
@@ -245,7 +245,7 @@ void ArmorInit() {
 	strcpy(heavyLeatherArmor.text,"Thicker then leather armor");
 	heavyLeatherArmor.mateTag = ARMOR;
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
-	heavyLeatherArmor.maxValue = 45;
+	heavyLeatherArmor.maxValue = 110;
 	heavyLeatherArmor.value = heavyLeatherArmor.maxValue;
 	heavyLeatherArmor.flag = true;
 	heavyLeatherArmor.maxHp = 300;
@@ -258,7 +258,7 @@ void ArmorInit() {
 	strcpy(chainmail.text, "A kind of expensive and tough armor, but being stabbed is easy to break ");
 	chainmail.mateTag = ARMOR;
 	chainmail.armorType = CHAINMAIL;
-	chainmail.maxValue = 150;
+	chainmail.maxValue = 175;
 	chainmail.value = chainmail.maxValue;
 	chainmail.flag = true;
 	chainmail.maxHp = 500;
@@ -295,6 +295,7 @@ void ItemInit() {
 	powerPostion.flag = true;
 	powerPostion.hp = 10;
 	powerPostion.weight = 0.2f;
+
 	//黃金
 	strcpy(gold.name, "gold");
 	strcpy(gold.text, "Gold is a popular precious metal");
@@ -320,7 +321,7 @@ void ItemInit() {
 	ivory.itemType = IVORY;
 	ivory.value = 400;
 	ivory.flag = true;
-	ivory.weight = 20.0f;
+	ivory.weight = 23.0f;
 
 	//碎鑽
 	strcpy(brokenDiamond.name, "broken diamond");
