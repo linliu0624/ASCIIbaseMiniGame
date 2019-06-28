@@ -295,7 +295,8 @@ void CreatePlayer() {
 	player.inventory[0] = superPotion;
 	player.inventory[0].amount = 3;
 	for (int i = 0; i < MAX_INVENTORY; i++)
-		player.loan -= player.inventory[i].value * player.inventory[i].amount;
+		player.loan -= player.inventory[i].value * player.inventory[i].amount ;
+	player.loan -= player.weapon.value + player.armor.value;
 	player.weight = player.inventory[0].weight * player.inventory[0].amount;
 	//player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
 	//プレイヤーの生成位置を決める
