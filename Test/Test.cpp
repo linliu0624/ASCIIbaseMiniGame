@@ -75,7 +75,7 @@ void OutputFile(ranking r[]) {
 	fstream file;
 	file.open(fileName, ios::in);
 	int n = 0;
-	while (!file.eof()) {
+	while (!file.eof() && file) {
 		file >> r[n].name;
 		file >> r[n].score;
 		file >> r[n].sTime;

@@ -186,7 +186,7 @@ void Update() {
 		haveEnemy = SearchEnemy();
 		PlayerTurn();
 		UpdateBigMap();
-		Refresh();
+		//Refresh();
 		if (player.inventoryMode == false) {
 			//haveEnemy = SearchEnemy();
 			if (haveEnemy)
@@ -295,6 +295,7 @@ void CreatePlayer() {
 	player.weight = player.inventory[0].weight * player.inventory[0].amount;
 	//player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
 	//プレイヤーの生成位置を決める
+	playerMoveCounter = 0;
 	room[3][3].playerPos = true;
 	player.roomX = 3;
 	player.roomY = 3;
@@ -753,11 +754,11 @@ void PlayerTurn() {
 ***************************************/
 void EnemyTurn() {
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		if (enemy[i].samePosWithPlayer == true && enemy[i].alive == true) {
+		if (enemy[i].samePosWithPlayer == true && enemy[i].alive == true && SearchEnemy(i)) {
 			//如果不攻擊
 			if (!EnemyAttack(i))
 				//再次判定是否為跟玩家同個房間,同房才移動
-				if (SearchEnemy(i))
+				//if (SearchEnemy(i))
 					EnemyMove(i);
 			continue;
 		}
@@ -1707,24 +1708,25 @@ void ShowRule() {
 *作者：林
 ***************************************/
 void ShowRank(ranking r[]) {
-	cout << "No.  Name      Score      time" << endl;
+	system("CLS");
+	cout << "No.  Name      Score         time" << endl;
 	cout << "================================================" << endl;
 	int n = 1;
-	int x = 1, y = 1;
+	int x = 0, y =2;
 	for (int i = 0; i < RANK_LENGTH - 1; i++) {
 		if (r[i].score > 0) {
 			GotoXY(x, y);
 			cout << n << '.';
-			x += 10;
+			x += 5;
 			GotoXY(x, y);
 			cout << r[i].name;
-			x += 10;
+			x += 11;
 			GotoXY(x, y);
 			cout << r[i].score;
 			x += 10;
 			GotoXY(x, y);
 			cout << r[i].strTime;
-			x = 1;
+			x = 0;
 			y++;
 			if (r[i].score != r[i + 1].score) {
 				n++;
@@ -1732,6 +1734,7 @@ void ShowRank(ranking r[]) {
 		}
 	}
 	char ch;
+	GotoXY(1, y + 5);
 	cout << "Press any key to back" << endl;
 	ch = _getch();
 	scean = START_SCEAN;
