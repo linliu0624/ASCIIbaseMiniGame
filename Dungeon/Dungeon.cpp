@@ -429,6 +429,10 @@ void CreateEnemy() {
 
 	}
 }
+/***************************************
+*enemyが持つ道具の生成
+*作者：林
+***************************************/
 void CreateEnemyItem() {
 	int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
