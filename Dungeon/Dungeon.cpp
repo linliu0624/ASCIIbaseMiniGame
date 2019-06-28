@@ -1789,13 +1789,13 @@ bool PlayerEscape(int ch)
 					value += player.inventory[i].value * player.inventory[i].amount;
 			}
 			value += player.weapon.value + player.armor.value + player.loan;
-			if (value < GOAL_VALUE) {
-				cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
-				cout << "If you escape now, you lose." << endl;
-			}
-			else {
-				cout << "You have " << value << " point" << endl;
-			}
+			//if (value < GOAL_VALUE) {
+			//	cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
+			//	cout << "If you escape now, you lose." << endl;
+			//}
+			//else {
+			cout << "You have " << value << " point" << endl;
+			//}
 			cout << "Are you sure?(y/n):";
 			cin >> flag;
 			if (flag == 'y' || flag == 'Y') {
