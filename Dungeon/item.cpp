@@ -242,7 +242,7 @@ void ArmorInit() {
 	leatherArmor.defType = NORMAL_DEF;
 	//重皮甲
 	strcpy(heavyLeatherArmor.name, "hLeather armor");
-	strcpy(heavyLeatherArmor.text,"Thicker then leather armor");
+	strcpy(heavyLeatherArmor.text, "Thicker then leather armor");
 	heavyLeatherArmor.mateTag = ARMOR;
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
 	heavyLeatherArmor.maxValue = 110;
@@ -360,7 +360,7 @@ int Damage(int weaponType) {
 	else if (weaponType == MARIUS)
 		return (dice4 + dice4 + dice4) * 10;
 	else if (weaponType == DAGGER)
-		return dice20;
+		return dice20 * 10;
 
 }
 
