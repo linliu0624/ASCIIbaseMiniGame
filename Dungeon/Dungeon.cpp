@@ -1848,13 +1848,17 @@ void Start() {
 	char flag;
 	do {
 		int chr;
-		char fname[] = "start.txt";
+		/*char fname[] = "start.txt";
 		FILE* fp = fopen(fname, "r");
 		while ((chr = fgetc(fp)) != EOF) {
 			putchar(chr);
 		}
-		fclose(fp);
-		cout << endl;
+		fclose(fp);*/
+		cout << "************************" << endl;
+		cout << "* Getting              *" << endl;
+		cout << "*          Rich        *" << endl;
+		cout << "*                Qucik *" << endl;
+		cout << "************************" << endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
