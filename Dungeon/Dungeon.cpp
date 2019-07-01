@@ -11,6 +11,7 @@
 #include "map.h"
 #include "unit.h"
 #include "rank.h"
+#include "language.h"
 using namespace std;
 /*************待解決問題***************
 1.bug:

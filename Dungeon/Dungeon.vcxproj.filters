@@ -33,6 +33,9 @@
     <ClInclude Include="rank.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="language.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dungeon.cpp">
@@ -48,6 +51,9 @@
       <Filter>資源檔</Filter>
     </ClCompile>
     <ClCompile Include="rank.cpp">
+      <Filter>資源檔</Filter>
+    </ClCompile>
+    <ClCompile Include="language.cpp">
       <Filter>資源檔</Filter>
     </ClCompile>
   </ItemGroup>
