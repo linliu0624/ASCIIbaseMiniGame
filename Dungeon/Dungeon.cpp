@@ -1052,14 +1052,18 @@ void Attack(material weapon, bool playerToEnemy) {
 		if (armorDamage < 1) {
 			armorDamage = 1;
 		}
-		//armorが壊れた時
+		////armorが壊れた時
+		//if (player.armor.hp <= 0) {
+		//	player.armor.hp = 0;
+		//	player.armor = noArmor;
+		//	armorDamage = 0;
+		//}
+
+		player.armor.hp -= armorDamage;
 		if (player.armor.hp <= 0) {
 			player.armor.hp = 0;
 			player.armor = noArmor;
-			armorDamage = 0;
 		}
-
-		player.armor.hp -= armorDamage;
 		bodyDamage = totalDamage - armorDamage;
 		if (bodyDamage <= 0) {
 			bodyDamage = 0;
