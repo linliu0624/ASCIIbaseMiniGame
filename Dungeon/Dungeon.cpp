@@ -1824,7 +1824,7 @@ void ShowRank(ranking r[]) {
 void BackStart() {
 	char flag;
 	system("CLS");
-	cout << "Are you want to back to leace the game?(y/n):";
+	cout << "Are you want to back to leave the game?(y/n):";
 	cin >> flag;
 	if (flag == 'y' || flag == 'Y')
 		scean = START_SCEAN;
