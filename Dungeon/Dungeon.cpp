@@ -69,7 +69,7 @@ void ShowRule(int);
 //ヒントの表示
 void ShowHint(bool);
 //ランキングを表示する
-void ShowRank(ranking r[],int);
+void ShowRank(ranking r[], int);
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -1783,7 +1783,7 @@ void ShowHint(bool cantMove)
 *ランキングを表示する
 *作者：林
 ***************************************/
-void ShowRank(ranking r[],int lastscean) {
+void ShowRank(ranking r[], int lastscean) {
 	OutputFile(r);
 	system("CLS");
 	cout << "No.  Name      Score         time" << endl;
@@ -1848,7 +1848,7 @@ void escToStop() {
 		}
 	}
 	else if (n == '3') {
-		ShowRank(gameRank,scean);
+		ShowRank(gameRank, scean);
 		Refresh();
 	}
 	else if (n == '4') {
@@ -1858,7 +1858,7 @@ void escToStop() {
 	else {
 		system("CLS");
 	}
-	
+
 }
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
@@ -1990,13 +1990,11 @@ void Start() {
 		cout << "                                                                               .WMMNJ..~.~.~.~~.?HMMB^.~.~.~~.~._(JMMM@` " << endl;
 		cout << "                                                                                 .TMMMMNg&J--(((((((((((((JJ+gNMMMM#= " << endl;
 		cout << "                                                                                     ?^^MMMMMMMMMMMMMMMMMMMMMM^^7` " << endl;
-		cout << "" << endl;
-		cout << "" << endl;
+		cout << endl;
+		cout << endl;
 		cout << "友人に情報商材を売り込まれ250万の借金を作ってしまった君の家に届いていたのは財宝が眠る迷宮への招待状!?" << endl;
 		cout << "はたして君は250万を集め無事借金返済できるか??" << endl;
-		//cout << "" << endl;
-		//cout << "" << endl;
-		cout << "" << endl;
+		cout <<"==============================================================================================================================="<< endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
