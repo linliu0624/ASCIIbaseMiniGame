@@ -24,98 +24,15 @@ using namespace std;
 #define RANK_LENGTH 8
 void StartRnd();
 inline void GotoXY(int, int);
-/*
-從文件中把資料存到變數身上時，string遇到空白時候就會被分割
-*/
-struct ranking {
-	char name[32];
-	int score = 0;
-	time_t nowTime = time(0);
-	string sTime;
-};
-ranking arank[RANK_LENGTH];
-string fileName = "rank.txt";
-void InputFile(ranking[]);
-void SortRank(ranking[], ranking);
-void OutputFile(ranking[]);
-void ShowRank(ranking[]);
 
-void main() {
-	ranking tmp;
-	cout << "what's you name:";
-	cin >> tmp.name;
-	cout << "set score:";
-	cin >> tmp.score;
-
-	struct tm  tstruct;
-	char       buf[80];
-	tstruct = *localtime(&tmp.nowTime);
-	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-	tmp.sTime = buf;
-
-	OutputFile(arank);
-	SortRank(arank, tmp);
-	InputFile(arank);
-	ShowRank(arank);
-}
-/*把資料從Code寫進文件*/
-void InputFile(ranking r[]) {
-	//fstream file;
-	//file.open("rank.txt", ios::out);//寫入文件
-	ofstream file; //類似 file.open("....", ios::out) 
-	file.open(fileName);
-	if (file)
-		for (int i = 0; i < RANK_LENGTH - 1; i++)
-			if (r[i].score > 0)
-				file << r[i].name << " " << r[i].score << " " << r[i].sTime << endl;
-	file.close();
-}
-/*把文件中的資料存進code*/
-void OutputFile(ranking r[]) {
-	fstream file;
-	file.open(fileName, ios::in);
-	int n = 0;
-	while (!file.eof() && file) {
-		file >> r[n].name;
-		file >> r[n].score;
-		file >> r[n].sTime;
-		file << endl;
-		n++;
+int main() {
+	char c;
+	while (true) {
+		c = _getch();
+		int i = c;
+		cout << i << endl;
 	}
-	file.close();
-}
-/*insert sort*/
-void SortRank(ranking r[], ranking newPlayer) {
-	if (newPlayer.score > r[RANK_LENGTH - 1].score) {
-		r[RANK_LENGTH - 1] = newPlayer;
-	}
-	for (int i = 0; i < RANK_LENGTH; i++) {
-		int n = i;
-		ranking tmp = r[n];
-		while (i > 0) {
-			if (r[n].score > r[n - 1].score && n > 0) {
-				r[n] = r[n - 1];
-				r[n - 1] = tmp;
-				n--;
-			}
-			else
-				break;
-		}
-	}
-}
-
-void ShowRank(ranking r[]) {
-	cout << "No.  Name          Score      time" << endl;
-	cout << "================================================" << endl;
-	int n = 1;
-	for (int i = 0; i < RANK_LENGTH - 1; i++) {
-		if (r[i].score > 0) {
-			cout << n << ".   " << r[i].name << "          " << r[i].score << "      " << r[i].sTime << endl;
-			if (r[i].score != r[i + 1].score) {
-				n++;
-			}
-		}
-	}
+	return 0;
 }
 
 inline void GotoXY(int x, int y)

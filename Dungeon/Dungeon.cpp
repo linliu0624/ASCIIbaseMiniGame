@@ -88,6 +88,8 @@ void InventoryManage();
 void UsePotion(int);
 //判定價值
 void Valuation();
+//スタートシーンに戻る
+void BackStart();
 //ダメージの計算
 int Damage(int);
 //void Damage(int, int, int, bool);
@@ -762,6 +764,9 @@ void PlayerTurn() {
 		else if ((ch == 'i' || ch == 'I')) {
 			player.inventoryMode = !player.inventoryMode;
 			flag = true;
+		}
+		else if (ch == ESC) {
+			BackStart();
 		}
 		else {
 			flag = false;
@@ -1812,7 +1817,22 @@ void ShowRank(ranking r[]) {
 	scean = START_SCEAN;
 
 }
-
+/***************************************
+*スタートシーンに戻る
+*作者：林
+***************************************/
+void BackStart() {
+	char flag;
+	system("CLS");
+	cout << "Are you want to back to leace the game?(y/n):";
+	cin >> flag;
+	if (flag == 'y' || flag == 'Y')
+		scean = START_SCEAN;
+	else {
+		scean = scean;
+	}
+	cout << "Press SPACE key to continue" << endl;
+}
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
 *作者：荒井
