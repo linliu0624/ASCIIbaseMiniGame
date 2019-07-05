@@ -7,8 +7,10 @@ std::string fileName = "rank.txt";
 
 void InputFile(ranking r[]) {
 	//fstream file;
-	//file.open("rank.txt", ios::out);//寫入文件
-	ofstream file; //類似 file.open("....", ios::out) 
+	//file.open("rank.txt", ios::out);寫入文件
+	//類似 file.open("....", ios::out) 
+
+	ofstream file; 
 	file.open(fileName);
 	if (file)
 		for (int i = 0; i < RANK_LENGTH - 1; i++)
