@@ -17,7 +17,7 @@
 #define ENEMY_SPAWN_PROBABILITY 10 //生成機率
 #define MAX_INVENTORY 128
 #define INIT_MAX_WEIGHT 50
-#define GOAL_VALUE 250
+#define GOAL_VALUE 200
 #define RANK_LENGTH 8
 
 //道具
