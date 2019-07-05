@@ -39,7 +39,7 @@ void SortRank(ranking r[], ranking newPlayer) {
 		int n = i;
 		ranking tmp = r[n];
 		while (i > 0) {
-			if (r[n].score > r[n - 1].score && n > 0) {
+			if (r[n].score > r[n - 1].score && n > 0 && r[n].score >= GOAL_VALUE) {
 				r[n] = r[n - 1];
 				r[n - 1] = tmp;
 				n--;

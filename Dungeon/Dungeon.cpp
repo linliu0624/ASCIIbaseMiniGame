@@ -66,6 +66,8 @@ bool SearchEnemy(int);
 void ShowEnemyStatus();
 //ルールの表示
 void ShowRule();
+//ヒントの表示
+void ShowHint(bool);
 //ランキングを表示する
 void ShowRank(ranking r[]);
 //プレイヤーの移動先は敵がいる
@@ -633,7 +635,7 @@ bool SearchEnemy(int number)
 void PlayerTurn() {
 	int ch;
 	bool flag = false;
-
+	bool cantMove = false;
 	//玩家負重計算與檢測
 	player.weight = 0;
 	player.weight += player.weapon.weight;
@@ -647,6 +649,7 @@ void PlayerTurn() {
 	}
 
 	while (!flag) {
+		cantMove = false;
 		ch = _getch();
 		//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
 		if (ch == 224) {
@@ -674,6 +677,9 @@ void PlayerTurn() {
 						player.roomY--;
 						flag = true;
 					}
+					else if (room[player.roomY - 1][player.roomX].type == WALL) {
+						cantMove = true;
+					}
 					else {
 
 					}
@@ -691,6 +697,9 @@ void PlayerTurn() {
 						room[player.roomY + 1][player.roomX].playerPos = true;
 						player.roomY++;
 						flag = true;
+					}
+					else if (room[player.roomY + 1][player.roomX].type == WALL) {
+						cantMove = true;
 					}
 					else {
 
@@ -710,6 +719,9 @@ void PlayerTurn() {
 						player.roomX--;
 						flag = true;
 					}
+					else if (room[player.roomY][player.roomX - 1].type == WALL) {
+						cantMove = true;
+					}
 					else {
 
 					}
@@ -727,6 +739,9 @@ void PlayerTurn() {
 						room[player.roomY][player.roomX + 1].playerPos = true;
 						player.roomX++;
 						flag = true;
+					}
+					else if (room[player.roomY][player.roomX + 1].type == WALL) {
+						cantMove = true;
 					}
 					else {
 
@@ -751,6 +766,8 @@ void PlayerTurn() {
 		else {
 			flag = false;
 		}
+		ShowHint(cantMove);
+
 	}
 }
 /***************************************
@@ -1713,6 +1730,20 @@ void ShowRule() {
 
 }
 /***************************************
+*ヒントの表示
+*cantMove 移動先は壁かどうか
+*作者：林
+***************************************/
+void ShowHint(bool cantMove)
+{
+	if (cantMove) {
+		GotoXY(0, 0);
+		cout << "Can't move";
+		GotoXY(0, 1);
+		cout << "Because your move direction is wall";
+	}
+}
+/***************************************
 *ランキングを表示する
 *作者：林
 ***************************************/
@@ -1797,13 +1828,13 @@ bool PlayerEscape(int ch)
 					value += player.inventory[i].value * player.inventory[i].amount;
 			}
 			value += player.weapon.value + player.armor.value + player.loan;
-			//if (value < GOAL_VALUE) {
-			//	cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
-			//	cout << "If you escape now, you lose." << endl;
-			//}
-			//else {
-			cout << "You have " << value << " point" << endl;
-			//}
+			if (value < GOAL_VALUE) {
+				cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
+				cout << "If you escape now, you lose." << endl;
+			}
+			else {
+				cout << "You have " << value << " point" << endl;
+			}
 			cout << "Are you sure?(y/n):";
 			cin >> flag;
 			if (flag == 'y' || flag == 'Y') {
