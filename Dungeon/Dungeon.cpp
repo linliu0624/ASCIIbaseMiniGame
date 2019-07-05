@@ -1650,9 +1650,9 @@ void ShowPlayerStatus() {
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
 			if (player.inventory[i].mateTag == ITEM)
-				cout << i + 1 << "." << player.inventory[i].name << "[" << player.inventory[i].value << "]" << "  x " << player.inventory[i].amount << endl;
+				cout << i + 1 << "." << player.inventory[i].name << "[value:" << player.inventory[i].value << "]" << "  x " << player.inventory[i].amount << endl;
 			else
-				cout << i + 1 << "." << player.inventory[i].name << "[" << player.inventory[i].value << "]" << endl;
+				cout << i + 1 << "." << player.inventory[i].name << "[value:" << player.inventory[i].value << "]" << endl;
 		}
 	}
 }
