@@ -285,7 +285,7 @@ void CreatePlayer() {
 	//player.armor = noArmor;
 	player.weapon = dagger;
 	player.armor = leatherArmor;
-	player.armor.hp = 200;
+	player.armor.hp = 100;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
 	player.loan = 0;
