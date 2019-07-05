@@ -2,7 +2,7 @@
 using namespace std;
 
 vector<string> vecStrEnglish;
-vector<string> vecStrEJapaness;
+vector<string> vecStrJapaness;
 
 
 
