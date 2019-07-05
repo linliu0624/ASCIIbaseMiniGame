@@ -488,7 +488,11 @@ void CreateEnemyItem() {
 			}
 		}
 		else if (player.hp <= 50) {
+			if(itemRnd>10)
 			enemy[i].inventory[0] = superPotion;
+			else {
+				enemy[i].inventory[0] = simplePotion;
+			}
 		}
 	}
 }
@@ -1946,13 +1950,10 @@ bool PlayerEscape(int ch)
 				//exit(1);
 				//back to main menu. and update the rank.
 			}
-			else {
-				cin.clear();
-				cin.ignore(100, '\n');
-				Refresh();
-				return false;
-			}
-
+			cin.clear();
+			cin.ignore(100, '\n');
+			Refresh();
+			return false;
 		}
 	}
 }
@@ -1994,7 +1995,7 @@ void Start() {
 		cout << endl;
 		cout << "友人に情報商材を売り込まれ250万の借金を作ってしまった君の家に届いていたのは財宝が眠る迷宮への招待状!?" << endl;
 		cout << "はたして君は250万を集め無事借金返済できるか??" << endl;
-		cout <<"==============================================================================================================================="<< endl;
+		cout << "===============================================================================================================================" << endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
