@@ -3,28 +3,26 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <time.h>
-#include <malloc.h>
-#include <time.h>
 #include <cstdlib>
+#include <cctype>
 #include "item.h"
 #include "conio.h"
 #include "define.h"
 #include "map.h"
 #include "unit.h"
-#include <queue>
+#include "rank.h"
+#include "language.h"
 using namespace std;
 /*************待解決問題***************
 1.bug:
-  背包系統重做:
-	 需檢查看看有沒有bug
-2.逃出
-3.玩家死
-4.平衡性調整
+  各種遊戲bug
+  需特別注意:
+	  需檢查排行榜bug
+	  需檢查背包bug
+2.平衡性調整
    1.依照玩家的武器和護甲來決定敵人裝備物品
    2.依照敵人生成位置決定裝備(越後面越強價值越高)
-   3.增加武器與護甲還有其耐久與價值跟重量
-5.起始畫面
-商人
+3.商人
 **************************************/
 //初期化
 void Init();
@@ -54,6 +52,8 @@ void CreatePlayer();
 void ShowPlayerStatus();
 //敵の初期化
 void CreateEnemy();
+//敵のアイテム初期化
+void CreateEnemyItem();
 //敵の配置
 void SpawnEnemy();
 //敵の削除
@@ -65,7 +65,11 @@ bool SearchEnemy(int);
 //敵の状態を表示する
 void ShowEnemyStatus();
 //ルールの表示
-void ShowRule();
+void ShowRule(int);
+//ヒントの表示
+void ShowHint(bool);
+//ランキングを表示する
+void ShowRank(ranking r[],int);
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -84,6 +88,8 @@ void InventoryManage();
 void UsePotion(int);
 //判定價值
 void Valuation();
+//選択画面に入る
+void escToStop();
 //ダメージの計算
 int Damage(int);
 //void Damage(int, int, int, bool);
@@ -92,7 +98,7 @@ void Attack(material, bool);
 //玩家死亡
 void PlayerDie();
 //玩家逃出
-void PlayerEscape(int);
+bool PlayerEscape(int);
 
 
 unit player;
@@ -109,10 +115,11 @@ int enemyPosX, enemyPosY;
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
-
 int main()
-{
+{	//ゲーム画面の大きさを設定する
+	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	StartRnd();
+	//MakeFile();
 	while (true) {
 		if (scean == START_SCEAN) {
 			Start();
@@ -122,8 +129,11 @@ int main()
 			//画面表示
 			Refresh();
 		}
+		else if (scean == RANK_SCEAN) {
+			ShowRank(gameRank, START_SCEAN);
+		}
 		else if (scean == RULE_SCEAN) {
-			ShowRule();
+			ShowRule(START_SCEAN);
 		}
 		// ゲームの循環
 		while (true)
@@ -140,8 +150,6 @@ int main()
 /*初始化*/
 void Init() {
 
-	//ゲーム画面の大きさを設定する
-	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	//char flag;
 	bool flag;
 	clsFlag_Inventory = false;
@@ -181,9 +189,10 @@ void Update() {
 		haveEnemy = SearchEnemy();
 		PlayerTurn();
 		UpdateBigMap();
-		Refresh();
+		//Refresh();
 		if (player.inventoryMode == false) {
 			//haveEnemy = SearchEnemy();
+			CreateEnemyItem();
 			if (haveEnemy)
 				EnemyTurn();
 			//敵を削除して。生成と配置をし直す。
@@ -224,8 +233,8 @@ void CreateMap() {
 	//地下城初期化
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
-			dangeon[i][j].type = ROOM;
-			dangeon[i][j].playerPos = false;
+			dungeon[i][j].type = ROOM;
+			dungeon[i][j].playerPos = false;
 		}
 	}
 
@@ -235,8 +244,8 @@ void CreateMap() {
 			if (i != 0 && i != MAPRANGE - 1 && j != 0 && j != MAPRANGE - 1) {
 				//一番左上はプレイヤーの生成位置
 				if (i == 1 && j == 1) {
-					dangeon[i][j].type = ROOM;
-					dangeon[i][j].playerPos = true;
+					dungeon[i][j].type = ROOM;
+					dungeon[i][j].playerPos = true;
 				}
 				else {
 					//部屋の生成
@@ -250,14 +259,14 @@ void CreateMap() {
 					else {
 						type = ROOM;
 					}
-					dangeon[i][j].type = type;
-					dangeon[i][j].playerPos = false;
+					dungeon[i][j].type = type;
+					dungeon[i][j].playerPos = false;
 
 				}
 			}
 			else {
-				dangeon[i][j].type = WALL;
-				dangeon[i][j].playerPos = false;
+				dungeon[i][j].type = WALL;
+				dungeon[i][j].playerPos = false;
 
 			}
 		}
@@ -274,8 +283,11 @@ void CreatePlayer() {
 	player.maxHp = 300;
 	player.hp = player.maxHp;
 	player.type = PLAYER;
-	player.weapon = battleAxe;//fist;
-	player.armor = noArmor;
+	//player.weapon = fist;
+	//player.armor = noArmor;
+	player.weapon = dagger;
+	player.armor = leatherArmor;
+	player.armor.hp = 100;
 	player.maxWeight = INIT_MAX_WEIGHT;
 	player.weight = 0;
 	player.loan = 0;
@@ -285,17 +297,27 @@ void CreatePlayer() {
 	}
 	player.inventory[0] = superPotion;
 	player.inventory[0].amount = 3;
-	for (int i = 0; i < MAX_INVENTORY; i++)
+	Valuation();
+	for (int i = 0; i < MAX_INVENTORY; i++) {
 		player.loan -= player.inventory[i].value * player.inventory[i].amount;
+	}
+	player.loan -= (player.weapon.value + player.armor.value);
 	player.weight = player.inventory[0].weight * player.inventory[0].amount;
-	//player.weight = player.inventory[0].weight + player.inventory[1].weight + player.inventory[2].weight;
+	player.weight += player.weapon.weight + player.armor.weight;
 	//プレイヤーの生成位置を決める
+	playerMoveCounter = 0;
 	room[3][3].playerPos = true;
 	player.roomX = 3;
 	player.roomY = 3;
 	system("cls");
 	cout << "What's your name:";
-	cin >> player.name;
+	//cin >> player.name;
+	cin.get(player.name, sizeof(player.name));
+	for (auto& c : player.name) {
+		if (isspace(c)) {
+			c = '_';
+		}
+	}
 	cin.clear();
 	cin.ignore(100, '\n');
 }
@@ -308,10 +330,10 @@ void CreateEnemy() {
 	playerWAValue = player.weapon.value + player.armor.value;
 	int weaponRnd;
 	int armorRnd;
-	int itemRnd;
+	//int itemRnd;
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		enemy[i].maxHp = 250;
-		enemy[i].hp = 130 + rand() % 75 + rand() % 75;
+		enemy[i].maxHp = 300;
+		enemy[i].hp = 150 + rand() % 75 + rand() % 75;
 		enemy[i].type = ENEMY;
 		if (i % 4 == 0) {
 			strcpy(enemy[i].name, "!");
@@ -330,7 +352,7 @@ void CreateEnemy() {
 
 		weaponRnd = rand() % 100 + 1;
 		armorRnd = rand() % 100 + 1;
-		itemRnd = rand() % 100 + 1;
+		//itemRnd = rand() % 100 + 1;
 		//if (playerWAValue < 100) {
 			//武器を装備する
 		if (weaponRnd <= 20) {
@@ -363,8 +385,66 @@ void CreateEnemy() {
 			enemy[i].armor.hp = rand() % 250 + 250;
 		}
 
+		////アイテムを装備する
+		//if (player.hp / (float)player.maxHp > 0.33f) {
+		//	if (itemRnd < 5) {
+		//		enemy[i].inventory[0] = ivory;
+		//	}
+		//	else if (itemRnd >= 5 && itemRnd < 15) {
+		//		enemy[i].inventory[0] = silver;
+		//	}
+		//	else if (itemRnd >= 15 && itemRnd < 45) {
+		//		enemy[i].inventory[0] = simplePotion;
+		//	}
+		//	else if (itemRnd >= 45 && itemRnd < 50) {
+		//		enemy[i].inventory[0] = superPotion;
+		//	}
+		//	else if (itemRnd >= 50 && itemRnd < 58) {
+		//		enemy[i].inventory[0] = gold;
+		//	}
+		//	else if (itemRnd >= 58 && itemRnd < 63) {
+		//		enemy[i].inventory[0] = dagger;
+		//	}
+		//	else if (itemRnd >= 63 && itemRnd < 68) {
+		//		enemy[i].inventory[0] = powerPostion;
+		//	}
+		//	else if (itemRnd >= 68) {
+		//		enemy[i].inventory[0] = brokenDiamond;
+		//	}
+		//}
+		//else if (player.hp / (float)player.maxHp > 0.33f && player.hp > 50) {
+		//	if (itemRnd > 60) {
+		//		enemy[i].inventory[0] = simplePotion;
+		//	}
+		//	else if (itemRnd <= 60 && itemRnd > 40) {
+		//		enemy[i].inventory[0] = superPotion;
+		//	}
+		//	else if (itemRnd <= 40 && itemRnd > 30) {
+		//		enemy[i].inventory[0] = powerPostion;
+		//	}
+		//	else if (itemRnd <= 30 && itemRnd > 20) {
+		//		enemy[i].inventory[0] = ivory;
+		//	}
+		//	else if (itemRnd <= 20) {
+		//		enemy[i].inventory[0] = chainmail;
+		//	}
+		//}
+		//else if (player.hp <= 50) {
+		//	enemy[i].inventory[0] = superPotion;
+		//}
+
+	}
+}
+/***************************************
+*enemyが持つ道具の生成
+*作者：林
+***************************************/
+void CreateEnemyItem() {
+	int itemRnd;
+	for (int i = 0; i < ENEMYNUMBER; i++) {
+		itemRnd = rand() % 100 + 1;
 		//アイテムを装備する
-		if (player.hp / (float)player.maxHp > 0.3f) {
+		if (player.hp / (float)player.maxHp > 0.33f) {
 			if (itemRnd < 5) {
 				enemy[i].inventory[0] = ivory;
 			}
@@ -383,11 +463,14 @@ void CreateEnemy() {
 			else if (itemRnd >= 58 && itemRnd < 63) {
 				enemy[i].inventory[0] = dagger;
 			}
-			else if (itemRnd >= 63) {
+			else if (itemRnd >= 63 && itemRnd < 68) {
+				enemy[i].inventory[0] = powerPostion;
+			}
+			else if (itemRnd >= 68) {
 				enemy[i].inventory[0] = brokenDiamond;
 			}
 		}
-		else {
+		else if (player.hp / (float)player.maxHp > 0.4f && player.hp > 50) {
 			if (itemRnd > 60) {
 				enemy[i].inventory[0] = simplePotion;
 			}
@@ -404,79 +487,9 @@ void CreateEnemy() {
 				enemy[i].inventory[0] = chainmail;
 			}
 		}
-		//}
-		//else {
-		//	//武器を装備する
-		//	weaponRnd = rand() % 100 + 1;
-		//	if (weaponRnd <= 20) {
-		//		enemy[i].weapon = fist;
-		//	}
-		//	else if (weaponRnd >= 20 && weaponRnd < 40) {
-		//		enemy[i].weapon = battleAxe;
-		//	}
-		//	else if (weaponRnd >= 40 && weaponRnd < 60) {
-		//		enemy[i].weapon = spear;
-		//	}
-		//	else {
-		//		enemy[i].weapon = shortSword;
-		//	}
-		//	enemy[i].weapon.hp = enemy[i].weapon.maxHp - rand() % 5;
-
-		//	//防具を装備する
-		//	if (armorRnd < 50)
-		//		enemy[i].armor = noArmor;
-		//	else if (armorRnd >= 50 && armorRnd < 70) {
-		//		enemy[i].armor = leatherArmor;
-		//		enemy[i].armor.hp = rand() % 200 + 200;
-		//	}
-		//	else if (armorRnd >= 70 && armorRnd < 85) {
-		//		enemy[i].armor = heavyLeatherArmor;
-		//		enemy[i].armor.hp = rand() % 150 + 150;
-		//	}
-		//	else {
-		//		enemy[i].armor = chainmail;
-		//		enemy[i].armor.hp = rand() % 250 + 250;
-		//	}
-
-		//	//アイテムを装備する
-		//	if (player.hp / (float)player.maxHp > 0.3f) {
-		//		if (itemRnd < 5) {
-		//			enemy[i].inventory[0] = ivory;
-		//		}
-		//		else if (itemRnd >= 5 && itemRnd < 15) {
-		//			enemy[i].inventory[0] = silver;
-		//		}
-		//		else if (itemRnd >= 15 && itemRnd < 45) {
-		//			enemy[i].inventory[0] = simplePotion;
-		//		}
-		//		else if (itemRnd >= 45 && itemRnd < 50) {
-		//			enemy[i].inventory[0] = superPotion;
-		//		}
-		//		else if (itemRnd >= 50 && itemRnd < 58) {
-		//			enemy[i].inventory[0] = gold;
-		//		}
-		//		else if (itemRnd >= 58) {
-		//			enemy[i].inventory[0] = brokenDiamond;
-		//		}
-		//	}
-		//	else {
-		//		if (itemRnd > 60) {
-		//			enemy[i].inventory[0] = simplePotion;
-		//		}
-		//		else if (itemRnd <= 60 && itemRnd > 40) {
-		//			enemy[i].inventory[0] = superPotion;
-		//		}
-		//		else if (itemRnd <= 40 && itemRnd > 30) {
-		//			enemy[i].inventory[0] = powerPostion;
-		//		}
-		//		else if (itemRnd <= 30 && itemRnd > 20) {
-		//			enemy[i].inventory[0] = ivory;
-		//		}
-		//		else if (itemRnd <= 20) {
-		//			enemy[i].inventory[0] = chainmail;
-		//		}
-		//	}
-		//}
+		else if (player.hp <= 50) {
+			enemy[i].inventory[0] = superPotion;
+		}
 	}
 }
 /***************************************
@@ -491,7 +504,7 @@ void SpawnEnemy() {
 	//ダンジョンの部屋の移動
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].playerPos != true) {
 				//部屋のマスの移動
 				for (int roomY = i * 5 - 4; roomY <= i * 5; roomY++) {
 					for (int roomX = j * 5 - 4; roomX <= j * 5; roomX++) {
@@ -551,7 +564,7 @@ bool SearchEnemy() {
 	bool haveEnemy = false;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//轉換大地圖座標為房間座標
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -597,7 +610,7 @@ bool SearchEnemy(int number)
 	bool haveEnemy = false;
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//轉換大地圖座標為房間座標
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -622,7 +635,7 @@ bool SearchEnemy(int number)
 void PlayerTurn() {
 	int ch;
 	bool flag = false;
-
+	bool cantMove = false;
 	//玩家負重計算與檢測
 	player.weight = 0;
 	player.weight += player.weapon.weight;
@@ -636,6 +649,7 @@ void PlayerTurn() {
 	}
 
 	while (!flag) {
+		cantMove = false;
 		ch = _getch();
 		//基於技術上的原因(因為方向鍵為驅動鍵，所以需要讀取兩次)
 		if (ch == 224) {
@@ -647,12 +661,13 @@ void PlayerTurn() {
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
-				PlayerEscape(UP);
+				flag = !PlayerEscape(UP);
 				//武器の攻撃範囲で敵がいるかどうかを判定する
 				//いれば戦闘に入る
 				if (IsEnemy(UP) == true) {
 					//戰鬥=>賦予武器攻擊力=>計算敵人防禦血量
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					//なければ移動
@@ -660,6 +675,13 @@ void PlayerTurn() {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY - 1][player.roomX].playerPos = true;
 						player.roomY--;
+						flag = true;
+					}
+					else if (room[player.roomY - 1][player.roomX].type == WALL) {
+						cantMove = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -667,12 +689,20 @@ void PlayerTurn() {
 			case DOWN: {
 				if (IsEnemy(DOWN) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomY + 1 != ROOMRANGE && room[player.roomY + 1][player.roomX].type != WALL && player.roomY < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY + 1][player.roomX].playerPos = true;
 						player.roomY++;
+						flag = true;
+					}
+					else if (room[player.roomY + 1][player.roomX].type == WALL) {
+						cantMove = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -680,12 +710,20 @@ void PlayerTurn() {
 			case LEFT: {
 				if (IsEnemy(LEFT) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomX - 1 != 0 && room[player.roomY][player.roomX - 1].type != WALL) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX - 1].playerPos = true;
 						player.roomX--;
+						flag = true;
+					}
+					else if (room[player.roomY][player.roomX - 1].type == WALL) {
+						cantMove = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -693,12 +731,20 @@ void PlayerTurn() {
 			case RIGHT: {
 				if (IsEnemy(RIGHT) == true) {
 					Attack(player.weapon, true);
+					flag = true;
 				}
 				else {
 					if (player.roomX + 1 != ROOMRANGE && room[player.roomY][player.roomX + 1].type != WALL && player.roomX < 25) {
 						room[player.roomY][player.roomX].playerPos = false;
 						room[player.roomY][player.roomX + 1].playerPos = true;
 						player.roomX++;
+						flag = true;
+					}
+					else if (room[player.roomY][player.roomX + 1].type == WALL) {
+						cantMove = true;
+					}
+					else {
+
 					}
 				}
 				break;
@@ -708,7 +754,7 @@ void PlayerTurn() {
 			if (currentX != newX || currentY != newY) {
 				playerMoveCounter++;
 			}
-			flag = true;
+
 		}
 		else if (ch == SPACE) {
 			flag = true;
@@ -717,9 +763,15 @@ void PlayerTurn() {
 			player.inventoryMode = !player.inventoryMode;
 			flag = true;
 		}
+		else if (ch == ESC) {
+			escToStop();
+			flag = false;
+		}
 		else {
 			flag = false;
 		}
+		ShowHint(cantMove);
+
 	}
 }
 /***************************************
@@ -728,12 +780,12 @@ void PlayerTurn() {
 ***************************************/
 void EnemyTurn() {
 	for (int i = 0; i < ENEMYNUMBER; i++) {
-		if (enemy[i].samePosWithPlayer == true && enemy[i].alive == true) {
+		if (enemy[i].samePosWithPlayer == true && enemy[i].alive == true && SearchEnemy(i)) {
 			//如果不攻擊
 			if (!EnemyAttack(i))
 				//再次判定是否為跟玩家同個房間,同房才移動
-				if (SearchEnemy(i))
-					EnemyMove(i);
+				//if (SearchEnemy(i))
+				EnemyMove(i);
 			continue;
 		}
 	}
@@ -907,7 +959,7 @@ void CreateRoom() {
 	//ダンジョンこの地域は壁だと、部屋も壁
 	for (int i = 1; i < MAPRANGE - 1; i++) {
 		for (int j = 1; j < MAPRANGE - 1; j++) {
-			if (dangeon[i][j].type == WALL) {
+			if (dungeon[i][j].type == WALL) {
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					for (int x = j * 5 - 4; x <= j * 5; x++) {
 						room[y][x].type = WALL;
@@ -944,7 +996,7 @@ void Attack(material weapon, bool playerToEnemy) {
 				//只能砍的武器對鎖甲造成的傷害低
 				else if (weapon.atkType == CUT) {
 					if (enemy[i].armor.defType == CANNOT_DEF_STAB) {
-						armorDef = armorDef * 1.1f;
+						armorDef = armorDef * 1.3f;
 					}
 					else {
 						armorDef = armorDef;
@@ -971,6 +1023,13 @@ void Attack(material weapon, bool playerToEnemy) {
 					enemy[i].armor.hp = 0;
 					enemy[i].armor = noArmor;
 					armorDamage = 0;
+				}
+				//weaponが壊れた時
+				if (player.weapon.weaponType != FIST) {
+					if (player.weapon.hp <= 0) {
+						player.weapon.hp = 0;
+						player.weapon = fist;
+					}
 				}
 				//enemy[i].armor.hp -= armorDamage;
 				bodyDamage = totalDamage - armorDamage;
@@ -1016,20 +1075,18 @@ void Attack(material weapon, bool playerToEnemy) {
 		if (armorDamage < 1) {
 			armorDamage = 1;
 		}
-		//armorが壊れた時
+		////armorが壊れた時
+		//if (player.armor.hp <= 0) {
+		//	player.armor.hp = 0;
+		//	player.armor = noArmor;
+		//	armorDamage = 0;
+		//}
+
+		player.armor.hp -= armorDamage;
 		if (player.armor.hp <= 0) {
 			player.armor.hp = 0;
 			player.armor = noArmor;
-			armorDamage = 0;
 		}
-		//weaponが壊れた時
-		if (player.weapon.weaponType != FIST) {
-			if (player.weapon.hp <= 0) {
-				player.weapon.hp = 0;
-				player.weapon = fist;
-			}
-		}
-		player.armor.hp -= armorDamage;
 		bodyDamage = totalDamage - armorDamage;
 		if (bodyDamage <= 0) {
 			bodyDamage = 0;
@@ -1210,13 +1267,13 @@ void UpdateBigMap() {
 	for (int i = 0; i < MAPRANGE; i++) {
 		for (int j = 0; j < MAPRANGE; j++) {
 			if (i == mapY && j == mapX) {
-				dangeon[mapY][mapX].playerPos = true;
+				dungeon[mapY][mapX].playerPos = true;
 				player.mapX = mapX;
 				player.mapY = mapY;
 			}
 			else
 			{
-				dangeon[i][j].playerPos = false;
+				dungeon[i][j].playerPos = false;
 			}
 		}
 	}
@@ -1226,17 +1283,17 @@ void UpdateBigMap() {
 *作者：林
 ***************************************/
 void ShowBigMap() {
-	cout << "                                        >dungenon map<" << endl;
+	cout << "                                        >dungeon map<" << endl;
 	for (int i = 0; i < MAPRANGE; i++) {
 		cout << "                                        ";
 		for (int j = 0; j < MAPRANGE; j++) {
-			if (dangeon[i][j].type == WALL && dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].type == WALL && dungeon[i][j].playerPos != true) {
 				cout << "X ";
 			}
-			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos != true) {
+			if (dungeon[i][j].type == ROOM && dungeon[i][j].playerPos != true) {
 				cout << "  ";
 			}
-			if (dangeon[i][j].type == ROOM && dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].type == ROOM && dungeon[i][j].playerPos == true) {
 				cout << "P ";
 			}
 
@@ -1253,7 +1310,7 @@ void ShowRoom() {
 	cout << "                                        ->room map<-" << endl;
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (dangeon[i][j].playerPos == true)
+			if (dungeon[i][j].playerPos == true)
 			{
 				for (int y = i * 5 - 4; y <= i * 5; y++) {
 					cout << "                                        |";
@@ -1352,8 +1409,8 @@ void InventoryManage() {
 		clsFlag_Inventory = !clsFlag_Inventory;
 	}
 	if (player.weight > player.maxWeight) {
-		cout << ">>You carry to many things, discard something!<<" << endl;
-		cout << "weight:" << player.weight << "/" << player.maxWeight << endl << endl;
+		cout << ">>重量オーバー!、最大重量を下回るようにアイテムを捨ててください<<" << endl;
+		cout << "重量:" << player.weight << "/" << player.maxWeight << endl << endl;
 	}
 
 	int a, b;
@@ -1362,19 +1419,19 @@ void InventoryManage() {
 	for (int i = 0; i < 64; i++) {
 		if (player.inventory[i].flag == true) {
 			if (player.inventory[i].mateTag == ITEM)
-				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" << player.inventory[i].weight << "]"
+				cout << i + 1 << "." << player.inventory[i].name << " [価値:" << player.inventory[i].value << " ,重量:" << player.inventory[i].weight << "]"
 				<< "  x " << player.inventory[i].amount << endl << "  ~" << player.inventory[i].text << "~" << endl;
 			else
-				cout << i + 1 << "." << player.inventory[i].name << " [value:" << player.inventory[i].value << " ,weight:" <<
-				player.inventory[i].weight << " , durability:" << player.inventory[i].hp << " / " << player.inventory[i].maxHp << "]" <<
+				cout << i + 1 << "." << player.inventory[i].name << " [価値:" << player.inventory[i].value << " ,重量:" <<
+				player.inventory[i].weight << " , 耐久値:" << player.inventory[i].hp << " / " << player.inventory[i].maxHp << "]" <<
 				endl << "  ~" << player.inventory[i].text << "~" << endl;
 		}
 	}
 
 	cout << endl;
 	while (1) {
-		cout << "Input a number that you want to change" << endl <<
-			"(twice time same number to equip or use, '666' to undress armor, '777' to undress weapon, '888' to back ,'999' to discard):";
+		cout << "数字を入力してください" << endl <<
+			"(同じ数字を2回入力するとアイテムの使用または装備, '666'で防具を脱ぐ, '777'で武器を外す, '888' で戻る,'999'でアイテムを捨てる):";
 		cin >> a;
 		if ((a < 1 || a > MAX_INVENTORY) && a != 999 && a != 888 && a != 666 && a != 777) {
 			cin.clear();
@@ -1388,7 +1445,7 @@ void InventoryManage() {
 	else if (a == 999) {
 		while (true) {
 			while (true) {
-				cout << "Discard:";
+				cout << "捨てるアイテムを選択してください:";
 				cin >> b;
 				if (b < 1 || player.inventory[b - 1].mateTag == NOTHING) {
 					cin.clear();
@@ -1559,8 +1616,9 @@ void Valuation()
 *作者：荒井
 ***************************************/
 void ShowPlayerStatus() {
-	cout << "↑↓←→ to move and attack, 'space' to wait       |-----enemy status-----" << endl;
-	cout << "press 'i' to manage inventory";
+	cout << "↑↓←→ で移動か攻撃, 'space' でその場で待機       |-----enemy status-----" << endl;
+	cout << "'i' でアイテム画面を開く" << endl;
+	cout << "'esc'でpause";
 	if (player.roomX == 1 && player.roomY == 1) {
 		cout << ". Press ↑ to escape" << endl;
 	}
@@ -1574,15 +1632,15 @@ void ShowPlayerStatus() {
 			value += player.inventory[i].value * player.inventory[i].amount;
 	}
 	value += player.weapon.value + player.armor.value;
-	cout << "Name:" << player.name << "  |  All value:" << player.loan + value << endl;
+	cout << "Name:" << player.name << "  |  獲得金額:" << player.loan + value << endl;
 	cout << "HP:" << player.hp << "/" << player.maxHp;
-	cout << "  Weight:" << player.weight << "/" << player.maxWeight << endl;
+	cout << "  重量:" << player.weight << "/" << player.maxWeight << endl;
 	//cout << "X:" << player.roomX << "  Y:" << player.roomY << endl;
 	//cout << "move count:" << playerMoveCounter << endl;
 	cout << "[" << player.armor.name << "] def:+" << player.armor.def * 100 <<
-		"%  durability:" << player.armor.hp << "/" << player.armor.maxHp << endl;
+		"%  耐久値:" << player.armor.hp << "/" << player.armor.maxHp << endl;
 	if (player.weapon.weaponType != FIST)
-		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << ".  durability:" << player.weapon.hp << "/" << player.weapon.maxHp << endl;
+		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << ".  耐久値:" << player.weapon.hp << "/" << player.weapon.maxHp << endl;
 	else
 		cout << "[" << player.weapon.name << "]   " << player.weapon.atktext << endl;
 	cout << "----Inventory----" << endl;
@@ -1610,7 +1668,7 @@ void ShowEnemyStatus() {
 	//プレイヤーがダンジョンのどこにいるかを探す
 	for (int i = 1; i < MAPRANGE; i++) {
 		for (int j = 1; j < MAPRANGE; j++) {
-			if (dangeon[i][j].playerPos == true) {
+			if (dungeon[i][j].playerPos == true) {
 				//ダンジョンの座標を部屋の座標に転換する
 				roomX_max = j * 5; roomX_min = roomX_max - 4;
 				roomY_max = i * 5; roomY_min = roomY_max - 4;
@@ -1630,11 +1688,11 @@ void ShowEnemyStatus() {
 									GotoXY(x, y++);
 									cout << "|enemy hp:" << enemy[e].hp << endl;
 									GotoXY(x, y++);
-									cout << "|weapon:" << enemy[e].weapon.name << endl;
-									GotoXY(x, y++);
 									cout << "|armor:" << enemy[e].armor.name << endl;
 									GotoXY(x, y++);
-									cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
+									cout << "|weapon:" << enemy[e].weapon.name << endl;
+									//GotoXY(x, y++);
+									//cout << "|durability:" << enemy[e].armor.hp << "/" << enemy[e].armor.maxHp << endl;
 									x += 25;
 								}
 								else {
@@ -1653,32 +1711,156 @@ void ShowEnemyStatus() {
 *ルールを表示する
 *作者：横林
 ***************************************/
-void ShowRule() {
+void ShowRule(int lastscean) {
 	system("CLS");
-	cout << "このゲームはダンジョン内を探索し、最終的に集めた金額で争います。" << endl;
-	cout << "目標金額があります。まずはそれを達成しましょう！" << endl;
+	system("mode con cols=150");
+	cout << "～ゲーム概要～" << endl;
+	cout << "このゲームはダンジョン内を探索し、敵を倒してアイテムや装備を集め、ダンジョンから脱出した後、それらを換金しその合計金額（スコア）を他のプレイヤーと争うゲームです" << endl;
+	cout << "まずは、目標金額を達成しましょう！" << endl;
+	cout << "ダンジョンは最大25部屋で構成され、その構造は入る度に変わるので毎回違った冒険が楽しめます" << endl;
+	cout << "各部屋の詳細は入るまで分からず、一定数部屋間を移動すると部屋の中に敵が再出現する場合があります" << endl;
+	cout << "各部屋への移動は、障害物がその先にない限り、対応した方角の壁に向かうことで移動できます" << endl;
+	cout << "プレイヤーは移動、攻撃、その場で待機、のいずれかの行動でターンを消費します。ターン進行はプレイヤー→敵→プレイヤー...の順に進んでいきます" << endl;
+	cout << "アイテム、装備には重さが設定されており、持ち運べる重量は限られているので注意しましょう" << endl;
+	cout << "また装備には耐久値が存在しており、武器は攻撃するたびに、防具はダメージを受ける度に消耗していきます。耐久値がなくなると装備は壊れて無くなります" << endl;
+	cout << "ダンジョンから出るにはスタート地点であるマップ左上に向かってください" << endl;
+	cout << "" << endl;
 	cout << "勝利条件" << endl;
-	cout << "・目標金額を満たし、ダンジョンを抜け出す。" << endl;
+	cout << "・目標金額を満たし、ダンジョンを抜け出す" << endl;
 	cout << "敗北条件" << endl;
-	cout << "・目標金額に満たないまま、ダンジョンを抜け出す。" << endl;
+	cout << "・目標金額に満たないまま、ダンジョンを抜け出す" << endl;
 	cout << "・HPが0になり、死んでしまう。" << endl;
 	cout << "(その際、スコアも0になってしまうので気を付けましょう。)" << endl;
+	cout << endl;
+	cout << "～操作説明～" << endl;
+	cout << "移動は各種矢印キーで対応した方向に動きます" << endl;
+	cout << "攻撃は各種矢印キーを押した際に攻撃範囲に敵がいる場合に攻撃します" << endl;
+	cout << "スペースキーを押すことでプレイヤーは何もせずその場所で１ターン消費します" << endl;
+	cout << "「i」キーを押すことでアイテム画面を開けます" << endl;
+	cout << "アイテム画面では、アイテムの使用、武器防具の着脱、アイテムの破棄、並び順の変更が行えます" << endl;
+	cout << "～アイテム画面での操作～" << endl;
+	cout << "アイテムには上から順に一番左に数字が割り振られています。同じ数字を二回入力することでアイテムの使用ができ、異なる数字を1回ずつ選んで入力することで並び替えができます。" << endl;
+	cout << "各種入力" << endl;
+	cout << " 666: 防具を脱ぐ" << endl;
+	cout << " 777: 武器を外す" << endl;
+	cout << " 888: アイテム画面を終了" << endl;
+	cout << " 999: アイテムを捨てる" << endl;
+	cout << endl;
+	cout << "～マップ表示について～" << endl;
+	cout << "　X:　マップの進めない場所や壁を表す" << endl;
+	cout << "　|:　部屋の横壁を表す" << endl;
+	cout << "　E:　ゴール位置を表す" << endl;
+	cout << "　P:　プレイヤーの位置を表す" << endl;
+	cout << "　$,!,@,#:　敵の位置を表す" << endl;
+	cout << "" << endl;
+	cout << "～ゲーム攻略のヒント～" << endl;
+	cout << "序盤は装備が弱い敵に挑んで徐々に装備を強くしよう" << endl;
+	cout << "先制攻撃ができるように、その場で待機する行動を活用しよう" << endl;
+	cout << "最初から持っている3つのポーションはあなたが借金をして買った強力なポーション、値は張るが出し惜しみせずに使おう" << endl;
+	cout << "武器には攻撃範囲や相性が存在している。敵にどれだけのダメージが入ってるのかに注目して、有利な武器で敵を攻撃しよう" << endl;
 
-	cout << "X:マップの進めない場所や壁を表す" << endl;
-	cout << "|:部屋の横壁を表す" << endl;
-	cout << "E:ゴール位置を表す" << endl;
-	cout << "P:プレイヤーの位置を表す" << endl;
-	cout << "$,!,@,#:敵の位置を表す" << endl;
 
 	cout << "Press any key to continue" << endl;
 	char tmp;
 	tmp = _getch();
-	scean = START_SCEAN;
+	scean = lastscean;
 
 }
+/***************************************
+*ヒントの表示
+*cantMove 移動先は壁かどうか
+*作者：林
+***************************************/
+void ShowHint(bool cantMove)
+{
+	if (cantMove) {
+		GotoXY(0, 0);
+		cout << "Can't move";
+		GotoXY(0, 1);
+		cout << "Because your move direction is wall";
+	}
+}
+/***************************************
+*ランキングを表示する
+*作者：林
+***************************************/
+void ShowRank(ranking r[],int lastscean) {
+	OutputFile(r);
+	system("CLS");
+	cout << "No.  Name      Score         time" << endl;
+	cout << "================================================" << endl;
+	int n = 1;
+	int x = 0, y = 2;
+	for (int i = 0; i < RANK_LENGTH - 1; i++) {
+		if (r[i].score > 0) {
+			GotoXY(x, y);
+			cout << n << '.';
+			x += 5;
+			GotoXY(x, y);
+			cout << r[i].name;
+			x += 11;
+			GotoXY(x, y);
+			cout << r[i].score;
+			x += 10;
+			GotoXY(x, y);
+			cout << r[i].strTime;
+			x = 0;
+			y++;
+			if (r[i].score != r[i + 1].score) {
+				n++;
+			}
+		}
+	}
+	char ch;
+	GotoXY(0, y + 5);
+	cout << "Press any key to back" << endl;
+	ch = _getch();
+	scean = lastscean;
 
-
-
+}
+/***************************************
+*スタートシーンに戻る
+*作者：林
+***************************************/
+void escToStop() {
+	char n;
+	char flag;
+	system("CLS");
+	cout << "1.Back to the game" << endl;
+	cout << "2.Leave the game" << endl;
+	cout << "3.Show rank" << endl;
+	cout << "4.Show rule" << endl;
+	cout << "Select a number:";
+	cin >> n;
+	if (n == '1') {
+		scean = scean;
+		Refresh();
+	}
+	else if (n == '2') {
+		cout << "Are you want to back to leave the game?(y/n):";
+		cin >> flag;
+		if (flag == 'y' || flag == 'Y') {
+			scean = START_SCEAN;
+			cout << "Press SPACE key to continue" << endl;
+		}
+		else {
+			scean = scean;
+			Refresh();
+		}
+	}
+	else if (n == '3') {
+		ShowRank(gameRank,scean);
+		Refresh();
+	}
+	else if (n == '4') {
+		ShowRule(scean);
+		Refresh();
+	}
+	else {
+		system("CLS");
+	}
+	
+}
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
 *作者：荒井
@@ -1713,7 +1895,7 @@ void PlayerDie() {
 *プレイヤーが逃げた時
 *作者：林
 ***************************************/
-void PlayerEscape(int ch)
+bool PlayerEscape(int ch)
 {
 	if (player.roomX == 1 && player.roomY == 1) {
 		if (ch == UP) {
@@ -1727,7 +1909,6 @@ void PlayerEscape(int ch)
 			}
 			value += player.weapon.value + player.armor.value + player.loan;
 			if (value < GOAL_VALUE) {
-
 				cout << "You have " << value << " point, but the goal is " << GOAL_VALUE << endl;
 				cout << "If you escape now, you lose." << endl;
 			}
@@ -1741,12 +1922,36 @@ void PlayerEscape(int ch)
 				player.roomX = -1;
 				player.roomY = -1;
 				player.alive = false;
-				exit(1);
+
+				//把資料塞進ranking
+				ranking tmp;
+				strcpy(tmp.name, player.name);
+				tmp.score = value;
+				tmp.nowTime = time(0);
+				//下面4行用來把時間轉成字串
+				struct tm  tstruct;
+				char       buf[80];
+				tstruct = *localtime(&tmp.nowTime);
+				strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+				tmp.strTime = buf;
+				//文件中的資料寫進內存
+				OutputFile(gameRank);
+				//排序內存中的資料
+				SortRank(gameRank, tmp);
+				//內存中的資料寫進文件
+				InputFile(gameRank);
+
+
+				scean = RANK_SCEAN;
+				return true;
+				//exit(1);
 				//back to main menu. and update the rank.
 			}
 			else {
 				cin.clear();
 				cin.ignore(100, '\n');
+				Refresh();
+				return false;
 			}
 
 		}
@@ -1760,29 +1965,63 @@ void Start() {
 	system("cls");
 	char flag;
 	do {
-		int chr;
-		char fname[] = "start.txt";
-		FILE* fp = fopen(fname, "r");
-		while ((chr = fgetc(fp)) != EOF) {
-			putchar(chr);
-		}
-		fclose(fp);
-		cout << endl;
+		cout << "*******************************************************************                              .dMMMa" << endl;
+		cout << "*                                                                 *                    .dMMMNa. .MMB7MMN  .gMMMN," << endl;
+		cout << "*     _/_/_/              _/      _/      _/                      *                    JMM7TWMMMMMD~.(MMNMMMBTMM#" << endl;
+		cout << "*  _/          _/_/    _/_/_/_/_/_/_/_/      _/_/_/      _/_/_/   *                    .MMN,.~?WM@~.~.(MMB^~(MMM^" << endl;
+		cout << "* _/  _/_/  _/_/_/_/    _/      _/      _/  _/    _/  _/    _/    *                      TMMN--((((((----~.(MM#`" << endl;
+		cout << "*_/    _/  _/          _/      _/      _/  _/    _/  _/    _/     *                       .MMMMMMMMMMMMMMMMMMF" << endl;
+		cout << "* _/_/_/    _/_/_/      _/_/    _/_/  _/  _/    _/    _/_/_/      *                      .MM#9O=========vTHMMMx" << endl;
+		cout << "*                                                        _/       *                      .MMNMMMMMMMMMMMMMMNMM#" << endl;
+		cout << "*                                                   _/_/          *                      .MMM#^^^^^^^^^^^MMMM^" << endl;
+		cout << "*    _/_/_/    _/            _/                                   *                   .JMMM#:.~~.~~.~.~.~_TMMNa." << endl;
+		cout << "*   _/    _/        _/_/_/  _/_/_/                                *                .dMMM#^~..~..~..~.~.~.~.~? WMMNa." << endl;
+		cout << "*  _/_/_/    _/  _/        _/    _/                               *             .gMMMB=~.._-_~~.~~.~.~.~~__~.._?MMMN." << endl;
+		cout << "* _/    _/  _/  _/        _/    _/                                *           .JMM#^~.~.(dMMMMNJ-.~.~((gMMMMp~.~.(TMMh." << endl;
+		cout << "*_/    _/  _/    _/_/_/  _/    _/                                 *          .MM#!~.~.~.dMM+?TMMMN.JMMMM8>dMM>~.~.~(WMM. " << endl;
+		cout << "*                                                                 *         .MM@~~.~.~.~_WMMNJ<?WMMM#6<+gMMM5..~.~.~.dMM| " << endl;
+		cout << "*     _/_/                _/            _/                        *         dMM<~.~.~.~.~.(TMMMNg<71jMMMMB=.~~.~.~.~~.dMN." << endl;
+		cout << "*  _/    _/    _/    _/        _/_/_/  _/  _/                     *         MM#~..~.~..~.~(gMMMMM#:JMMMMMNg,.~..~.~..~(MMb" << endl;
+		cout << "* _/  _/_/    _/    _/  _/  _/        _/_/                        *         MMF~.~.~.~~.~JMMBYYYY>::?TYYTWMN-.~~.~.~.~.dMN" << endl;
+		cout << "*_/    _/    _/    _/  _/  _/        _/  _/                       *         MMN.~.~.~..~.dMMMMMMNm:jMMMMMMM#_.~.~.~.~.~JMM" << endl;
+		cout << "* _/_/  _/    _/_/_/  _/    _/_/_/  _/    _/                      *         4MN-~.~.~.~.~(MMMMMMMMC?MMMMMMMN~.~.~.~.~.~JMM" << endl;
+		cout << "*                                                                 *         .MMb.~.~.~.~.JMMNggggJ:<+ggggMMM:~.~.~.~.~_MM#" << endl;
+		cout << "*******************************************************************          -MMm~.~.~.~.~?TMMMMMM<JMM#^^B5<~.~.~.~.~_jMM^" << endl;
+		cout << "                                                                              (MMN..~.~.~.~.~~.JMMggMM..~.~..~.~.~..(MMM\ " << endl;
+		cout << "                                                                               .WMMNJ..~.~.~.~~.?HMMB^.~.~.~~.~._(JMMM@` " << endl;
+		cout << "                                                                                 .TMMMMNg&J--(((((((((((((JJ+gNMMMM#= " << endl;
+		cout << "                                                                                     ?^^MMMMMMMMMMMMMMMMMMMMMM^^7` " << endl;
+		cout << "" << endl;
+		cout << "" << endl;
+		cout << "友人に情報商材を売り込まれ250万の借金を作ってしまった君の家に届いていたのは財宝が眠る迷宮への招待状!?" << endl;
+		cout << "はたして君は250万を集め無事借金返済できるか??" << endl;
+		//cout << "" << endl;
+		//cout << "" << endl;
+		cout << "" << endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
 		cout << "Select number:";
-		cin >> flag;
+		cin.get(flag);
 		cout << endl;
 		if (flag == '1') {
 			scean = INIT_SCEAN;
+			cin.ignore(100, '\n');
+			break;
+		}
+		else if (flag == '2') {
+			scean = RANK_SCEAN;
+			cin.ignore(100, '\n');
 			break;
 		}
 		else if (flag == '3') {
 			scean = RULE_SCEAN;
+			cin.ignore(100, '\n');
 			break;
 		}
 		else {
+			//cin.clear();
+			//cin.ignore(100);
 			system("cls");
 		}
 	} while (true);
@@ -1808,5 +2047,7 @@ inline void GotoXY(int x, int y)
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+
 
 

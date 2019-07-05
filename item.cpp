@@ -42,8 +42,8 @@ material ivory;
 material brokenDiamond;
 void WeaponInit() {
 	//拳
-	strcpy(fist.name, "fist");
-	strcpy(fist.text, "~ Just hands, attack distance is one. atk = 10~40 ~");
+	strcpy(fist.name, "拳");
+	strcpy(fist.text, "~ 自身の拳、武器がない時に頼るものといえばコレ");
 	strcpy(fist.atktext, "atk: 10~40");
 	fist.mateTag = WEAPON;
 	fist.weaponType = FIST;
@@ -54,7 +54,8 @@ void WeaponInit() {
 	fist.flag = true;
 
 	//匕首
-	strcpy(dagger.name, "dagger");
+	strcpy(dagger.name, "ダガー");
+	strcpy(dagger.text, "短剣、急所に当たれば大ダメージ");
 	strcpy(dagger.atktext, "atk: 10~200");
 	dagger.mateTag = WEAPON;
 	dagger.weaponType = SHORT_SWORD;
@@ -68,11 +69,12 @@ void WeaponInit() {
 	dagger.flag = true;
 
 	//短剣
-	strcpy(shortSword.name, "short sword");
-	strcpy(shortSword.atktext, "atk: 20~50");
+	strcpy(shortSword.name, "ショートソード");
+	strcpy(shortSword.atktext, "atk: 30~60");
+	strcpy(shortSword.text, "バランスのとれた剣、大量生産品");
 	shortSword.mateTag = WEAPON;
 	shortSword.weaponType = SHORT_SWORD;
-	shortSword.maxValue = 40;
+	shortSword.maxValue = 60;
 	shortSword.value = shortSword.maxValue;
 	shortSword.maxHp = 30;
 	shortSword.hp = shortSword.maxHp;
@@ -81,7 +83,7 @@ void WeaponInit() {
 	shortSword.atkType = CUT_STAB;
 	shortSword.flag = true;
 	//長剣
-	strcpy(longSword.name, "long sword");
+	strcpy(longSword.name, "ロングソード");
 	strcpy(longSword.atktext, "atk=40~100");
 	longSword.mateTag = WEAPON;
 	longSword.weaponType = LONG_SWORD;
@@ -94,7 +96,7 @@ void WeaponInit() {
 	longSword.atkType = CUT_STAB;
 	longSword.flag = true;
 	//バナナ剣
-	strcpy(banana.name, "banana");
+	strcpy(banana.name, "バナナ");
 	banana.mateTag = WEAPON;
 	banana.weaponType = BANANA;
 	banana.value = 15;
@@ -105,7 +107,7 @@ void WeaponInit() {
 	strcpy(graduationCetificateTube.name, "sotsugyoshosho no tsutsu");
 	graduationCetificateTube.mateTag = WEAPON;
 	graduationCetificateTube.weaponType = GRADUATION_CERTIFICATE_TUBE;
-	graduationCetificateTube.value = 50;
+	graduationCetificateTube.value = 15;
 	graduationCetificateTube.atkRange = ONE;
 	graduationCetificateTube.atkType = CUT_STAB;
 	graduationCetificateTube.flag = true;
@@ -119,11 +121,12 @@ void WeaponInit() {
 	cutlass.flag = true;
 
 	//斧
-	strcpy(battleAxe.name, "battle axe");
+	strcpy(battleAxe.name, "バトルアックス");
 	strcpy(battleAxe.atktext, "atk: 10~80");
+	strcpy(battleAxe.text, "切ることしかできない武器、ダメージは安定しないが、運がいいと大ダメージ");
 	battleAxe.mateTag = WEAPON;
 	battleAxe.weaponType = BATTLE_AXE;
-	battleAxe.maxValue = 60;
+	battleAxe.maxValue = 75;
 	battleAxe.value = battleAxe.maxValue;
 	battleAxe.maxHp = 30;
 	battleAxe.hp = shortSword.maxHp;
@@ -162,13 +165,14 @@ void WeaponInit() {
 	obrist.flag = true;
 
 	//槍
-	strcpy(spear.name, "spear");
-	strcpy(spear.atktext, "atk: 20~50");
+	strcpy(spear.name, "スピア");
+	strcpy(spear.atktext, "atk: 30~60");
+	strcpy(spear.text, "長い柄の先に尖った金属がついている武器、ダメージは普通だがリーチを生かして2マス前の敵まで攻撃が届く");
 	spear.mateTag = WEAPON;
 	spear.weaponType = SPEAR;
-	spear.maxValue = 45;
+	spear.maxValue = 100;
 	spear.value = spear.maxValue;
-	spear.maxHp = 70;
+	spear.maxHp = 20;
 	spear.hp = shortSword.maxHp;
 	spear.weight = 3.5f;
 	spear.atkRange = TWO;
@@ -214,7 +218,7 @@ void WeaponInit() {
 }
 void ArmorInit() {
 	//裸体
-	strcpy(noArmor.name, "no armor");
+	strcpy(noArmor.name, "裸");
 	noArmor.mateTag = ARMOR;
 	noArmor.armorType = NO_ARMOR;
 	noArmor.value = 0;
@@ -225,10 +229,11 @@ void ArmorInit() {
 	noArmor.defType = NORMAL_DEF;
 	noArmor.flag = true;
 	//皮甲
-	strcpy(leatherArmor.name, "leather armor");
+	strcpy(leatherArmor.name, "レザーアーマー");
+	strcpy(leatherArmor.text, "動物の皮でできた鎧、これではちょっと心もとない");
 	leatherArmor.mateTag = ARMOR;
 	leatherArmor.armorType = LEATHER_ARMOR;
-	leatherArmor.maxValue = 40;
+	leatherArmor.maxValue = 90;
 	leatherArmor.value = leatherArmor.maxValue;
 	leatherArmor.flag = true;
 	leatherArmor.maxHp = 400;
@@ -237,10 +242,11 @@ void ArmorInit() {
 	leatherArmor.weight = 5.0f;
 	leatherArmor.defType = NORMAL_DEF;
 	//重皮甲
-	strcpy(heavyLeatherArmor.name, "hLeather armor");
+	strcpy(heavyLeatherArmor.name, "ハードレザーアーマー");
+	strcpy(heavyLeatherArmor.text, "レザーアーマーより分厚く、防御力もある");
 	heavyLeatherArmor.mateTag = ARMOR;
 	heavyLeatherArmor.armorType = HEAVY_LEATHE_RARMOR;
-	heavyLeatherArmor.maxValue = 45;
+	heavyLeatherArmor.maxValue = 110;
 	heavyLeatherArmor.value = heavyLeatherArmor.maxValue;
 	heavyLeatherArmor.flag = true;
 	heavyLeatherArmor.maxHp = 300;
@@ -249,10 +255,11 @@ void ArmorInit() {
 	heavyLeatherArmor.weight = 7.5f;
 	heavyLeatherArmor.defType = NORMAL_DEF;
 	//鎖甲(鎖帷子)
-	strcpy(chainmail.name, "chainmail");
+	strcpy(chainmail.name, "チェーンメイル");
+	strcpy(chainmail.text, "着心地最悪、高価でタフな鎧、しかし刺突攻撃に対しての防御力は低い ");
 	chainmail.mateTag = ARMOR;
 	chainmail.armorType = CHAINMAIL;
-	chainmail.maxValue = 150;
+	chainmail.maxValue = 175;
 	chainmail.value = chainmail.maxValue;
 	chainmail.flag = true;
 	chainmail.maxHp = 500;
@@ -263,17 +270,17 @@ void ArmorInit() {
 }
 void ItemInit() {
 	//簡易藥水
-	strcpy(simplePotion.name, "simple potion");
-	strcpy(simplePotion.text, "Use to +75 hp");
+	strcpy(simplePotion.name, "ただのポーション");
+	strcpy(simplePotion.text, "使うとHPを75回復");
 	simplePotion.mateTag = ITEM;
 	simplePotion.itemType = SIMPLE_POTION;
-	simplePotion.value = 80;
+	simplePotion.value = 40;
 	simplePotion.flag = true;
 	simplePotion.hp = 75;
 	simplePotion.weight = 0.2f;
 	//超級藥水
-	strcpy(superPotion.name, "super potion");
-	strcpy(superPotion.text, "Use to restore all hp");
+	strcpy(superPotion.name, "すげえポーション");
+	strcpy(superPotion.text, "使用すると全回復、多分ヤバい薬");
 	superPotion.mateTag = ITEM;
 	superPotion.itemType = SUPER_POTION;
 	superPotion.value = 200;
@@ -281,17 +288,18 @@ void ItemInit() {
 	superPotion.hp = 300;
 	superPotion.weight = 0.2f;
 	//耐重要水
-	strcpy(powerPostion.name, "power potion");
-	strcpy(powerPostion.text, "Use to increase 10 of the max heavy weight");
+	strcpy(powerPostion.name, "力のポーション");
+	strcpy(powerPostion.text, "使用すると持てる最大重量が10増える");
 	powerPostion.mateTag = ITEM;
 	powerPostion.itemType = POWER_POTION;
 	powerPostion.value = 100;
 	powerPostion.flag = true;
 	powerPostion.hp = 10;
 	powerPostion.weight = 0.2f;
+
 	//黃金
-	strcpy(gold.name, "gold");
-	strcpy(gold.text, "Gold is a popular precious metal");
+	strcpy(gold.name, "金塊");
+	strcpy(gold.text, "お金になるものといえばやはり金");
 	gold.mateTag = ITEM;
 	gold.itemType = GOLD;
 	gold.value = 100;
@@ -299,8 +307,8 @@ void ItemInit() {
 	gold.weight = 1.0f;
 
 	//銀
-	strcpy(silver.name, "silver");
-	strcpy(silver.text, "Silver is a popular precious metal");
+	strcpy(silver.name, "銀塊");
+	strcpy(silver.text, "銀、金には劣るがこれも充分高価な金属");
 	silver.mateTag = ITEM;
 	silver.itemType = GOLD;
 	silver.value = 80;
@@ -308,17 +316,17 @@ void ItemInit() {
 	silver.weight = 1.0f;
 
 	//象牙
-	strcpy(ivory.name, "ivory");
-	strcpy(ivory.text, "Although selling ivory is not ethical, it is still valuable");
+	strcpy(ivory.name, "象牙");
+	strcpy(ivory.text, "現在では取ることが禁止されている象牙、非常に高価だが持ち運ぶのも大変");
 	ivory.mateTag = ITEM;
 	ivory.itemType = IVORY;
 	ivory.value = 400;
 	ivory.flag = true;
-	ivory.weight = 20.0f;
+	ivory.weight = 23.0f;
 
 	//碎鑽
-	strcpy(brokenDiamond.name, "broken diamond");
-	strcpy(brokenDiamond.text, "Diamond fragment, not very valuable");
+	strcpy(brokenDiamond.name, "砕けたダイヤモンド");
+	strcpy(brokenDiamond.text, "ダイヤモンドは砕けないなんて事はなかった");
 	brokenDiamond.mateTag = ITEM;
 	brokenDiamond.itemType = IVORY;
 	brokenDiamond.value = 10;
@@ -326,7 +334,7 @@ void ItemInit() {
 	brokenDiamond.weight = 0.01f;
 }
 void CreateEmpty() {
-	strcpy(nothing.name, "nothing");
+	strcpy(nothing.name, "虚無");
 	nothing.mateTag = NOTHING;
 	nothing.value = 0;
 	nothing.flag = false;
@@ -345,7 +353,7 @@ int Damage(int weaponType) {
 	if (weaponType == FIST)
 		return dice4 * 10; //10~40
 	else if (weaponType == SHORT_SWORD || weaponType == SPEAR)
-		return dice4 * 10 + 10; //20~50
+		return dice4 * 10 + 10 + 10; //30~60
 	else if (weaponType == BATTLE_AXE)
 		return dice8 * 10; //10~80
 	else if (weaponType == SCORPION || weaponType == LONG_SWORD)
@@ -353,7 +361,7 @@ int Damage(int weaponType) {
 	else if (weaponType == MARIUS)
 		return (dice4 + dice4 + dice4) * 10;
 	else if (weaponType == DAGGER)
-		return dice20;
+		return dice20 * 10;
 
 }
 
