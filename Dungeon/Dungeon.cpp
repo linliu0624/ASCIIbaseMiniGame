@@ -116,7 +116,8 @@ bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
 int main()
-{
+{	//ゲーム画面の大きさを設定する
+	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
 	StartRnd();
 	//MakeFile();
 	while (true) {
@@ -148,8 +149,7 @@ int main()
 
 /*初始化*/
 void Init() {
-	//ゲーム画面の大きさを設定する
-	system("mode con cols=150");  //system("mode con cols=100 lines=100");//改變寬高
+
 	//char flag;
 	bool flag;
 	clsFlag_Inventory = false;
@@ -1964,15 +1964,43 @@ void Start() {
 	system("cls");
 	char flag;
 	do {
-		cout << "************************" << endl;
-		cout << "* Getting              *" << endl;
-		cout << "*          Rich        *" << endl;
-		cout << "*                Qucik *" << endl;
-		cout << "************************" << endl;
+		cout << "*******************************************************************                              .dMMMa" << endl;
+		cout << "*                                                                 *                    .dMMMNa. .MMB7MMN  .gMMMN," << endl;
+		cout << "*     _/_/_/              _/      _/      _/                      *                    JMM7TWMMMMMD~.(MMNMMMBTMM#" << endl;
+		cout << "*  _/          _/_/    _/_/_/_/_/_/_/_/      _/_/_/      _/_/_/   *                    .MMN,.~?WM@~.~.(MMB^~(MMM^" << endl;
+		cout << "* _/  _/_/  _/_/_/_/    _/      _/      _/  _/    _/  _/    _/    *                      TMMN--((((((----~.(MM#`" << endl;
+		cout << "*_/    _/  _/          _/      _/      _/  _/    _/  _/    _/     *                       .MMMMMMMMMMMMMMMMMMF" << endl;
+		cout << "* _/_/_/    _/_/_/      _/_/    _/_/  _/  _/    _/    _/_/_/      *                      .MM#9O=========vTHMMMx" << endl;
+		cout << "*                                                        _/       *                      .MMNMMMMMMMMMMMMMMNMM#" << endl;
+		cout << "*                                                   _/_/          *                      .MMM#^^^^^^^^^^^MMMM^" << endl;
+		cout << "*    _/_/_/    _/            _/                                   *                   .JMMM#:.~~.~~.~.~.~_TMMNa." << endl;
+		cout << "*   _/    _/        _/_/_/  _/_/_/                                *                .dMMM#^~..~..~..~.~.~.~.~? WMMNa." << endl;
+		cout << "*  _/_/_/    _/  _/        _/    _/                               *             .gMMMB=~.._-_~~.~~.~.~.~~__~.._?MMMN." << endl;
+		cout << "* _/    _/  _/  _/        _/    _/                                *           .JMM#^~.~.(dMMMMNJ-.~.~((gMMMMp~.~.(TMMh." << endl;
+		cout << "*_/    _/  _/    _/_/_/  _/    _/                                 *          .MM#!~.~.~.dMM+?TMMMN.JMMMM8>dMM>~.~.~(WMM. " << endl;
+		cout << "*                                                                 *         .MM@~~.~.~.~_WMMNJ<?WMMM#6<+gMMM5..~.~.~.dMM| " << endl;
+		cout << "*     _/_/                _/            _/                        *         dMM<~.~.~.~.~.(TMMMNg<71jMMMMB=.~~.~.~.~~.dMN." << endl;
+		cout << "*  _/    _/    _/    _/        _/_/_/  _/  _/                     *         MM#~..~.~..~.~(gMMMMM#:JMMMMMNg,.~..~.~..~(MMb" << endl;
+		cout << "* _/  _/_/    _/    _/  _/  _/        _/_/                        *         MMF~.~.~.~~.~JMMBYYYY>::?TYYTWMN-.~~.~.~.~.dMN" << endl;
+		cout << "*_/    _/    _/    _/  _/  _/        _/  _/                       *         MMN.~.~.~..~.dMMMMMMNm:jMMMMMMM#_.~.~.~.~.~JMM" << endl;
+		cout << "* _/_/  _/    _/_/_/  _/    _/_/_/  _/    _/                      *         4MN-~.~.~.~.~(MMMMMMMMC?MMMMMMMN~.~.~.~.~.~JMM" << endl;
+		cout << "*                                                                 *         .MMb.~.~.~.~.JMMNggggJ:<+ggggMMM:~.~.~.~.~_MM#" << endl;
+		cout << "*******************************************************************          -MMm~.~.~.~.~?TMMMMMM<JMM#^^B5<~.~.~.~.~_jMM^" << endl;
+		cout << "                                                                              (MMN..~.~.~.~.~~.JMMggMM..~.~..~.~.~..(MMM\ " << endl;
+		cout << "                                                                               .WMMNJ..~.~.~.~~.?HMMB^.~.~.~~.~._(JMMM@` " << endl;
+		cout << "                                                                                 .TMMMMNg&J--(((((((((((((JJ+gNMMMM#= " << endl;
+		cout << "                                                                                     ?^^MMMMMMMMMMMMMMMMMMMMMM^^7` " << endl;
+		cout << "" << endl;
+		cout << "" << endl;
+		cout << "友人に情報商材を売り込まれ250万の借金を作ってしまった君の家に届いていたのは財宝が眠る迷宮への招待状!?" << endl;
+		cout << "はたして君は250万を集め無事借金返済できるか??" << endl;
+		//cout << "" << endl;
+		//cout << "" << endl;
+		cout << "" << endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
-		cout << "Select number(1-3):";
+		cout << "Select number:";
 		cin.get(flag);
 		cout << endl;
 		if (flag == '1') {
