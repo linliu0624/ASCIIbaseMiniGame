@@ -1917,13 +1917,6 @@ void Start() {
 	system("cls");
 	char flag;
 	do {
-		int chr;
-		/*char fname[] = "start.txt";
-		FILE* fp = fopen(fname, "r");
-		while ((chr = fgetc(fp)) != EOF) {
-			putchar(chr);
-		}
-		fclose(fp);*/
 		cout << "************************" << endl;
 		cout << "* Getting              *" << endl;
 		cout << "*          Rich        *" << endl;
@@ -1932,8 +1925,8 @@ void Start() {
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
 		cout << "3.Check the rule" << endl;
-		cout << "Select number:";
-		cin >> flag;
+		cout << "Select number(1-3):";
+		cin.get(flag);
 		cout << endl;
 		if (flag == '1') {
 			scean = INIT_SCEAN;
@@ -1951,8 +1944,8 @@ void Start() {
 			break;
 		}
 		else {
-			cin.clear();
-			cin.ignore(100);
+			//cin.clear();
+			//cin.ignore(100);
 			system("cls");
 		}
 	} while (true);
