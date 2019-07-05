@@ -65,11 +65,11 @@ bool SearchEnemy(int);
 //敵の状態を表示する
 void ShowEnemyStatus();
 //ルールの表示
-void ShowRule();
+void ShowRule(int);
 //ヒントの表示
 void ShowHint(bool);
 //ランキングを表示する
-void ShowRank(ranking r[]);
+void ShowRank(ranking r[],int);
 //プレイヤーの移動先は敵がいる
 bool IsEnemy(int);
 //敵の攻撃
@@ -88,8 +88,8 @@ void InventoryManage();
 void UsePotion(int);
 //判定價值
 void Valuation();
-//スタートシーンに戻る
-void BackStart();
+//選択画面に入る
+void escToStop();
 //ダメージの計算
 int Damage(int);
 //void Damage(int, int, int, bool);
@@ -115,7 +115,6 @@ int enemyPosX, enemyPosY;
 bool clsFlag_Inventory;
 bool haveEnemyFlag;
 bool isBattle;
-
 int main()
 {
 	StartRnd();
@@ -130,11 +129,10 @@ int main()
 			Refresh();
 		}
 		else if (scean == RANK_SCEAN) {
-			OutputFile(gameRank);
-			ShowRank(gameRank);
+			ShowRank(gameRank, START_SCEAN);
 		}
 		else if (scean == RULE_SCEAN) {
-			ShowRule();
+			ShowRule(START_SCEAN);
 		}
 		// ゲームの循環
 		while (true)
@@ -663,7 +661,7 @@ void PlayerTurn() {
 		if (ch == UP || ch == LEFT || ch == DOWN || ch == RIGHT) {
 			switch (ch) {
 			case UP: {
-				flag = PlayerEscape(UP);
+				flag = !PlayerEscape(UP);
 				//武器の攻撃範囲で敵がいるかどうかを判定する
 				//いれば戦闘に入る
 				if (IsEnemy(UP) == true) {
@@ -766,7 +764,8 @@ void PlayerTurn() {
 			flag = true;
 		}
 		else if (ch == ESC) {
-			BackStart();
+			escToStop();
+			flag = false;
 		}
 		else {
 			flag = false;
@@ -1711,7 +1710,7 @@ void ShowEnemyStatus() {
 *ルールを表示する
 *作者：横林
 ***************************************/
-void ShowRule() {
+void ShowRule(int lastscean) {
 	system("CLS");
 	system("mode con cols=150");
 	cout << "～ゲーム概要～" << endl;
@@ -1763,7 +1762,7 @@ void ShowRule() {
 	cout << "Press any key to continue" << endl;
 	char tmp;
 	tmp = _getch();
-	scean = START_SCEAN;
+	scean = lastscean;
 
 }
 /***************************************
@@ -1784,7 +1783,8 @@ void ShowHint(bool cantMove)
 *ランキングを表示する
 *作者：林
 ***************************************/
-void ShowRank(ranking r[]) {
+void ShowRank(ranking r[],int lastscean) {
+	OutputFile(r);
 	system("CLS");
 	cout << "No.  Name      Score         time" << endl;
 	cout << "================================================" << endl;
@@ -1814,24 +1814,51 @@ void ShowRank(ranking r[]) {
 	GotoXY(0, y + 5);
 	cout << "Press any key to back" << endl;
 	ch = _getch();
-	scean = START_SCEAN;
+	scean = lastscean;
 
 }
 /***************************************
 *スタートシーンに戻る
 *作者：林
 ***************************************/
-void BackStart() {
+void escToStop() {
+	char n;
 	char flag;
 	system("CLS");
-	cout << "Are you want to back to leave the game?(y/n):";
-	cin >> flag;
-	if (flag == 'y' || flag == 'Y')
-		scean = START_SCEAN;
-	else {
+	cout << "1.Back to the game" << endl;
+	cout << "2.Leave the game" << endl;
+	cout << "3.Show rank" << endl;
+	cout << "4.Show rule" << endl;
+	cout << "Select a number:";
+	cin >> n;
+	if (n == '1') {
 		scean = scean;
+		Refresh();
 	}
-	cout << "Press SPACE key to continue" << endl;
+	else if (n == '2') {
+		cout << "Are you want to back to leave the game?(y/n):";
+		cin >> flag;
+		if (flag == 'y' || flag == 'Y') {
+			scean = START_SCEAN;
+			cout << "Press SPACE key to continue" << endl;
+		}
+		else {
+			scean = scean;
+			Refresh();
+		}
+	}
+	else if (n == '3') {
+		ShowRank(gameRank,scean);
+		Refresh();
+	}
+	else if (n == '4') {
+		ShowRule(scean);
+		Refresh();
+	}
+	else {
+		system("CLS");
+	}
+	
 }
 /***************************************
 *プレイヤーが死んだときにリスタートするかを選ぶ
