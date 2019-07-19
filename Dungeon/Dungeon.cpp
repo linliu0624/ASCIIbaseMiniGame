@@ -488,8 +488,8 @@ void CreateEnemyItem() {
 			}
 		}
 		else if (player.hp <= 50) {
-			if(itemRnd>10)
-			enemy[i].inventory[0] = superPotion;
+			if (itemRnd > 10)
+				enemy[i].inventory[0] = superPotion;
 			else {
 				enemy[i].inventory[0] = simplePotion;
 			}
@@ -1717,50 +1717,51 @@ void ShowEnemyStatus() {
 void ShowRule(int lastscean) {
 	system("CLS");
 	system("mode con cols=150");
-	cout << "～ゲーム概要～" << endl;
-	cout << "このゲームはダンジョン内を探索し、敵を倒してアイテムや装備を集め、ダンジョンから脱出した後、それらを換金しその合計金額（スコア）を他のプレイヤーと争うゲームです" << endl;
-	cout << "まずは、目標金額を達成しましょう！" << endl;
-	cout << "ダンジョンは最大25部屋で構成され、その構造は入る度に変わるので毎回違った冒険が楽しめます" << endl;
-	cout << "各部屋の詳細は入るまで分からず、一定数部屋間を移動すると部屋の中に敵が再出現する場合があります" << endl;
-	cout << "各部屋への移動は、障害物がその先にない限り、対応した方角の壁に向かうことで移動できます" << endl;
-	cout << "プレイヤーは移動、攻撃、その場で待機、のいずれかの行動でターンを消費します。ターン進行はプレイヤー→敵→プレイヤー...の順に進んでいきます" << endl;
-	cout << "アイテム、装備には重さが設定されており、持ち運べる重量は限られているので注意しましょう" << endl;
-	cout << "また装備には耐久値が存在しており、武器は攻撃するたびに、防具はダメージを受ける度に消耗していきます。耐久値がなくなると装備は壊れて無くなります" << endl;
-	cout << "ダンジョンから出るにはスタート地点であるマップ左上に向かってください" << endl;
+	cout << "～About this game～" << endl;
+	cout << "This game is a game that explores the dungeon, kills enemies and collects items and equipment, escapes from the dungeon, redeems them and competes the total amount (score) with other players." << endl;
+	cout << "First of all, let's achieve the target amount!" << endl;
+	cout << "The dungeon consists of up to 25 rooms, and its structure changes every time you enter it, so you can enjoy different adventures every time" << endl;
+	cout << "The details of each room are unknown until you enter, and moving between several rooms may cause enemies to reappear in the room" << endl;
+	cout << "You can move to each room by heading toward the wall in the corresponding direction as long as there are no obstacles ahead" << endl;
+	cout << "The player consumes a turn by moving, attacking or waiting on the spot. The turn progresses from player → enemy → player ..." << endl;
+	cout << "Please note that the weight of items and equipment is set and the weight that can be carried is limited." << endl;
+	cout << "In addition, the equipment has endurance value, and as the weapon attacks, the armor wears away every time it gets damaged. The equipment will break and disappear if the endurance value is lost" << endl;
+	cout << "To get out of the dungeon, head towards the top left of the map, which is the starting point" << endl;
 	cout << "" << endl;
-	cout << "勝利条件" << endl;
-	cout << "・目標金額を満たし、ダンジョンを抜け出す" << endl;
-	cout << "敗北条件" << endl;
-	cout << "・目標金額に満たないまま、ダンジョンを抜け出す" << endl;
-	cout << "・HPが0になり、死んでしまう。" << endl;
-	cout << "(その際、スコアも0になってしまうので気を付けましょう。)" << endl;
+	cout << "Victory conditions" << endl;
+	cout << "・Meet the target amount and get out of the dungeon" << endl;
+	cout << "Defeat condition" << endl;
+	cout << "・Get out of the dungeon without reaching the target amount" << endl;
+	cout << "・HP goes to 0 and dies" << endl;
+	cout << "(At that time, the score will be 0, so be careful.)" << endl;
 	cout << endl;
-	cout << "～操作説明～" << endl;
-	cout << "移動は各種矢印キーで対応した方向に動きます" << endl;
-	cout << "攻撃は各種矢印キーを押した際に攻撃範囲に敵がいる場合に攻撃します" << endl;
-	cout << "スペースキーを押すことでプレイヤーは何もせずその場所で１ターン消費します" << endl;
-	cout << "「i」キーを押すことでアイテム画面を開けます" << endl;
-	cout << "アイテム画面では、アイテムの使用、武器防具の着脱、アイテムの破棄、並び順の変更が行えます" << endl;
-	cout << "～アイテム画面での操作～" << endl;
-	cout << "アイテムには上から順に一番左に数字が割り振られています。同じ数字を二回入力することでアイテムの使用ができ、異なる数字を1回ずつ選んで入力することで並び替えができます。" << endl;
-	cout << "各種入力" << endl;
-	cout << " 666: 防具を脱ぐ" << endl;
-	cout << " 777: 武器を外す" << endl;
-	cout << " 888: アイテム画面を終了" << endl;
-	cout << " 999: アイテムを捨てる" << endl;
+	cout << "～Operation explanation～" << endl;
+	cout << "Movement moves in the corresponding direction with various arrow keys" << endl;
+	cout << "The attack will attack if there is an enemy in the attack range when you press the various arrow keys" << endl;
+	cout << "By pressing the space key, the player consumes one turn at that place without doing anything" << endl;
+	cout << "Open the item screen by pressing the <i> key" << endl;
+	cout << "The item screen allows you to use items, attach and remove weapon armor, destroy items, and change the order." << endl;
+	cout << "～Operation on the item screen～" << endl;
+	cout << "Items are assigned numbers from the top to the left. Items can be used by entering the same number twice," << endl;
+	cout << "and sorting can be done by selecting and entering different numbers once." << endl;
+	cout << "Various input" << endl;
+	cout << " 666: Take off the protective gear" << endl;
+	cout << " 777: Remove the weapon" << endl;
+	cout << " 888: Back" << endl;
+	cout << " 999: Discard items" << endl;
 	cout << endl;
-	cout << "～マップ表示について～" << endl;
-	cout << "　X:　マップの進めない場所や壁を表す" << endl;
-	cout << "　|:　部屋の横壁を表す" << endl;
-	cout << "　E:　ゴール位置を表す" << endl;
-	cout << "　P:　プレイヤーの位置を表す" << endl;
-	cout << "　$,!,@,#:　敵の位置を表す" << endl;
+	cout << "～About map display～" << endl;
+	cout << "　X:　Represents a location or wall where the map can not advance" << endl;
+	cout << "　|:　Represents the side wall of the room" << endl;
+	cout << "　E:　Represents the goal position" << endl;
+	cout << "　P:　Represents the player's position" << endl;
+	cout << "　$,!,@,#:　Represents the position of the enemy" << endl;
 	cout << "" << endl;
-	cout << "～ゲーム攻略のヒント～" << endl;
-	cout << "序盤は装備が弱い敵に挑んで徐々に装備を強くしよう" << endl;
-	cout << "先制攻撃ができるように、その場で待機する行動を活用しよう" << endl;
-	cout << "最初から持っている3つのポーションはあなたが借金をして買った強力なポーション、値は張るが出し惜しみせずに使おう" << endl;
-	cout << "武器には攻撃範囲や相性が存在している。敵にどれだけのダメージが入ってるのかに注目して、有利な武器で敵を攻撃しよう" << endl;
+	cout << "～	Tips ～" << endl;
+	cout << "In the early stage, attack the enemy with weak equipment and gradually strengthen the equipment" << endl;
+	cout << "Let's use the action of waiting on the spot so that the first strike can be done" << endl;
+	cout << "The three potions you have from the beginning are powerful potions you bought for debts, and you can use them without punishing" << endl;
+	cout << "Weapons have an attack range and compatibility. Watch for how much damage the enemy has, let's attack the enemy with a good weapon" << endl;
 
 
 	cout << "Press any key to continue" << endl;
@@ -1993,8 +1994,8 @@ void Start() {
 		cout << "                                                                                     ?^^MMMMMMMMMMMMMMMMMMMMMM^^7` " << endl;
 		cout << endl;
 		cout << endl;
-		cout << "友人に情報商材を売り込まれ250万の借金を作ってしまった君の家に届いていたのは財宝が眠る迷宮への招待状!?" << endl;
-		cout << "はたして君は250万を集め無事借金返済できるか??" << endl;
+		cout << "The invitation to a labyrinth where the treasure sleeps has been delivered to your home that has sold information items to a friend and made 2.5 million debts?" << endl;
+		cout << "Can you raise 2.5 million and pay off your debts safely?" << endl;
 		cout << "===============================================================================================================================" << endl;
 		cout << "1.Start this game" << endl;
 		cout << "2.Display Ranking List" << endl;
