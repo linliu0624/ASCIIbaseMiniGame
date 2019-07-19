@@ -1621,7 +1621,7 @@ void Valuation()
 ***************************************/
 void ShowPlayerStatus() {
 	cout << "↑↓←→ to move and attack, 'space' to wait       |-----enemy status-----" << endl;
-	cout << "press 'i' to manage inventory";
+	cout << "press 'i' to manage inventory, 'ESC' to option.";
 	if (player.roomX == 1 && player.roomY == 1) {
 		cout << ". Press ↑ to escape" << endl;
 	}
@@ -1830,7 +1830,7 @@ void escToStop() {
 	char n;
 	char flag;
 	system("CLS");
-	cout << "1.Back to the game" << endl;
+	cout << "1.Return to the game" << endl;
 	cout << "2.Leave the game" << endl;
 	cout << "3.Show rank" << endl;
 	cout << "4.Show rule" << endl;
